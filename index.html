@@ -1,301 +1,269 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl" data-bs-theme="dark">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>انجمن نجوم نوا | NOVA</title>
-    <link rel="stylesheet" href="assets/BootStrap/css/bootstrap.min.css">
+    <title>انجمن نجوم نوا</title>
     <link rel="stylesheet" href="assets/fonts/fonts.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- آیکون‌ها (FontAwesome برای شباهت بیشتر به عکس) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+    <link rel="manifest" href="assets/favicon/site.webmanifest">
 </head>
+
 <body>
     <canvas id="sky" aria-hidden="true"></canvas>
+    <div class="nav-overlay" id="navOverlay"></div>
 
-    <!-- هدر سایت -->
-    <header class="site-header">
-        <div class="wrap header-container">
-            <!-- لوگو سمت راست -->
-            <a class="brand" href="#">
-                <img src="assets/icons/nova-light.png" alt="NOVA" class="logo-img">
-                <div class="brand-text">
-                    <h1>نوا</h1>
-                    <span>انجمن نجوم</span>
-                </div>
+    <!-- منوی کشویی موبایل -->
+    <nav id="nav" class="mobile-nav">
+        <div class="nav-header-mobile">
+            <span class="nav-title-mobile Pacifico-font">NOVA</span>
+            <button class="nav-close-btn" id="navCloseBtn" type="button" aria-label="بستن منو">&times;</button>
+        </div>
+        <a href="#top">خانه</a>
+        <a href="#about">درباره ما</a>
+        <a href="#team">اعضا</a>
+        <a href="#events">رویدادها</a>
+        <a href="#gallery">گالری</a>
+        <a href="#news">اخبار</a>
+        <a href="#join">عضویت و تماس</a>
+        <div class="nav-mobile-logins">
+            <a href="login/login2.html" class="btn btn-login-mobile">ورود اعضا</a>
+        </div>
+    </nav>
+
+    <!-- هدر -->
+    <header>
+        <div class="wrap bar">
+            <button class="menu" type="button" aria-expanded="false" aria-controls="nav" aria-label="باز کردن منو">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 5h18a1 1 0 010 2H3a1 1 0 010-2zm0 6h18a1 1 0 010 2H3a1 1 0 010-2zm0 6h18a1 1 0 010 2H3a1 1 0 010-2z" fill="#ffffff" />
+                </svg>
+            </button>
+
+            <a class="brand" href="#top" aria-label="انجمن نجوم نوا">
+                <img src="assets/icons/nova-light.png" alt="نشان انجمن نجوم نوا" class="nova-logo">
+                <span class="brand-text">
+                    <b class="Pacifico-font">NOVA</b>
+                    <small>انجمن نجوم</small>
+                </span>
             </a>
 
-            <!-- منوی وسط -->
-            <nav class="main-nav">
-                <a href="#" class="active">خانه</a>
-                <a href="#">درباره ما</a>
-                <a href="#">اعضا</a>
-                <a href="#">مقالات</a>
-                <a href="#">گالری</a>
-                <a href="#">رویدادها</a>
-                <a href="#">تماس با ما</a>
-            </nav>
+            <div class="desktop-nav">
+                <a href="#top" class="active">خانه</a>
+                <a href="#about">درباره ما</a>
+                <a href="#team">اعضا</a>
+                <a href="#events">رویدادها</a>
+                <a href="#gallery">گالری</a>
+                <a href="#news">اخبار</a>
+                <a href="#join">تماس با ما</a>
+            </div>
 
-            <!-- ابزارهای سمت چپ -->
-            <div class="header-actions">
-                <button class="theme-btn" id="themeToggleBtn"><i class="fa-solid fa-moon"></i></button>
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="جستجو در سایت...">
+            <div class="header-left-actions">
+                <label class="search" aria-label="جستجو در سایت">
+                    <input type="search" id="siteSearch" placeholder="جستجو در سایت...">
+                </label>
+                <div class="logins">
+                    <a href="login/login2.html" class="btn ghost login-desktop-btn">ورود اعضا</a>
                 </div>
+                <button class="theme-switch" id="themeToggleBtn" type="button" aria-label="تغییر تم">
+                    <span class="theme-switch-track">
+                        <span class="theme-switch-thumb"><span id="themeIcon">🌙</span></span>
+                    </span>
+                </button>
             </div>
         </div>
     </header>
 
-    <main id="main-content">
-        <!-- بخش هیرو (Hero) -->
-        <section class="hero-section">
-            <!-- تصویر پس‌زمینه (کوه، تلسکوپ و کهکشان) -->
-            <div class="hero-bg-image"></div> 
-            
-            <div class="wrap hero-content">
-                <!-- سمت راست: متن -->
-                <div class="hero-text-area">
-                    <span class="hero-badge">به انجمن نجوم نوا خوش آمدید</span>
-                    <div class="hero-logo-title">
-                        <img src="assets/icons/nova-light.png" alt="NOVA">
-                    </div>
-                    <h2>جایی برای کشف، یادگیری و شگفتی‌های آسمان</h2>
-                    <p>ما در نوا، به هم می‌پیوندیم تا با هم آسمان را بهتر بشناسیم؛ از رصد ستارگان شب تا یادگیری، پژوهش و تجربه‌های مشترک.</p>
-                    <a href="#" class="btn-primary">
-                        <i class="fa-solid fa-user-plus"></i> به انجمن بپیوندید
-                    </a>
-                </div>
-
-                <!-- سمت چپ: کارت ویژگی‌ها -->
-                <div class="hero-features-card">
-                    <div class="feature-item">
-                        <div class="icon-box"><i class="fa-solid fa-users"></i></div>
-                        <span>سه عضو موسس</span>
-                    </div>
-                    <div class="feature-item">
-                        <div class="icon-box"><i class="fa-solid fa-telescope"></i></div>
-                        <span>فعال در زمینه رصد و آموزش نجوم</span>
-                    </div>
-                    <div class="feature-item">
-                        <div class="icon-box"><i class="fa-regular fa-calendar-check"></i></div>
-                        <span>برگزاری رویدادهای منظم</span>
-                    </div>
-                    <div class="feature-item">
-                        <div class="icon-box"><i class="fa-regular fa-star"></i></div>
-                        <span>برای همه علاقه‌مندان به آسمان</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- بخش اعضای موسس -->
-        <section class="team-section wrap">
-            <div class="section-title">
-                <h2>اعضای موسس</h2>
-                <p>با سه دوست، یک رویا: نوا؛ انجمنی برای همه علاقه‌مندان به آسمان</p>
-            </div>
-            <div class="team-grid">
-                <!-- کارت 1 -->
-                <div class="member-card">
-                    <img src="assets/img/member1.jpg" alt="سینا محمدی" class="member-img">
-                    <div class="member-info">
-                        <h3>سینا محمدی</h3>
-                        <span>موسس و مسئول محتوا</span>
-                        <p>«هر ستاره، داستانی برای گفتن دارد؛ کافی است گوش دهیم.»</p>
-                        <div class="member-socials">
-                            <a href="#"><i class="fa-solid fa-paper-plane"></i></a>
-                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <!-- کارت 2 -->
-                <div class="member-card">
-                    <img src="assets/img/member2.jpg" alt="مریم رضایی" class="member-img">
-                    <div class="member-info">
-                        <h3>مریم رضایی</h3>
-                        <span>موسس و مسئول رویدادها</span>
-                        <p>«نجوم فقط یک علم نیست؛ یک سبک زندگی است.»</p>
-                        <div class="member-socials">
-                            <a href="#"><i class="fa-solid fa-paper-plane"></i></a>
-                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <!-- کارت 3 -->
-                <div class="member-card">
-                    <img src="assets/img/member3.jpg" alt="علی حسینی" class="member-img">
-                    <div class="member-info">
-                        <h3>علی حسینی</h3>
-                        <span>موسس و مسئول علمی</span>
-                        <p>«آسمان، کتابی است که هر شب صفحه‌ای جدید از آن ورق می‌خورد.»</p>
-                        <div class="member-socials">
-                            <a href="#"><i class="fa-solid fa-paper-plane"></i></a>
-                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- بخش سه ستونه (رویدادها، گالری، اخبار) -->
-        <section class="services-section wrap">
-            <div class="services-grid">
-                <!-- ستون 1: رویدادها -->
-                <div class="service-box">
-                    <div class="box-header">
-                        <h3><i class="fa-regular fa-calendar"></i> رویدادهای پیش رو</h3>
-                        <a href="#">مشاهده همه</a>
-                    </div>
-                    <div class="event-list">
-                        <div class="event-item">
-                            <div class="event-date"><b>۲۵</b><span>مهر</span></div>
-                            <img src="assets/img/moon.png" alt="ماه">
-                            <div class="event-details">
-                                <h4>رصد عمومی ماه و سیارات</h4>
-                                <p>رصدخانه نوا - ساعت ۱۹</p>
-                            </div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-date"><b>۲۸</b><span>مهر</span></div>
-                            <img src="assets/img/telescope.png" alt="تلسکوپ">
-                            <div class="event-details">
-                                <h4>کارگاه آشنایی با تلسکوپ‌ها</h4>
-                                <p>دانشکده علوم - ساعت ۱۶</p>
-                            </div>
-                        </div>
-                        <div class="event-item">
-                            <div class="event-date"><b>۳</b><span>آبان</span></div>
-                            <img src="assets/img/blackhole.png" alt="سیاه‌چاله">
-                            <div class="event-details">
-                                <h4>سخنرانی: سیاه‌چاله‌ها</h4>
-                                <p>سالن اجتماعات - ساعت ۱۵</p>
-                            </div>
-                        </div>
+    <main id="top">
+        <!-- ۱. هیرو -->
+        <section class="hero">
+            <div class="wrap hero-grid">
+                <div class="hero-main">
+                    <p class="hero-kicker">به انجمن نجوم</p>
+                    <svg class="nova" viewBox="0 0 200 200" role="img"
+                        aria-label="ستاره‌ی نوا در مرکز، با سیاره‌هایی در حال گردش به دورش">
+                        <defs>
+                            <radialGradient id="glow">
+                                <stop offset="0" stop-color="#eafcff" stop-opacity=".9" />
+                                <stop offset=".5" stop-color="#4fd8e8" stop-opacity=".3" />
+                                <stop offset="1" stop-color="#4fd8e8" stop-opacity="0" />
+                            </radialGradient>
+                            <radialGradient id="sf" cx="42%" cy="38%">
+                                <stop offset="0" stop-color="#fff" />
+                                <stop offset=".55" stop-color="#cdeeff" />
+                                <stop offset="1" stop-color="#6fa8f0" />
+                            </radialGradient>
+                        </defs>
+                        <circle cx="100" cy="100" r="44" fill="none" stroke="rgba(180,205,255,.16)" />
+                        <circle cx="100" cy="100" r="66" fill="none" stroke="rgba(180,205,255,.14)" />
+                        <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(180,205,255,.1)" />
+                        <circle class="halo" cx="100" cy="100" r="58" fill="url(#glow)" />
+                        <circle cx="100" cy="100" r="38" fill="url(#sf)" />
+                        <text x="100" y="106" text-anchor="middle" class="nova-word">NOVA</text>
+                        <g class="p1"><circle cx="144" cy="100" r="5" fill="#8fefe0" /></g>
+                        <g class="p2"><circle cx="100" cy="34" r="4" fill="#a9c9ff" /></g>
+                        <g class="p3"><g transform="translate(188,100)"><circle r="7" fill="#ffd8a6" /></g></g>
+                    </svg>
+                    <h1>بیایید آسمان را بهتر بشناسیم...</h1>
+                    <p>انجمن نجوم نوا؛ جایی برای رصد، آموختن و شگفت‌زده شدن در برابر آسمان شب.</p>
+                    <div class="cta">
+                        <a class="btn" href="#join">به انجمن بپیوندید</a>
+                        <a class="btn ghost" href="#events">رصدهای پیش‌رو</a>
                     </div>
                 </div>
 
-                <!-- ستون 2: گالری -->
-                <div class="service-box">
-                    <div class="box-header">
-                        <h3><i class="fa-regular fa-images"></i> گالری تصاویر</h3>
-                        <a href="#">مشاهده همه</a>
-                    </div>
-                    <div class="gallery-grid">
-                        <img src="assets/img/gal1.jpg" alt="گالری">
-                        <img src="assets/img/gal2.jpg" alt="گالری">
-                        <img src="assets/img/gal3.jpg" alt="گالری">
-                        <img src="assets/img/gal4.jpg" alt="گالری">
-                        <img src="assets/img/gal5.jpg" alt="گالری">
-                        <img src="assets/img/gal6.jpg" alt="گالری">
-                    </div>
-                </div>
-
-                <!-- ستون 3: اخبار -->
-                <div class="service-box">
-                    <div class="box-header">
-                        <h3><i class="fa-regular fa-newspaper"></i> آخرین اخبار</h3>
-                        <a href="#">مشاهده همه</a>
-                    </div>
-                    <div class="news-list">
-                        <div class="news-item">
-                            <div class="news-text">
-                                <h4>رصد بارش شهابی برساوشی</h4>
-                                <span>۱۴۰۳/۰۶/۲۱</span>
-                            </div>
-                            <img src="assets/img/news1.jpg" alt="خبر">
-                        </div>
-                        <div class="news-item">
-                            <div class="news-text">
-                                <h4>کشف یک سیاره فراخورشیدی جدید</h4>
-                                <span>۱۴۰۳/۰۶/۱۸</span>
-                            </div>
-                            <img src="assets/img/news2.jpg" alt="خبر">
-                        </div>
-                        <div class="news-item">
-                            <div class="news-text">
-                                <h4>برگزاری کارگاه عکاسی نجومی</h4>
-                                <span>۱۴۰۳/۰۶/۱۵</span>
-                            </div>
-                            <img src="assets/img/news3.jpg" alt="خبر">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- بخش عضویت و تماس -->
-        <section class="join-section wrap">
-            <div class="join-container">
-                <!-- سمت راست: تصویر پس زمینه و مزایا -->
-                <div class="join-info">
-                    <ul class="benefits-list">
-                        <li><i class="fa-regular fa-calendar-check"></i> دسترسی به رویدادهای ویژه</li>
-                        <li><i class="fa-regular fa-newspaper"></i> شرکت در کارگاه‌ها و جلسات</li>
-                        <li><i class="fa-solid fa-rss"></i> دریافت جدیدترین اخبار نجومی</li>
-                        <li><i class="fa-solid fa-user-group"></i> پیوستن به یک جامعه علمی و دوستانه</li>
+                <aside class="hero-panel card" aria-label="هدف‌های انجمن">
+                    <ul class="goals">
+                        <li>برگزاری رصدهای عمومی و رایگان برای همه‌ی سنین</li>
+                        <li>آموزش کار با تلسکوپ، نقشه‌ی آسمان و عکاسی نجومی</li>
+                        <li>ترویج آگاهی درباره‌ی آلودگی نوری</li>
+                        <li>پیوند دادن علاقه‌مندان و پژوهشگران نجوم</li>
                     </ul>
+                </aside>
+            </div>
+        </section>
+
+        <!-- ۲. درباره ما -->
+        <section id="about">
+            <div class="wrap about rv">
+                <div>
+                    <h2>درباره ما</h2>
+                    <p class="lead">«نوا» نام ستاره‌ای است که ناگهان می‌درخشد. ما گروهی از دانش‌آموزانیم که
+                        می‌خواهیم نجوم را از کتاب به آسمان واقعی ببریم.</p>
+                </div>
+                <div class="tl">
+                    <div><b>آغاز راه</b><span>چند دوست هم‌مسیر، با علاقه به آموزش.</span></div>
+                    <div><b>آغاز فعالیت‌ها</b><span>رسمیت‌یافتن فعالیت‌ها و انتشار نخستین مطالب آموزشی.</span></div>
+                    <div><b>رصد عمومی</b><span>برگزاری اولین برنامه‌های رصد همگانی در مدرسه.</span></div>
+                    <div><b>نوا در امروز</b><span>فعالیت مستمر، عکاسی نجومی و ستاره‌شناسی مقدماتی.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ۳. مدیران -->
+        <section id="team">
+            <div class="wrap">
+                <div class="rv">
+                    <h2>مدیران انجمن</h2>
+                    <p class="lead">کسانی که شب‌های رصد را ممکن می‌کنند.</p>
+                </div>
+                <div class="team grid g3 rv">
+                    <div class="card mem">
+                        <div class="av shayan"></div>
+                        <h3>شایان توکلی دستجرد</h3><small>مدیر انجمن</small>
+                    </div>
+                    <div class="card mem">
+                        <div class="av sepehr"></div>
+                        <h3>سپهر ابراهیمی</h3><small>مسئول فناوری</small>
+                    </div>
+                    <div class="card mem">
+                        <div class="av meraj"></div>
+                        <h3>معراج عیدی درمیان</h3><small>مسئول محتوا</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ۴. رویدادها، گالری، اخبار (سه ستون) -->
+        <section class="triple">
+            <div class="wrap triple-grid">
+                <div class="card panel" id="events">
+                    <div class="panel-head">
+                        <h3>رویدادهای پیش‌رو</h3>
+                    </div>
+                    <article class="event">
+                        <span class="tag">رصد دانش‌آموزی</span>
+                        <h4>شب رصد سیاره زحل</h4>
+                        <p>رصد غول گازی منظومه شمسی با تلسکوپ‌های پیشرفته.</p>
+                        <p class="when">پنج‌شنبه، ساعاتی پس از غروب</p>
+                        <p class="btn event-btn">ثبت نام به اتمام رسید</p>
+                    </article>
                 </div>
 
-                <!-- وسط: فرم -->
-                <div class="join-form-area">
-                    <h3><i class="fa-regular fa-user"></i> درخواست عضویت</h3>
-                    <p>اگر به نجوم علاقه‌مند هستید و می‌خواهید به جمع ما بپیوندید، فرم زیر را تکمیل کنید.</p>
-                    <form class="join-form">
-                        <div class="input-group">
-                            <i class="fa-regular fa-user"></i>
-                            <input type="text" placeholder="نام و نام خانوادگی">
-                        </div>
-                        <div class="input-group">
-                            <i class="fa-solid fa-phone"></i>
-                            <input type="text" placeholder="شماره تماس">
-                        </div>
-                        <div class="input-group">
-                            <i class="fa-regular fa-envelope"></i>
-                            <input type="email" placeholder="ایمیل">
-                        </div>
-                        <button class="btn-primary full-width" type="submit"><i class="fa-solid fa-paper-plane"></i> ارسال درخواست</button>
-                    </form>
+                <div class="card panel" id="gallery">
+                    <div class="panel-head">
+                        <h3>گالری تصاویر</h3>
+                        <a href="gallery/gallery.html">مشاهده همه</a>
+                    </div>
+                    <div class="gal">
+                        <figure><img src="assets/img/7.jpg" alt="سحابی در آسمان تاریک"></figure>
+                        <figure><img src="assets/img/9.jpg" alt="ماه کامل بالای دشت"></figure>
+                        <figure><img src="assets/img/8.png" alt="راه شیری در کویر"></figure>
+                        <figure><img src="assets/img/2.jpg" alt="شفق پیش از رصد"></figure>
+                        <figure><img src="assets/img/4.jpg" alt="مشتری و قمرهایش"></figure>
+                        <figure><img src="assets/img/3.jpg" alt="کهکشان مارپیچی"></figure>
+                    </div>
                 </div>
+
+                <div class="card panel" id="news">
+                    <div class="panel-head">
+                        <h3>آخرین اخبار</h3>
+                    </div>
+                    <div class="not-broadcasted">
+                        <p>هنوز چیزی منتشر نکرده‌ایم. با همکاری شما انتشار سریع‌تر می‌شود.</p>
+                        <a href="#join" class="btn">می‌خواهم عضو شوم</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ۵. عضویت و تماس -->
+        <section id="join">
+            <div class="wrap join card rv">
+                <div class="join-info">
+                    <h2>درخواست عضویت</h2>
+                    <p class="lead">فرم را برای ارسال درخواست عضویت یا پیشنهاد خود تکمیل کنید.</p>
+                    <div class="info">
+                        <b>نشانی</b>
+                        <p>بیرجند، سجادشهر، امامت، دبیرستان شهید بهشتی دوره اول</p>
+                        <b>ایمیل</b>
+                        <p dir="ltr">Novaastro405@gmail.com</p>
+                        <b>تلفن</b>
+                        <a dir="ltr" href="tel:056-32461020">056-32461020</a>
+                        <b>آیدی مسئول فناوری</b>
+                        <a href="https://shad.ir/sepehr_ebi">@SEPEHR_EBI (تمام شبکه‌های اجتماعی ایرانی)</a>
+                    </div>
+                </div>
+
+                <form id="f" novalidate>
+                    <input type="hidden" name="access_key" value="b88779ab-ad0a-4b3c-b611-3042033b6495">
+                    <input type="hidden" name="subject" value="درخواست جدید از سایت انجمن نجوم نوا">
+
+                    <label>نام و نام خانوادگی <span class="req">*</span>
+                        <input name="n" required autocomplete="name" placeholder="مثال: علی محمدی">
+                    </label>
+                    <label>شماره کلاس <span class="req">*</span>
+                        <input name="c" required placeholder="مثال: ۸۰۲ یا ۱۰/۳">
+                    </label>
+                    <label>آیدی شاد یا ایتا <span class="req">*</span>
+                        <input name="id" dir="ltr" required placeholder="مثال: @username">
+                    </label>
+                    <label>پیام یا پیشنهاد (برای درخواست عضویت خالی بگذارید)
+                        <textarea name="m" rows="3" placeholder="متن پیام خود را بنویسید..."></textarea>
+                    </label>
+                    <button class="btn" type="submit" id="submit-btn">ارسال درخواست</button>
+                    <div class="ok" id="ok" role="status"></div>
+                </form>
             </div>
         </section>
     </main>
 
-    <!-- فوتر -->
-    <footer class="site-footer">
-        <div class="wrap footer-container">
-            <!-- راست: لوگو و شبکه‌های اجتماعی -->
-            <div class="footer-right">
-                <div class="brand footer-brand">
-                    <img src="assets/icons/nova-light.png" alt="NOVA">
-                    <div class="brand-text">
-                        <h1>نوا</h1>
-                        <span>انجمن نجوم</span>
-                    </div>
-                </div>
-                <div class="social-links">
-                    <a href="#"><i class="fa-solid fa-paper-plane"></i> @nova_astronomy</a>
-                    <a href="#"><i class="fa-regular fa-envelope"></i> nova@astronomy.ir</a>
-                    <a href="#"><i class="fa-solid fa-phone"></i> ۰۹۱۲ ۳۴۵ ۶۷۸۹</a>
-                </div>
-            </div>
-
-            <!-- وسط: نقل قول -->
-            <div class="footer-center">
-                <i class="fa-solid fa-star"></i>
-                <p>آسمان، پایان نیست؛<br>آغاز هزاران پرسش است...</p>
-            </div>
-
-            <!-- چپ: کپی رایت -->
-            <div class="footer-left">
-                <p>© انجمن نجوم نوا - تمامی حقوق محفوظ است.</p>
+    <footer>
+        <div class="wrap foot">
+            <div class="text">© انجمن نجوم نوا · همه‌ی حقوق محفوظ است.</div>
+            <div class="soc">
+                <a href="https://shad.ir/novaastro405" aria-label="شاد">شاد</a>
+                <a href="https://rubika.ir/novaastro405" aria-label="روبیکا">روبیکا</a>
+                <a href="https://www.aparat.com/nova_astro_405" aria-label="آپارات">آپارات</a>
             </div>
         </div>
     </footer>
 
     <script src="assets/js/index.js"></script>
 </body>
+
 </html>
