@@ -2,6 +2,9 @@
   'use strict';
   const $ = s => document.querySelector(s);
   const root = document.documentElement;
+  root.classList.add('js');
+  // اگر به هر دلیل افکت ظاهر شدن کار نکرد، بعد از ۲ ثانیه همه‌ی بخش‌ها نشان داده می‌شوند
+  setTimeout(() => document.querySelectorAll('.rv').forEach(n => n.classList.add('on')), 2000);
 
   /* ===== تنظیمات رئیس =====
      نام کاربری و هش SHA-256 رمز. رمز پیش‌فرض: nova1405
@@ -153,7 +156,7 @@
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => showTab(b.dataset.tab));
   vAdd.addEventListener('submit', e => {
     e.preventDefault();
-    const title = vAdd.title.value.trim(), m = vAdd.link.value.match(/\/v\/([A-Za-z0-9]+)/) || vAdd.link.value.trim().match(/^([A-Za-z0-9]{4,})$/);
+    const title = vAdd.elements.title.value.trim(), lk = vAdd.elements.link.value.trim(), m = lk.match(/\/v\/([A-Za-z0-9]+)/) || lk.match(/^([A-Za-z0-9]{4,})$/);
     if (!title || !m) return;
     db.set('nova-videos', [...videos(), { title, id: m[1] }]); vAdd.reset(); renderVideos(); showTab('videos');
   });
