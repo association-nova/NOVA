@@ -29,32 +29,18 @@ $$('dialog').forEach(d => { $('.x', d).addEventListener('click', () => d.close()
 const lb = $('#lb');
 $$('.g').forEach(b => b.addEventListener('click', () => { const i = $('img', b); $('img', lb).src = i.src; $('img', lb).alt = i.alt; $('p', lb).textContent = i.alt; lb.showModal(); }));
 
-/* کارت‌های سه‌بعدی روی موس */
-const tiltSel = '.mem,.vc:not(.soon),.g';
-document.addEventListener('pointermove', e => {
-    if (e.pointerType !== 'mouse') return;
-    const el = e.target.closest?.(tiltSel); if (!el) return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 10 + 'deg');
-    el.style.setProperty('--rx', (.5 - (e.clientY - r.top) / r.height) * 10 + 'deg');
-});
-document.addEventListener('pointerout', e => { const el = e.target.closest?.(tiltSel); if (el) { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); } });
-
-/* آسمان ستاره‌ای با شهاب */
+/* آسمان ستاره‌ای: یک‌بار رسم می‌شود (بدون انیمیشن مداوم، سبک) */
 try {
-    const c = $('#sky'), x = c.getContext('2d'), calm = matchMedia('(prefers-reduced-motion: reduce)').matches; let S = [], M = [];
-    const fit = () => { c.width = innerWidth; c.height = innerHeight; S = Array.from({ length: Math.round(c.width * c.height / 8000) }, () => ({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.3 + .2, p: Math.random() * 6 })); };
-    const draw = t => {
-        x.clearRect(0, 0, c.width, c.height);
+    const c = $('#sky'), x = c.getContext('2d'); let lastW = 0, tm;
+    const paint = () => {
+        const w = c.width = innerWidth, hh = c.height = innerHeight; lastW = w;
         const dark = document.documentElement.dataset.bsTheme !== 'light';
         x.fillStyle = dark ? '#fff' : '#3a46b8';
-        S.forEach(s => { x.globalAlpha = (dark ? .3 : .16) + .45 * Math.abs(Math.sin(t / 1400 + s.p)); x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill(); });
-        if (dark && !calm && Math.random() < .006) M.push({ x: Math.random() * c.width, y: Math.random() * c.height * .5, l: 0 });
-        M = M.filter(m => m.l < 40);
-        M.forEach(m => { m.l++; m.x -= 9; m.y += 5; const g = x.createLinearGradient(m.x, m.y, m.x + 90, m.y - 50); g.addColorStop(0, 'rgba(255,255,255,' + (1 - m.l / 40) + ')'); g.addColorStop(1, 'transparent'); x.globalAlpha = 1; x.strokeStyle = g; x.lineWidth = 1.6; x.beginPath(); x.moveTo(m.x, m.y); x.lineTo(m.x + 90, m.y - 50); x.stroke(); });
-        if (!calm) requestAnimationFrame(draw);
+        for (let i = 0, n = Math.min(220, (w * hh / 9000) | 0); i < n; i++) { x.globalAlpha = (dark ? .25 : .15) + Math.random() * .6; x.beginPath(); x.arc(Math.random() * w, Math.random() * hh, Math.random() * 1.2 + .2, 0, 7); x.fill(); }
     };
-    addEventListener('resize', () => { fit(); calm && draw(0); }); fit(); requestAnimationFrame(draw);
+    addEventListener('resize', () => { if (innerWidth === lastW) return; clearTimeout(tm); tm = setTimeout(paint, 250); });
+    $('#themeBtn').addEventListener('click', () => setTimeout(paint, 0));
+    paint();
 } catch (_) { }
 
 /* ---- ویدیوها: از سرور خوانده می‌شود، وگرنه فهرست پیش‌فرض ---- */
