@@ -1,131 +1,147 @@
-/* نوا — index.js */
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+/* نوا — nova.js */
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const h = (t, a = {}, ...k) => { const e = document.createElement(t); Object.assign(e, a); e.append(...k); return e; };
+const api = async (u, o = {}) => { const r = await fetch(u, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...o }); if (!r.ok) throw r.status; return r.json(); };
+const post = (u, b) => api(u, { method: 'POST', body: JSON.stringify(b) });
 
-/* ویدیوها: برای افزودن ویدیوی جدید، یک آیتم به این آرایه اضافه کنید.
-   h = کد ویدیو در آپارات (بخش videohash در لینک embed) */
-const VIDEOS = [
-    { t: 'زندگی در سیاره‌ای با دو خورشید؛ واقعیت علمی یا تخیل؟', d: 'ویدیوی آموزشی انجمن نوا', h: 'sox81n1', img: 'assets/img/3.jpg' },
-];
-
-/* آسمان ستاره‌ای */
-(() => {
-    const c = $('#sky'), x = c.getContext('2d'); let S = [];
-    const fit = () => { c.width = innerWidth; c.height = innerHeight; S = Array.from({ length: Math.round(c.width * c.height / 9000) }, () => ({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.3 + .2, p: Math.random() * 6 })); };
-    const draw = t => {
-        x.clearRect(0, 0, c.width, c.height);
-        const dark = document.documentElement.dataset.bsTheme !== 'light';
-        x.fillStyle = dark ? '#fff' : '#3a46b8';
-        S.forEach(s => { x.globalAlpha = (dark ? .35 : .18) + .4 * Math.abs(Math.sin(t / 1500 + s.p)); x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill(); });
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(draw);
-    };
-    addEventListener('resize', fit); fit(); requestAnimationFrame(draw);
-})();
-
-/* منوی همبرگری */
+/* ---- منوی همبرگری ---- */
 const menu = $('#menu'), mb = $('#menuBtn');
 const setMenu = o => { menu.classList.toggle('open', o); mb.setAttribute('aria-expanded', o); };
-mb.onclick = e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); };
+mb.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
 menu.addEventListener('click', e => { if (e.target.closest('a,button')) setMenu(false); });
 document.addEventListener('click', e => { if (!menu.contains(e.target)) setMenu(false); });
 addEventListener('keydown', e => e.key === 'Escape' && setMenu(false));
 
-/* حالت شب و روز (ذخیره در مرورگر) */
-$('#themeBtn').onclick = () => {
+/* ---- شب و روز (ذخیره در مرورگر) ---- */
+$('#themeBtn').addEventListener('click', () => {
     const n = document.documentElement.dataset.bsTheme === 'light' ? 'dark' : 'light';
     document.documentElement.dataset.bsTheme = n;
-    try { localStorage.setItem('nova-theme', n); } catch (e) { }
-};
+    try { localStorage.setItem('nova-theme', n); } catch (_) { }
+});
 
-/* انیمیشن ورود بخش‌ها و دکمه‌ی بازگشت به بالا */
-const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add('on'), io.unobserve(e.target))), { threshold: .12 });
+/* ---- ظاهر: ظهور بخش‌ها، بازگشت به بالا، پنجره‌ها، گالری ---- */
+const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add('on'), io.unobserve(e.target))), { threshold: .1 });
 $$('.rv').forEach(el => io.observe(el));
 const up = $('#toTop');
 addEventListener('scroll', () => up.classList.toggle('show', scrollY > 600), { passive: true });
-up.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
-
-/* پنجره‌ها */
-$$('dialog').forEach(d => {
-    $('.x', d).onclick = () => d.close();
-    d.addEventListener('click', e => e.target === d && d.close());
-});
-
-/* گالری: نمایش تصویر بزرگ */
+up.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+$$('dialog').forEach(d => { $('.x', d).addEventListener('click', () => d.close()); d.addEventListener('click', e => e.target === d && d.close()); });
 const lb = $('#lb');
-$$('.g').forEach(b => b.onclick = () => {
-    const i = $('img', b); $('img', lb).src = i.src; $('img', lb).alt = i.alt; $('p', lb).textContent = i.alt; lb.showModal();
-});
+$$('.g').forEach(b => b.addEventListener('click', () => { const i = $('img', b); $('img', lb).src = i.src; $('img', lb).alt = i.alt; $('p', lb).textContent = i.alt; lb.showModal(); }));
 
-/* ویدیوها */
-const vd = $('#vd');
-VIDEOS.forEach(v => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'vc';
-    b.innerHTML = '<div class="th"></div><div><h3></h3><p></p></div>';
-    $('.th', b).style.backgroundImage = `url(${v.img})`;
-    $('h3', b).textContent = v.t; $('p', b).textContent = v.d;
-    b.onclick = () => {
-        $('.vf', vd).innerHTML = `<iframe src="https://www.aparat.com/video/video/embed/videohash/${encodeURIComponent(v.h)}/vt/frame" allowfullscreen title=""></iframe>`;
-        $('iframe', vd).title = v.t; vd.showModal();
+/* کارت‌های سه‌بعدی روی موس */
+const tiltSel = '.mem,.vc:not(.soon),.g';
+document.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const el = e.target.closest?.(tiltSel); if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 10 + 'deg');
+    el.style.setProperty('--rx', (.5 - (e.clientY - r.top) / r.height) * 10 + 'deg');
+});
+document.addEventListener('pointerout', e => { const el = e.target.closest?.(tiltSel); if (el) { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); } });
+
+/* آسمان ستاره‌ای با شهاب */
+try {
+    const c = $('#sky'), x = c.getContext('2d'), calm = matchMedia('(prefers-reduced-motion: reduce)').matches; let S = [], M = [];
+    const fit = () => { c.width = innerWidth; c.height = innerHeight; S = Array.from({ length: Math.round(c.width * c.height / 8000) }, () => ({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.3 + .2, p: Math.random() * 6 })); };
+    const draw = t => {
+        x.clearRect(0, 0, c.width, c.height);
+        const dark = document.documentElement.dataset.bsTheme !== 'light';
+        x.fillStyle = dark ? '#fff' : '#3a46b8';
+        S.forEach(s => { x.globalAlpha = (dark ? .3 : .16) + .45 * Math.abs(Math.sin(t / 1400 + s.p)); x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill(); });
+        if (dark && !calm && Math.random() < .006) M.push({ x: Math.random() * c.width, y: Math.random() * c.height * .5, l: 0 });
+        M = M.filter(m => m.l < 40);
+        M.forEach(m => { m.l++; m.x -= 9; m.y += 5; const g = x.createLinearGradient(m.x, m.y, m.x + 90, m.y - 50); g.addColorStop(0, 'rgba(255,255,255,' + (1 - m.l / 40) + ')'); g.addColorStop(1, 'transparent'); x.globalAlpha = 1; x.strokeStyle = g; x.lineWidth = 1.6; x.beginPath(); x.moveTo(m.x, m.y); x.lineTo(m.x + 90, m.y - 50); x.stroke(); });
+        if (!calm) requestAnimationFrame(draw);
     };
-    $('#vids').append(b);
-});
-vd.addEventListener('close', () => $('.vf', vd).innerHTML = '');
+    addEventListener('resize', () => { fit(); calm && draw(0); }); fit(); requestAnimationFrame(draw);
+} catch (_) { }
 
-/* فرم عضویت: اعتبارسنجی و ارسال */
+/* ---- ویدیوها: از سرور خوانده می‌شود، وگرنه فهرست پیش‌فرض ---- */
+const DEFAULT_VIDEOS = [{ title: 'زندگی در سیاره‌ای با دو خورشید؛ واقعیت علمی یا تخیل؟', hash: 'sox81n1' }];
+const THUMBS = ['assets/img/3.jpg', 'assets/img/4.jpg', 'assets/img/7.jpg', 'assets/img/8.png'];
+const vd = $('#vd');
+async function loadVideos() {
+    let list = []; try { list = await api('/api/videos'); } catch (_) { }
+    if (!list.length) list = DEFAULT_VIDEOS;
+    const box = $('#vids'); box.replaceChildren();
+    list.forEach((v, i) => {
+        const b = h('button', { type: 'button', className: 'vc' }, h('div', { className: 'th' }), h('div', {}, h('h3', { textContent: v.title }), h('p', { textContent: 'پخش در آپارات' })));
+        $('.th', b).style.backgroundImage = `url(${THUMBS[i % THUMBS.length]})`;
+        b.addEventListener('click', () => { $('.vf', vd).replaceChildren(h('iframe', { src: `https://www.aparat.com/video/video/embed/videohash/${encodeURIComponent(v.hash)}/vt/frame`, title: v.title, allowFullscreen: true })); vd.showModal(); });
+        box.append(b);
+    });
+    for (let i = list.length; i < 3; i++) box.append(h('div', { className: 'vc soon' }, h('div', { className: 'th' }), h('div', {}, h('h3', { textContent: 'ویدیوی بعدی' }), h('p', { textContent: 'به‌زودی منتشر می‌شود' }))));
+}
+vd.addEventListener('close', () => $('.vf', vd).replaceChildren());
+loadVideos();
+
+/* ---- فرم عضویت ---- */
 const fa = s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 const rules = {
     name: v => v.trim().length >= 3 || 'نام و نام خانوادگی را کامل وارد کنید.',
-    age: v => (+fa(v) >= 5 && +fa(v) <= 100) || 'سن باید بین ۵ تا ۱۰۰ باشد.',
-    phone: v => /^(0|\+98)?(9\d{9}|[1-8]\d{9})$/.test(fa(v).replace(/[\s-]/g, '')) || 'شماره تماس معتبر نیست.',
+    cls: v => /^[\d\/\-\s]{1,10}$/.test(fa(v.trim())) || 'شماره کلاس معتبر نیست (مثال: ۸۰۲ یا ۱۰/۳).',
     email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || 'ایمیل معتبر نیست.',
-    city: v => v.trim().length >= 2 || 'نام شهر را وارد کنید.',
-    reason: v => v.trim().length >= 10 || 'دلیل علاقه را حداقل در ۱۰ نویسه بنویسید.'
+    shad: v => /^@?[\w.]{3,40}$/.test(v.trim()) || 'آیدی شاد معتبر نیست (مثال: @username).'
 };
+const note = (el, m, good) => { el.style.display = 'block'; el.textContent = m; el.style.background = good ? '' : 'rgba(255,107,129,.2)'; };
 const f = $('#f'), ok = $('#ok');
-const show = (el, m, good) => { el.style.display = 'block'; el.textContent = m; el.style.background = good ? '' : 'rgba(255,107,129,.2)'; };
 f.addEventListener('submit', async e => {
     e.preventDefault();
     let valid = true;
-    Object.keys(rules).forEach(k => {
-        const i = f.elements[k], r = rules[k](i.value), er = i.closest('label').querySelector('.err');
-        i.setAttribute('aria-invalid', r !== true); er.textContent = r === true ? '' : r; if (r !== true) valid = false;
-    });
+    for (const k in rules) {
+        const i = f.elements[k], r = rules[k](i.value);
+        i.setAttribute('aria-invalid', r !== true); i.closest('label').querySelector('.err').textContent = r === true ? '' : r; if (r !== true) valid = false;
+    }
     if (!valid) return;
     const btn = $('#submit-btn'); btn.disabled = true; btn.textContent = 'در حال ارسال...';
+    const d = { name: f.elements.name.value.trim(), cls: fa(f.elements.cls.value.trim()), email: f.elements.email.value.trim(), shad: f.elements.shad.value.trim() };
     try {
-        const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(f))) });
-        const j = await res.json();
-        if (!j.success) throw 0;
-        show(ok, 'درخواست شما ارسال شد. به‌زودی با شما تماس می‌گیریم.', true); f.reset();
-    } catch (_) { show(ok, 'ارسال انجام نشد. اتصال اینترنت را بررسی و دوباره تلاش کنید.', false); }
+        try { await post('/api/join', d); }
+        catch (s) {
+            if (s === 429) throw 'many';
+            /* سرور اختصاصی در دسترس نیست (مثلاً میزبانی ایستا): ارسال از راه ایمیل */
+            const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ access_key: f.elements.access_key.value, subject: f.elements.subject.value, name: d.name, class: d.cls, email: d.email, shad: d.shad }) });
+            if (!(await r.json()).success) throw 0;
+        }
+        note(ok, 'درخواست شما ثبت شد. به‌زودی در شاد با شما تماس می‌گیریم. ✨', true); f.reset();
+    } catch (er) { note(ok, er === 'many' ? 'تعداد درخواست‌ها زیاد است؛ کمی بعد دوباره تلاش کنید.' : 'ارسال انجام نشد. اتصال اینترنت را بررسی کنید.', false); }
     btn.disabled = false; btn.textContent = 'ارسال درخواست';
 });
 
-/* ورود رئیس: احراز هویت فقط سمت سرور.
-   فرانت‌اند هیچ رمزی ندارد و فقط به /api/login درخواست می‌فرستد.
-   تا وقتی بک‌اند آماده نشده، ورود امکان‌پذیر نیست (نسخه‌ی نمایشی). */
-const ld = $('#loginDlg'), lm = $('#loginMsg'), dash = $('#dash');
-$('#loginBtn').onclick = () => ld.showModal();
+/* ---- ورود رئیس و داشبورد (احراز هویت فقط سمت سرور) ---- */
+const ld = $('#loginDlg'), lm = $('#loginMsg'), dash = $('#dash'), list = $('#dashList'), vAdd = $('#vAdd');
+let tab = 'requests';
+$('#loginBtn').addEventListener('click', () => ld.showModal());
 $('#loginForm').addEventListener('submit', async e => {
     e.preventDefault();
     const u = e.target.elements.username.value.trim(), p = e.target.elements.password.value;
-    if (!u || !p) return show(lm, 'نام کاربری و رمز عبور را وارد کنید.', false);
-    try {
-        const r = await fetch('/api/login', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
-        if (!r.ok) return show(lm, 'نام کاربری یا رمز عبور درست نیست.', false);
-        e.target.reset(); lm.style.display = 'none'; ld.close(); dash.showModal();
-    } catch (_) { show(lm, 'سرور ورود متصل نیست. این بخش در نسخه‌ی نمایشی فقط ساختار دارد.', false); }
+    if (!u || !p) return note(lm, 'نام کاربری و رمز عبور را وارد کنید.', false);
+    try { await post('/api/login', { username: u, password: p }); e.target.reset(); lm.style.display = 'none'; ld.close(); openDash(); }
+    catch (s) { note(lm, s === 401 ? 'نام کاربری یا رمز عبور درست نیست.' : s === 429 ? 'تلاش‌های زیاد؛ ۱۰ دقیقه بعد دوباره امتحان کنید.' : 'سرور مدیریت در دسترس نیست. server.js را اجرا کنید.', false); }
 });
-
-/* داشبورد: داده‌ها از API سرور خوانده می‌شود (/api/requests، /api/images، /api/videos، /api/content) */
-$$('.tabs button').forEach(b => b.onclick = async () => {
-    $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
-    const ul = $('#dashList'); ul.innerHTML = '<li>در حال بارگذاری...</li>';
+const openDash = () => { dash.showModal(); showTab('requests'); };
+const showTab = async t => {
+    tab = t; $$('.tabs [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); vAdd.hidden = t !== 'videos';
+    list.replaceChildren(h('li', { className: 'mut', textContent: 'در حال بارگذاری...' }));
     try {
-        const r = await fetch('/api/' + b.dataset.tab, { credentials: 'include' });
-        if (!r.ok) throw 0;
-        const items = await r.json(); ul.innerHTML = '';
-        (items.length ? items : ['موردی ثبت نشده است.']).forEach(it => { const li = document.createElement('li'); li.textContent = typeof it === 'string' ? it : Object.values(it).join(' · '); ul.append(li); });
-    } catch (_) { ul.innerHTML = '<li>اتصال به سرور برقرار نیست.</li>'; }
+        const items = await api('/api/' + t); list.replaceChildren();
+        if (!items.length) list.append(h('li', { className: 'mut', textContent: t === 'requests' ? 'هنوز درخواستی ثبت نشده است.' : 'ویدیویی اضافه نشده است.' }));
+        items.forEach(it => {
+            const del = h('button', { type: 'button', className: 'del', textContent: 'حذف' });
+            del.addEventListener('click', async () => { if (confirm('حذف شود؟')) { await api(`/api/${t}/${it.id}`, { method: 'DELETE' }).catch(() => { }); showTab(t); if (t === 'videos') loadVideos(); } });
+            list.append(t === 'requests'
+                ? h('li', { className: 'req' }, h('b', { textContent: it.name }), h('span', { textContent: 'کلاس ' + it.cls }), h('span', { dir: 'ltr', textContent: it.email }), h('span', { dir: 'ltr', textContent: it.shad }), h('small', { textContent: new Date(it.at).toLocaleString('fa-IR') }), del)
+                : h('li', { className: 'req' }, h('b', { textContent: it.title }), h('span', { dir: 'ltr', textContent: it.hash }), del));
+        });
+    } catch (s) { list.replaceChildren(h('li', { textContent: s === 401 ? 'نشست پایان یافته؛ دوباره وارد شوید.' : 'اتصال به سرور برقرار نیست.' })); }
+};
+$$('.tabs [data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+$('#logoutBtn').addEventListener('click', async () => { await post('/api/logout', {}).catch(() => { }); dash.close(); });
+vAdd.addEventListener('submit', async e => {
+    e.preventDefault();
+    const title = vAdd.elements.title.value.trim(), link = vAdd.elements.link.value.trim();
+    const hash = (/videohash\/([A-Za-z0-9]+)/.exec(link) || /\/v\/([A-Za-z0-9]+)/.exec(link) || /^([A-Za-z0-9]{3,20})$/.exec(link) || [])[1];
+    if (!title || !hash) return alert('عنوان و لینک یا کد آپارات را درست وارد کنید.');
+    try { await post('/api/videos', { title, hash }); vAdd.reset(); showTab('videos'); loadVideos(); } catch (_) { alert('افزودن انجام نشد.'); }
 });
