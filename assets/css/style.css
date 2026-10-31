@@ -147,3 +147,59 @@ dialog .x{position:absolute;top:.4rem;left:.6rem;background:none;border:0;color:
   .req{grid-template-columns:1fr 1fr}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+
+/* ===== نسخه ۸ ===== */
+.hintc{font-size:.8rem}
+.dnav a.act,nav#menu a.act{background:var(--glow);color:var(--ink)}
+.small{padding:.35rem 1rem;font-size:.85rem;margin-inline-start:auto}
+
+/* گالری: پنجره‌ی عکس + توضیحات */
+#lb{width:min(94vw,920px);max-width:none;padding:0;overflow:hidden}
+.lbx{display:grid;grid-template-columns:1.5fr 1fr}
+#lb .lbx img{width:100%;height:100%;max-height:80vh;border-radius:0;object-fit:cover}
+.lbd{padding:1.6rem 1.4rem;align-self:center}
+.lbd h3{font-size:1.25rem;margin-bottom:.6rem;color:var(--a1)}
+#lb .lbd p{margin:0;text-align:start;color:var(--ink);line-height:2}
+#lb .x{z-index:2;background:rgba(0,0,0,.55);color:#fff;border-radius:50%;width:2.2rem;height:2.2rem;display:grid;place-items:center;font-size:1.5rem}
+
+/* دانستنی‌ها با عکس */
+.facts{grid-template-columns:repeat(3,1fr)}
+.facts article{padding:0;overflow:hidden}
+.fi{aspect-ratio:16/9;background:center/cover no-repeat}
+.sunimg{background:radial-gradient(circle at 50% 55%,#fff3b0 0,#ffb830 20%,#ff7a18 36%,rgba(255,122,24,0) 62%),#0b0a1c}
+.ft{padding:.9rem 1rem 1rem}
+.facts b{display:block;margin-bottom:.2rem}
+
+/* ویدیوهای صفحه‌ی اصلی */
+.vc{display:block}
+.vc .th{background-size:cover;background-position:center}
+.vc .th::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.5),transparent)}
+.vc h3{padding-bottom:.2rem}
+.vc small{display:block;padding:0 .9rem .8rem;color:var(--mut)}
+.vc:hover{border-color:var(--a1)}
+.vall{text-align:center;margin:1.1rem 0 0}
+#about .quote{padding:.8rem 1rem;border-right:3px solid var(--a2);background:var(--in);border-radius:10px;color:var(--mut)}
+
+/* فوتر */
+.foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.soc{display:flex;gap:.8rem}
+.soc a{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;border:1px solid var(--line);background:var(--in);transition:transform .2s}
+.soc a:hover{transform:translateY(-3px);border-color:var(--a1)}
+.soc svg{width:28px;height:28px;color:var(--ink)}
+
+/* صفحه‌ی آرشیو ویدیوها */
+.vpage{padding-block:2rem 3rem}
+.vhead h1{font-size:1.6rem}
+.vhead p{color:var(--mut);margin:.3rem 0 0}
+.vlist{display:grid;gap:1.2rem;margin-top:1.4rem}
+.vrow{display:grid;grid-template-columns:1.2fr 1fr;gap:1.2rem;align-items:center;scroll-margin-top:6rem}
+.vrow:target{border-color:var(--a1);box-shadow:0 0 24px var(--glow)}
+.vplayer{aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}
+.vplayer iframe{width:100%;height:100%;border:0}
+.vtag{display:inline-block;font-size:.78rem;padding:0 .8rem;border-radius:99px;border:1px solid var(--a1);color:var(--a1)}
+.vinfo h2{font-size:1.15rem;margin:.5rem 0}
+.vinfo p{color:var(--mut);font-size:.93rem;margin:.3rem 0}
+.vinfo .vby{color:var(--ink);font-size:.88rem}
+
+@media (max-width:900px){.facts{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){.facts{grid-template-columns:1fr}.lbx{grid-template-columns:1fr}.vrow{grid-template-columns:1fr}.hintc{display:none}.foot{justify-content:center}}
