@@ -4,222 +4,178 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>انجمن نجوم نوا</title>
+    <title>نوا | انجمن نجوم دانش‌آموزی</title>
+    <meta name="description" content="انجمن نجوم نوا؛ رصد عمومی، آموزش نجوم، عکاسی نجومی و گالری آسمان شب. به انجمن بپیوندید.">
+    <meta property="og:title" content="نوا | انجمن نجوم دانش‌آموزی">
+    <meta property="og:description" content="سفری به دنیای ستارگان با انجمن نجوم نوا">
+    <meta property="og:image" content="assets/img/3.jpg">
+    <meta name="theme-color" content="#070a1f">
     <link rel="stylesheet" href="assets/fonts/fonts.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
     <link rel="manifest" href="assets/favicon/site.webmanifest">
+    <script>try{document.documentElement.dataset.bsTheme=localStorage.getItem('nova-theme')||'dark'}catch(e){}</script>
 </head>
 
 <body>
     <canvas id="sky" aria-hidden="true"></canvas>
-    <div class="nav-overlay" id="navOverlay"></div>
-
-    <nav id="nav" class="mobile-nav">
-        <div class="nav-header-mobile">
-            <span class="Pacifico-font">NOVA</span>
-            <button class="nav-close-btn" id="navCloseBtn" type="button" aria-label="بستن منو">&times;</button>
-        </div>
-        <a href="#about">درباره ما</a>
-        <a href="#team">مدیران</a>
-        <a href="#events">رصدها</a>
-        <a href="#gallery">گالری</a>
-        <a href="#news">اخبار</a>
-        <a href="#join">عضویت</a>
-        <div class="nav-mobile-logins"><a href="login/login2.html" class="btn btn-login-mobile">ورود اعضا</a></div>
-    </nav>
 
     <header>
         <div class="wrap bar">
-            <button class="menu" type="button" aria-expanded="false" aria-controls="nav" aria-label="باز کردن منو">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h12" /></svg>
+            <button class="menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu" aria-label="منو">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
-            <a class="brand" href="#top" aria-label="انجمن نجوم نوا">
-                <img src="assets/icons/nova-light.png" alt="" class="nova-logo">
-                <span class="Pacifico-font">NOVA</span>
+            <a class="brand" href="#top">
+                <img src="assets/icons/nova-light.png" alt="لوگوی نوا" width="46" height="46">
+                <span><b>نوا</b><small>سفری به دنیای ستارگان...</small></span>
             </a>
-            <div class="desktop-nav">
-                <a href="#about">درباره ما</a>
-                <a href="#team">مدیران</a>
-                <a href="#events">رصدها</a>
-                <a href="#gallery">گالری</a>
-                <a href="#news">اخبار</a>
-                <a href="#join">عضویت</a>
-            </div>
-            <div class="header-left-actions">
-                <a href="login/login2.html" class="login-desktop-btn">ورود اعضا</a>
-                <button class="theme-switch" id="themeToggleBtn" type="button" aria-label="تغییر تم">
-                    <span class="theme-switch-track"><span class="theme-switch-thumb"><span id="themeIcon">🌙</span></span></span>
-                </button>
-            </div>
+            <button class="tg" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز"><span>☀</span><span>☾</span></button>
         </div>
+        <nav id="menu" aria-label="منوی اصلی">
+            <a href="#top">🏠 خانه</a>
+            <a href="#gallery">🖼 گالری تصاویر</a>
+            <a href="#videos">▶ ویدیوها</a>
+            <a href="#join">➕ درخواست عضویت</a>
+            <a href="#about">ℹ درباره ما</a>
+            <a href="#team">👥 تیم ما</a>
+            <a href="#path">🛰 مسیر فعالیت‌ها</a>
+            <a href="#contact">📞 تماس با ما</a>
+            <button type="button" id="loginBtn">🔐 ورود رئیس</button>
+        </nav>
     </header>
 
-    <main id="top">
-        <!-- هیرو: نقشه‌ی آسمان -->
-        <section class="hero">
-            <div class="wrap hero-grid">
-                <div class="hero-text">
-                    <h1>بیایید آسمان را<br>بهتر بشناسیم</h1>
-                    <p>انجمن نجوم نوا؛ جایی برای رصد، آموختن و شگفت‌زده شدن در برابر آسمان شب.</p>
-                    <div class="cta">
-                        <a class="btn" href="#join">عضو شو</a>
-                        <a class="link" href="#events">رصدهای پیش‌رو</a>
-                    </div>
-                </div>
-
-                <svg class="chart" viewBox="0 0 400 400" role="img" aria-label="نقشه‌ی آسمان با صورت فلکی و ستاره‌ی نوا">
-                    <defs>
-                        <radialGradient id="flare">
-                            <stop offset="0" stop-color="#fff" />
-                            <stop offset=".25" stop-color="var(--gold)" stop-opacity=".8" />
-                            <stop offset="1" stop-color="var(--gold)" stop-opacity="0" />
-                        </radialGradient>
-                    </defs>
-                    <g class="dial" fill="none" stroke="currentColor">
-                        <circle cx="200" cy="200" r="192" stroke-width="6" stroke-dasharray="1 5.63" opacity=".45" />
-                        <circle cx="200" cy="200" r="184" stroke-width="12" stroke-dasharray="1.6 29.7" opacity=".7" />
-                        <circle cx="200" cy="200" r="168" opacity=".5" />
-                        <circle cx="200" cy="200" r="120" stroke-dasharray="2 6" opacity=".35" />
-                        <circle cx="200" cy="200" r="60" opacity=".3" />
-                        <path d="M200 8v384M8 200h384" opacity=".18" />
-                    </g>
-                    <g class="stars">
-                        <polyline points="108,140 150,152 182,172 214,190 282,196 274,246 222,238 214,190" fill="none" stroke="var(--ice)" stroke-width="1" opacity=".6" />
-                        <g fill="var(--ice)">
-                            <circle cx="108" cy="140" r="2.6" /><circle cx="150" cy="152" r="2.2" /><circle cx="182" cy="172" r="2.4" />
-                            <circle cx="214" cy="190" r="3" /><circle cx="274" cy="246" r="2.8" /><circle cx="222" cy="238" r="2.4" />
-                        </g>
-                        <g class="nova-star">
-                            <circle cx="282" cy="196" r="34" fill="url(#flare)" />
-                            <path d="M282 168v56M254 196h56" stroke="#fff" stroke-width="1.2" opacity=".9" />
-                            <circle cx="282" cy="196" r="4.5" fill="#fff" />
-                        </g>
-                    </g>
-                </svg>
+    <main>
+        <section class="hero" id="top">
+            <div class="wrap">
+                <h1>نجوم، دانشی بی‌پایان</h1>
+                <p>با نوا، به آسمان نزدیک‌تر شوید.</p>
+                <a class="btn ghost" href="#about">بیشتر بدانید ‹</a>
             </div>
         </section>
 
-        <!-- درباره ما -->
-        <section id="about">
-            <div class="wrap">
-                <h2>درباره ما</h2>
-                <p class="lead">«نوا» نام ستاره‌ای است که ناگهان می‌درخشد. ما گروهی از دانش‌آموزانیم که می‌خواهیم نجوم را از کتاب به آسمان واقعی ببریم.</p>
+        <div class="wrap stack">
+            <section class="panel rv" id="gallery">
+                <h2>🖼 گالری تصاویر</h2>
+                <div class="gal">
+                    <button type="button" class="g"><img src="assets/img/7.jpg" alt="سحابی در آسمان تاریک" loading="lazy" width="400" height="300"></button>
+                    <button type="button" class="g"><img src="assets/img/9.jpg" alt="ماه کامل بالای دشت" loading="lazy" width="400" height="300"></button>
+                    <button type="button" class="g"><img src="assets/img/8.png" alt="راه شیری در کویر" loading="lazy" width="400" height="300"></button>
+                    <button type="button" class="g"><img src="assets/img/2.jpg" alt="شفق پیش از رصد" loading="lazy" width="400" height="300"></button>
+                    <button type="button" class="g"><img src="assets/img/4.jpg" alt="مشتری و قمرهایش" loading="lazy" width="400" height="300"></button>
+                    <button type="button" class="g"><img src="assets/img/3.jpg" alt="کهکشان مارپیچی" loading="lazy" width="400" height="300"></button>
+                </div>
+            </section>
+
+            <section class="panel rv" id="join">
+                <div class="join">
+                    <div class="join-img" role="img" aria-label="راه شیری"></div>
+                    <form id="f" novalidate>
+                        <h2>➕ درخواست عضویت</h2>
+                        <p class="mut">برای عضویت در انجمن نوا، اطلاعات خود را وارد کنید.</p>
+                        <input type="hidden" name="access_key" value="b88779ab-ad0a-4b3c-b611-3042033b6495">
+                        <input type="hidden" name="subject" value="درخواست جدید از سایت انجمن نجوم نوا">
+                        <div class="row">
+                            <label>نام و نام خانوادگی<input name="name" autocomplete="name"><small class="err"></small></label>
+                            <label>سن<input name="age" inputmode="numeric"><small class="err"></small></label>
+                        </div>
+                        <div class="row">
+                            <label>شماره تماس<input name="phone" dir="ltr" inputmode="tel" autocomplete="tel"><small class="err"></small></label>
+                            <label>ایمیل<input name="email" type="email" dir="ltr" autocomplete="email"><small class="err"></small></label>
+                        </div>
+                        <label>شهر<input name="city" autocomplete="address-level2"><small class="err"></small></label>
+                        <label>دلیل علاقه به نجوم<textarea name="reason" rows="2"></textarea><small class="err"></small></label>
+                        <label>توضیحات بیشتر (اختیاری)<textarea name="more" rows="2"></textarea></label>
+                        <button class="btn" type="submit" id="submit-btn">ارسال درخواست</button>
+                        <div class="ok" id="ok" role="status"></div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="panel rv" id="videos">
+                <h2>▶ ویدیوها</h2>
+                <div class="vids" id="vids"><noscript><a href="https://www.aparat.com/nova_astro_405">ویدیوها در آپارات</a></noscript></div>
+            </section>
+
+            <section class="panel rv" id="about">
+                <h2>ℹ درباره ما</h2>
+                <p>«نوا» نام ستاره‌ای است که ناگهان می‌درخشد. ما گروهی از دانش‌آموزانیم که می‌خواهیم نجوم را از کتاب به آسمان واقعی ببریم.</p>
                 <ul class="goals">
                     <li>برگزاری رصدهای عمومی و رایگان برای همه‌ی سنین</li>
                     <li>آموزش کار با تلسکوپ، نقشه‌ی آسمان و عکاسی نجومی</li>
                     <li>ترویج آگاهی درباره‌ی آلودگی نوری و حفاظت از آسمان تاریک</li>
                     <li>پیوند دادن علاقه‌مندان و پژوهشگران نجوم</li>
                 </ul>
-                <ol class="orbit">
+            </section>
+
+            <section class="panel rv" id="team">
+                <h2>👥 تیم ما</h2>
+                <div class="team">
+                    <article class="mem"><img src="assets/img/shayan.png" alt="شایان توکلی دستجرد" loading="lazy" width="120" height="120"><h3>شایان توکلی دستجرد</h3><small>مدیر انجمن</small></article>
+                    <article class="mem"><img src="assets/img/sepehr.jpg" alt="سپهر ابراهیمی" loading="lazy" width="120" height="120"><h3>سپهر ابراهیمی</h3><small>مسئول فناوری</small></article>
+                    <article class="mem"><img src="assets/img/meraj.jpg" alt="معراج عیدی درمیان" loading="lazy" width="120" height="120"><h3>معراج عیدی درمیان</h3><small>مسئول محتوا</small></article>
+                </div>
+            </section>
+
+            <section class="panel rv" id="path">
+                <h2>🛰 مسیر فعالیت‌های نوا</h2>
+                <ol class="tl">
                     <li><b>آغاز راه</b><span>چند دوست هم‌مسیر، با علاقه به آموزش.</span></li>
                     <li><b>آغاز فعالیت‌ها</b><span>رسمیت‌یافتن فعالیت‌ها و انتشار نخستین مطالب آموزشی.</span></li>
                     <li><b>رصد عمومی</b><span>اولین برنامه‌های رصد همگانی در مدرسه.</span></li>
                     <li><b>نوا در امروز</b><span>فعالیت مستمر، عکاسی نجومی و ستاره‌شناسی مقدماتی.</span></li>
                 </ol>
-            </div>
-        </section>
+            </section>
 
-        <!-- مدیران: صورت فلکی -->
-        <section id="team">
-            <div class="wrap">
-                <h2>مدیران انجمن</h2>
-                <p class="lead">کسانی که شب‌های رصد را ممکن می‌کنند.</p>
-                <div class="team">
-                    <div class="mem"><div class="av shayan"></div><h3>شایان توکلی دستجرد</h3><small>مدیر انجمن</small></div>
-                    <div class="mem"><div class="av sepehr"></div><h3>سپهر ابراهیمی</h3><small>مسئول فناوری</small></div>
-                    <div class="mem"><div class="av meraj"></div><h3>معراج عیدی درمیان</h3><small>مسئول محتوا</small></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- رصدها: دفترچه‌ی رصد -->
-        <section id="events">
-            <div class="wrap">
-                <h2>دفترچه‌ی رصد</h2>
-                <p class="lead">برنامه‌های پیش‌رو.</p>
-                <div class="logbook">
-                    <div class="entry">
-                        <div class="when"><b>پنج‌شنبه</b><span>پس از غروب</span></div>
-                        <div class="what">
-                            <h3>شب رصد سیاره زحل</h3>
-                            <p>رصد غول گازی منظومه شمسی با تلسکوپ‌های پیشرفته. ویژه‌ی دانش‌آموزان.</p>
-                        </div>
-                        <span class="state">ثبت نام به اتمام رسید</span>
+            <section class="panel rv" id="contact">
+                <h2>📞 تماس با ما</h2>
+                <div class="contact">
+                    <ul>
+                        <li>ایمیل: <a dir="ltr" href="mailto:Novaastro405@gmail.com">Novaastro405@gmail.com</a></li>
+                        <li>تلفن ثابت: <a dir="ltr" href="tel:05632461020">056-32461020</a></li>
+                        <li>آیدی شاد: <a dir="ltr" href="https://shad.ir/novaastro405">@novaastro405</a></li>
+                        <li>آیدی روبیکا: <a dir="ltr" href="https://rubika.ir/novaastro405">@novaastro405</a></li>
+                        <li>آیدی آپارات: <a dir="ltr" href="https://www.aparat.com/nova_astro_405">nova_astro_405</a></li>
+                        <li>نشانی: بیرجند، سجادشهر، امامت، دبیرستان شهید بهشتی دوره اول</li>
+                    </ul>
+                    <div class="soc">
+                        <a href="https://shad.ir/novaastro405" aria-label="شاد" title="شاد">ش</a>
+                        <a href="https://rubika.ir/novaastro405" aria-label="روبیکا" title="روبیکا">ر</a>
+                        <a href="https://www.aparat.com/nova_astro_405" aria-label="آپارات" title="آپارات">آ</a>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- گالری -->
-        <section id="gallery">
-            <div class="wrap">
-                <div class="head-row">
-                    <div><h2>گالری آسمان</h2><p class="lead">عکس‌های اعضا از رصدها و آسمان شب.</p></div>
-                    <a class="link" href="gallery/gallery.html">مشاهده‌ی کامل گالری</a>
-                </div>
-                <div class="gal">
-                    <figure><img src="assets/img/7.jpg" alt=""><figcaption>سحابی در آسمان تاریک</figcaption></figure>
-                    <figure><img src="assets/img/9.jpg" alt=""><figcaption>ماه کامل بالای دشت</figcaption></figure>
-                    <figure><img src="assets/img/8.png" alt=""><figcaption>راه شیری در کویر</figcaption></figure>
-                    <figure><img src="assets/img/2.jpg" alt=""><figcaption>شفق پیش از رصد</figcaption></figure>
-                    <figure><img src="assets/img/4.jpg" alt=""><figcaption>مشتری و قمرهایش</figcaption></figure>
-                    <figure><img src="assets/img/3.jpg" alt=""><figcaption>کهکشان مارپیچی</figcaption></figure>
-                </div>
-            </div>
-        </section>
-
-        <!-- اخبار -->
-        <section id="news">
-            <div class="wrap">
-                <h2>اخبار و مقالات</h2>
-                <p class="lead">یادداشت‌های آموزشی و خبرهای تازه‌ی آسمان.</p>
-                <div class="empty">
-                    <p>هنوز چیزی منتشر نکرده‌ایم. با همکاری شما انتشار سریع‌تر می‌شود.</p>
-                    <a href="#join" class="btn">می‌خواهم عضو شوم</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- عضویت -->
-        <section id="join">
-            <div class="wrap join">
-                <div>
-                    <h2>عضویت و تماس</h2>
-                    <p class="lead">فرم را برای ارسال درخواست عضویت یا پیشنهاد خود تکمیل کنید.</p>
-                    <dl class="info">
-                        <dt>نشانی</dt><dd>بیرجند، سجادشهر، امامت، دبیرستان شهید بهشتی دوره اول</dd>
-                        <dt>ایمیل</dt><dd dir="ltr">Novaastro405@gmail.com</dd>
-                        <dt>تلفن</dt><dd dir="ltr"><a href="tel:056-32461020">056-32461020</a></dd>
-                        <dt>آیدی مسئول فناوری</dt><dd><a href="https://shad.ir/sepehr_ebi">@SEPEHR_EBI (تمام شبکه‌های اجتماعی ایرانی)</a></dd>
-                    </dl>
-                </div>
-                <form id="f" novalidate>
-                    <input type="hidden" name="access_key" value="b88779ab-ad0a-4b3c-b611-3042033b6495">
-                    <input type="hidden" name="subject" value="درخواست جدید از سایت انجمن نجوم نوا">
-                    <label>نام و نام خانوادگی <span class="req">*</span><input name="n" required autocomplete="name" placeholder="مثال: علی محمدی"></label>
-                    <label>شماره کلاس <span class="req">*</span><input name="c" required placeholder="مثال: ۸۰۲ یا ۱۰/۳"></label>
-                    <label>آیدی شاد یا ایتا <span class="req">*</span><input name="id" dir="ltr" required placeholder="مثال: @username"></label>
-                    <label>پیام یا پیشنهاد (برای درخواست عضویت خالی بگذارید)<textarea name="m" rows="3" placeholder="متن پیام..."></textarea></label>
-                    <button class="btn" type="submit" id="submit-btn">ارسال پیام</button>
-                    <div class="ok" id="ok" role="status"></div>
-                </form>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
-    <footer>
-        <div class="wrap foot">
-            <div>© انجمن نجوم نوا · همه‌ی حقوق محفوظ است.</div>
-            <div class="soc">
-                <a href="https://shad.ir/novaastro405">شاد</a>
-                <a href="https://rubika.ir/novaastro405">روبیکا</a>
-                <a href="https://www.aparat.com/nova_astro_405">آپارات</a>
-            </div>
+    <footer><div class="wrap">© انجمن نجوم نوا · همه‌ی حقوق محفوظ است.</div></footer>
+    <button class="top" id="toTop" type="button" aria-label="بازگشت به بالا">↑</button>
+
+    <dialog id="lb"><button class="x" type="button" aria-label="بستن">&times;</button><img alt=""><p></p></dialog>
+    <dialog id="vd"><button class="x" type="button" aria-label="بستن">&times;</button><div class="vf"></div></dialog>
+
+    <dialog id="loginDlg">
+        <button class="x" type="button" aria-label="بستن">&times;</button>
+        <form id="loginForm" novalidate>
+            <h2>🔐 ورود رئیس</h2>
+            <label>نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
+            <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr"></label>
+            <button class="btn" type="submit">ورود</button>
+            <div class="ok" id="loginMsg" role="status"></div>
+        </form>
+    </dialog>
+
+    <dialog id="dash">
+        <button class="x" type="button" aria-label="بستن">&times;</button>
+        <h2>داشبورد مدیریت</h2>
+        <div class="tabs">
+            <button type="button" data-tab="requests">درخواست‌های عضویت</button>
+            <button type="button" data-tab="images">تصاویر</button>
+            <button type="button" data-tab="videos">ویدیوها</button>
+            <button type="button" data-tab="content">محتوای سایت</button>
         </div>
-    </footer>
+        <ul id="dashList" class="mut"><li>یک بخش را انتخاب کنید.</li></ul>
+    </dialog>
 
     <script src="assets/js/index.js"></script>
 </body>
