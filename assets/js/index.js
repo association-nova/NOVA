@@ -1,133 +1,161 @@
-/* نوا — nova.js */
-const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const h = (t, a = {}, ...k) => { const e = document.createElement(t); Object.assign(e, a); e.append(...k); return e; };
-const api = async (u, o = {}) => { const r = await fetch(u, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...o }); if (!r.ok) throw r.status; return r.json(); };
-const post = (u, b) => api(u, { method: 'POST', body: JSON.stringify(b) });
+(() => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const root = document.documentElement;
 
-/* ---- منوی همبرگری ---- */
-const menu = $('#menu'), mb = $('#menuBtn');
-const setMenu = o => { menu.classList.toggle('open', o); mb.setAttribute('aria-expanded', o); };
-mb.addEventListener('click', e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); });
-menu.addEventListener('click', e => { if (e.target.closest('a,button')) setMenu(false); });
-document.addEventListener('click', e => { if (!menu.contains(e.target)) setMenu(false); });
-addEventListener('keydown', e => e.key === 'Escape' && setMenu(false));
+  /* ===== تنظیمات رئیس =====
+     نام کاربری و هش SHA-256 رمز. رمز پیش‌فرض: nova1405
+     برای تغییر رمز: هش رمز جدید را از سایت‌های SHA-256 بگیرید و اینجا بگذارید. */
+  const ADMIN_USER = 'rais';
+  const ADMIN_HASH = '41c5bb5be14a81142fbfc902bd3a30dbe7d618d4ebe1a4b40c6f1a97ce7290bb';
 
-/* ---- شب و روز (ذخیره در مرورگر) ---- */
-$('#themeBtn').addEventListener('click', () => {
-    const n = document.documentElement.dataset.bsTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.dataset.bsTheme = n;
-    try { localStorage.setItem('nova-theme', n); } catch (_) { }
-});
+  const db = {
+    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  const el = (tag, props = {}, ...kids) => {
+    const n = Object.assign(document.createElement(tag), props);
+    kids.forEach(k => n.append(k));
+    return n;
+  };
+  const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))]
+    .map(b => b.toString(16).padStart(2, '0')).join('');
 
-/* ---- ظاهر: ظهور بخش‌ها، بازگشت به بالا، پنجره‌ها، گالری ---- */
-const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add('on'), io.unobserve(e.target))), { threshold: .1 });
-$$('.rv').forEach(el => io.observe(el));
-const up = $('#toTop');
-addEventListener('scroll', () => up.classList.toggle('show', scrollY > 600), { passive: true });
-up.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
-$$('dialog').forEach(d => { $('.x', d).addEventListener('click', () => d.close()); d.addEventListener('click', e => e.target === d && d.close()); });
-const lb = $('#lb');
-$$('.g').forEach(b => b.addEventListener('click', () => { const i = $('img', b); $('img', lb).src = i.src; $('img', lb).alt = i.alt; $('p', lb).textContent = i.alt; lb.showModal(); }));
+  /* تم */
+  $('#themeBtn').onclick = () => {
+    const t = root.dataset.bsTheme === 'dark' ? 'light' : 'dark';
+    root.dataset.bsTheme = t;
+    try { localStorage.setItem('nova-theme', t); } catch (e) {}
+  };
 
-/* آسمان ستاره‌ای: یک‌بار رسم می‌شود (بدون انیمیشن مداوم، سبک) */
-try {
-    const c = $('#sky'), x = c.getContext('2d'); let lastW = 0, tm;
-    const paint = () => {
-        const w = c.width = innerWidth, hh = c.height = innerHeight; lastW = w;
-        const dark = document.documentElement.dataset.bsTheme !== 'light';
-        x.fillStyle = dark ? '#fff' : '#3a46b8';
-        for (let i = 0, n = Math.min(220, (w * hh / 9000) | 0); i < n; i++) { x.globalAlpha = (dark ? .25 : .15) + Math.random() * .6; x.beginPath(); x.arc(Math.random() * w, Math.random() * hh, Math.random() * 1.2 + .2, 0, 7); x.fill(); }
-    };
-    addEventListener('resize', () => { if (innerWidth === lastW) return; clearTimeout(tm); tm = setTimeout(paint, 250); });
-    $('#themeBtn').addEventListener('click', () => setTimeout(paint, 0));
-    paint();
-} catch (_) { }
+  /* منوی موبایل */
+  const mb = $('#menuBtn'), menu = $('#menu');
+  const closeMenu = () => { menu.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); };
+  mb.onclick = () => mb.setAttribute('aria-expanded', menu.classList.toggle('open'));
+  menu.addEventListener('click', e => { if (e.target.closest('a,button')) closeMenu(); });
+  document.addEventListener('click', e => { if (!menu.contains(e.target) && !mb.contains(e.target)) closeMenu(); });
+  addEventListener('resize', () => { if (innerWidth > 720) closeMenu(); });
 
-/* ---- ویدیوها: از سرور خوانده می‌شود، وگرنه فهرست پیش‌فرض ---- */
-const DEFAULT_VIDEOS = [{ title: 'زندگی در سیاره‌ای با دو خورشید؛ واقعیت علمی یا تخیل؟', hash: 'sox81n1' }];
-const THUMBS = ['assets/img/3.jpg', 'assets/img/4.jpg', 'assets/img/7.jpg', 'assets/img/8.png'];
-const vd = $('#vd');
-async function loadVideos() {
-    let list = []; try { list = await api('/api/videos'); } catch (_) { }
-    if (!list.length) list = DEFAULT_VIDEOS;
+  /* بازگشت به بالا + ظاهر شدن بخش‌ها */
+  const topBtn = $('#toTop');
+  addEventListener('scroll', () => topBtn.classList.toggle('show', scrollY > 600), { passive: true });
+  topBtn.onclick = () => scrollTo({ top: 0 });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .08 });
+  document.querySelectorAll('.rv').forEach(n => io.observe(n));
+
+  /* آسمان پرستاره */
+  const cv = $('#sky'), cx = cv.getContext('2d');
+  let stars = [];
+  const draw = () => {
+    cv.width = innerWidth; cv.height = innerHeight;
+    stars = Array.from({ length: Math.min(160, innerWidth / 6) }, () => ({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: Math.random() * 1.4 + .3, p: Math.random() * 6 }));
+  };
+  const tick = t => {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    if (root.dataset.bsTheme === 'dark') stars.forEach(s => { cx.globalAlpha = .35 + .35 * Math.sin(t / 900 + s.p); cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.3); cx.fill(); });
+    requestAnimationFrame(tick);
+  };
+  draw(); addEventListener('resize', draw);
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(tick);
+
+  /* پنجره‌ها */
+  document.querySelectorAll('dialog').forEach(d => {
+    d.querySelector('.x').onclick = () => d.close();
+    d.addEventListener('click', e => { if (e.target === d) d.close(); });
+  });
+  const lb = $('#lb');
+  document.querySelectorAll('.g').forEach(b => b.onclick = () => {
+    const i = b.querySelector('img');
+    lb.querySelector('img').src = i.src; lb.querySelector('img').alt = i.alt;
+    lb.querySelector('p').textContent = i.alt; lb.showModal();
+  });
+  $('#vd').addEventListener('close', () => $('#vd .vf').innerHTML = '');
+
+  /* ویدیوها */
+  const defaults = [{ title: 'سفر به اعماق کهکشان' }, { title: 'منظومه‌ی شمسی' }, { title: 'کهکشان راه شیری' }];
+  const videos = () => db.get('nova-videos', []);
+  const renderVideos = () => {
     const box = $('#vids'); box.replaceChildren();
-    list.forEach((v, i) => {
-        const b = h('button', { type: 'button', className: 'vc' }, h('div', { className: 'th' }), h('div', {}, h('h3', { textContent: v.title }), h('p', { textContent: 'پخش در آپارات' })));
-        $('.th', b).style.backgroundImage = `url(${THUMBS[i % THUMBS.length]})`;
-        b.addEventListener('click', () => { $('.vf', vd).replaceChildren(h('iframe', { src: `https://www.aparat.com/video/video/embed/videohash/${encodeURIComponent(v.hash)}/vt/frame`, title: v.title, allowFullscreen: true })); vd.showModal(); });
-        box.append(b);
+    const list = videos();
+    (list.length ? list : defaults).forEach(v => {
+      const b = el('button', { type: 'button', className: 'vc' + (v.id ? '' : ' soon') }, el('div', { className: 'th' }), el('h3', { textContent: v.title + (v.id ? '' : ' (به‌زودی)') }));
+      if (v.id) b.onclick = () => {
+        $('#vd .vf').replaceChildren(el('iframe', { src: `https://www.aparat.com/video/video/embed/videohash/${encodeURIComponent(v.id)}/vt/frame`, allowFullscreen: true, title: v.title }));
+        $('#vd').showModal();
+      };
+      box.append(b);
     });
-    for (let i = list.length; i < 3; i++) box.append(h('div', { className: 'vc soon' }, h('div', { className: 'th' }), h('div', {}, h('h3', { textContent: 'ویدیوی بعدی' }), h('p', { textContent: 'به‌زودی منتشر می‌شود' }))));
-}
-vd.addEventListener('close', () => $('.vf', vd).replaceChildren());
-loadVideos();
+  };
+  renderVideos();
 
-/* ---- فرم عضویت ---- */
-const fa = s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
-const rules = {
-    name: v => v.trim().length >= 3 || 'نام و نام خانوادگی را کامل وارد کنید.',
-    cls: v => /^[\d\/\-\s]{1,10}$/.test(fa(v.trim())) || 'شماره کلاس معتبر نیست (مثال: ۸۰۲ یا ۱۰/۳).',
-    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || 'ایمیل معتبر نیست.',
-    shad: v => /^@?[\w.]{3,40}$/.test(v.trim()) || 'آیدی شاد معتبر نیست (مثال: @username).'
-};
-const note = (el, m, good) => { el.style.display = 'block'; el.textContent = m; el.style.background = good ? '' : 'rgba(255,107,129,.2)'; };
-const f = $('#f'), ok = $('#ok');
-f.addEventListener('submit', async e => {
+  /* فرم عضویت */
+  const f = $('#f');
+  const rules = {
+    name: v => v.trim().split(/\s+/).length >= 2 || 'نام و نام خانوادگی را کامل بنویسید.',
+    cls: v => /^[0-9۰-۹\/]{2,6}$/.test(v.trim()) || 'شماره کلاس معتبر نیست.',
+    shad: v => /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) || 'آیدی شاد معتبر نیست.',
+    email: v => /^[^\s@]+@gmail\.com$/i.test(v.trim()) || 'یک ایمیل جیمیل معتبر وارد کنید.'
+  };
+  f.addEventListener('submit', async e => {
     e.preventDefault();
-    let valid = true;
-    for (const k in rules) {
-        const i = f.elements[k], r = rules[k](i.value);
-        i.setAttribute('aria-invalid', r !== true); i.closest('label').querySelector('.err').textContent = r === true ? '' : r; if (r !== true) valid = false;
+    let ok = true;
+    Object.keys(rules).forEach(k => {
+      const i = f.elements[k], r = rules[k](i.value), err = i.parentElement.querySelector('.err');
+      err.textContent = r === true ? '' : r;
+      i.toggleAttribute('aria-invalid', r !== true);
+      if (r !== true) ok = false;
+    });
+    if (!ok) return;
+    const data = Object.fromEntries(new FormData(f));
+    const reqs = db.get('nova-requests', []);
+    reqs.unshift({ name: data.name.trim(), cls: data.cls.trim(), shad: data.shad.trim(), email: data.email.trim(), date: new Date().toLocaleDateString('fa-IR') });
+    db.set('nova-requests', reqs);
+    const msg = $('#ok'); msg.style.display = 'block';
+    try {
+      const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) });
+      msg.textContent = r.ok ? '✨ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم.' : 'درخواست ذخیره شد اما ارسال ایمیل انجام نشد.';
+    } catch (er) { msg.textContent = 'درخواست ذخیره شد اما ارسال ایمیل انجام نشد (اینترنت را بررسی کنید).'; }
+    f.reset();
+  });
+
+  /* ورود رئیس و داشبورد */
+  const dash = $('#dash'), list = $('#dashList'), vAdd = $('#vAdd');
+  const isAdmin = () => sessionStorage.getItem('nova-admin') === '1';
+  document.querySelectorAll('[data-login]').forEach(b => b.onclick = () => { closeMenu(); isAdmin() ? openDash() : $('#loginDlg').showModal(); });
+  $('#loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fm = e.target, m = $('#loginMsg');
+    const good = fm.username.value.trim() === ADMIN_USER && await sha(fm.password.value) === ADMIN_HASH;
+    if (!good) { m.style.display = 'block'; m.textContent = 'نام کاربری یا رمز عبور اشتباه است.'; return; }
+    sessionStorage.setItem('nova-admin', '1'); fm.reset(); m.style.display = 'none';
+    $('#loginDlg').close(); openDash();
+  });
+  const openDash = () => { showTab('requests'); dash.showModal(); };
+  const showTab = t => {
+    document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+    vAdd.hidden = t !== 'videos'; list.replaceChildren();
+    if (t === 'requests') {
+      const r = db.get('nova-requests', []);
+      if (!r.length) list.append(el('li', { className: 'mut', textContent: 'هنوز درخواستی در این مرورگر ثبت نشده است.' }));
+      r.forEach((q, i) => {
+        const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
+        del.onclick = () => { r.splice(i, 1); db.set('nova-requests', r); showTab('requests'); };
+        list.append(el('li', { className: 'req' }, el('b', { textContent: q.name }), el('span', { textContent: 'کلاس ' + q.cls }), el('span', { dir: 'ltr', textContent: q.email }), el('span', { dir: 'ltr', textContent: q.shad }), del, el('small', { textContent: 'تاریخ: ' + q.date })));
+      });
+    } else {
+      videos().forEach((v, i) => {
+        const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
+        del.onclick = () => { const a = videos(); a.splice(i, 1); db.set('nova-videos', a); renderVideos(); showTab('videos'); };
+        list.append(el('li', { className: 'req' }, el('b', { textContent: v.title }), el('span', { dir: 'ltr', textContent: v.id }), del));
+      });
     }
-    if (!valid) return;
-    const btn = $('#submit-btn'); btn.disabled = true; btn.textContent = 'در حال ارسال...';
-    const d = { name: f.elements.name.value.trim(), cls: fa(f.elements.cls.value.trim()), email: f.elements.email.value.trim(), shad: f.elements.shad.value.trim() };
-    try {
-        try { await post('/api/join', d); }
-        catch (s) {
-            if (s === 429) throw 'many';
-            /* سرور اختصاصی در دسترس نیست (مثلاً میزبانی ایستا): ارسال از راه ایمیل */
-            const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ access_key: f.elements.access_key.value, subject: f.elements.subject.value, name: d.name, class: d.cls, email: d.email, shad: d.shad }) });
-            if (!(await r.json()).success) throw 0;
-        }
-        note(ok, 'درخواست شما ثبت شد. به‌زودی در شاد با شما تماس می‌گیریم. ✨', true); f.reset();
-    } catch (er) { note(ok, er === 'many' ? 'تعداد درخواست‌ها زیاد است؛ کمی بعد دوباره تلاش کنید.' : 'ارسال انجام نشد. اتصال اینترنت را بررسی کنید.', false); }
-    btn.disabled = false; btn.textContent = 'ارسال درخواست';
-});
-
-/* ---- ورود رئیس و داشبورد (احراز هویت فقط سمت سرور) ---- */
-const ld = $('#loginDlg'), lm = $('#loginMsg'), dash = $('#dash'), list = $('#dashList'), vAdd = $('#vAdd');
-let tab = 'requests';
-$$('[data-login]').forEach(b => b.addEventListener('click', () => ld.showModal()));
-$('#loginForm').addEventListener('submit', async e => {
+  };
+  document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+  vAdd.addEventListener('submit', e => {
     e.preventDefault();
-    const u = e.target.elements.username.value.trim(), p = e.target.elements.password.value;
-    if (!u || !p) return note(lm, 'نام کاربری و رمز عبور را وارد کنید.', false);
-    try { await post('/api/login', { username: u, password: p }); e.target.reset(); lm.style.display = 'none'; ld.close(); openDash(); }
-    catch (s) { note(lm, s === 401 ? 'نام کاربری یا رمز عبور درست نیست.' : s === 429 ? 'تلاش‌های زیاد؛ ۱۰ دقیقه بعد دوباره امتحان کنید.' : 'سرور مدیریت در دسترس نیست. server.js را اجرا کنید.', false); }
-});
-const openDash = () => { dash.showModal(); showTab('requests'); };
-const showTab = async t => {
-    tab = t; $$('.tabs [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); vAdd.hidden = t !== 'videos';
-    list.replaceChildren(h('li', { className: 'mut', textContent: 'در حال بارگذاری...' }));
-    try {
-        const items = await api('/api/' + t); list.replaceChildren();
-        if (!items.length) list.append(h('li', { className: 'mut', textContent: t === 'requests' ? 'هنوز درخواستی ثبت نشده است.' : 'ویدیویی اضافه نشده است.' }));
-        items.forEach(it => {
-            const del = h('button', { type: 'button', className: 'del', textContent: 'حذف' });
-            del.addEventListener('click', async () => { if (confirm('حذف شود؟')) { await api(`/api/${t}/${it.id}`, { method: 'DELETE' }).catch(() => { }); showTab(t); if (t === 'videos') loadVideos(); } });
-            list.append(t === 'requests'
-                ? h('li', { className: 'req' }, h('b', { textContent: it.name }), h('span', { textContent: 'کلاس ' + it.cls }), h('span', { dir: 'ltr', textContent: it.email }), h('span', { dir: 'ltr', textContent: it.shad }), h('small', { textContent: new Date(it.at).toLocaleString('fa-IR') }), del)
-                : h('li', { className: 'req' }, h('b', { textContent: it.title }), h('span', { dir: 'ltr', textContent: it.hash }), del));
-        });
-    } catch (s) { list.replaceChildren(h('li', { textContent: s === 401 ? 'نشست پایان یافته؛ دوباره وارد شوید.' : 'اتصال به سرور برقرار نیست.' })); }
-};
-$$('.tabs [data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
-$('#logoutBtn').addEventListener('click', async () => { await post('/api/logout', {}).catch(() => { }); dash.close(); });
-vAdd.addEventListener('submit', async e => {
-    e.preventDefault();
-    const title = vAdd.elements.title.value.trim(), link = vAdd.elements.link.value.trim();
-    const hash = (/videohash\/([A-Za-z0-9]+)/.exec(link) || /\/v\/([A-Za-z0-9]+)/.exec(link) || /^([A-Za-z0-9]{3,20})$/.exec(link) || [])[1];
-    if (!title || !hash) return alert('عنوان و لینک یا کد آپارات را درست وارد کنید.');
-    try { await post('/api/videos', { title, hash }); vAdd.reset(); showTab('videos'); loadVideos(); } catch (_) { alert('افزودن انجام نشد.'); }
-});
+    const title = vAdd.title.value.trim(), m = vAdd.link.value.match(/\/v\/([A-Za-z0-9]+)/) || vAdd.link.value.trim().match(/^([A-Za-z0-9]{4,})$/);
+    if (!title || !m) return;
+    db.set('nova-videos', [...videos(), { title, id: m[1] }]); vAdd.reset(); renderVideos(); showTab('videos');
+  });
+  $('#logoutBtn').onclick = () => { sessionStorage.removeItem('nova-admin'); dash.close(); };
+})();
