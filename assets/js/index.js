@@ -112,7 +112,7 @@ f.addEventListener('submit', async e => {
 /* ---- ورود رئیس و داشبورد (احراز هویت فقط سمت سرور) ---- */
 const ld = $('#loginDlg'), lm = $('#loginMsg'), dash = $('#dash'), list = $('#dashList'), vAdd = $('#vAdd');
 let tab = 'requests';
-$('#loginBtn').addEventListener('click', () => ld.showModal());
+$$('[data-login]').forEach(b => b.addEventListener('click', () => ld.showModal()));
 $('#loginForm').addEventListener('submit', async e => {
     e.preventDefault();
     const u = e.target.elements.username.value.trim(), p = e.target.elements.password.value;
