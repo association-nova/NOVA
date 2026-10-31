@@ -1,483 +1,131 @@
-(function () {
-// ۱. تنظیمات بوم ستاره‌ها (Canvas) - ۶۰ فریم فوق‌العاده روان بدون کوچک‌ترین لگ در حرکت کند
-// ۱. تنظیمات بوم ستاره‌ها (Canvas) - دنباله‌دارتر + قطع هوشمند کشیدگی برای صفر کردن لگ
-try {
-    var c = document.getElementById('sky'), x, S = [], W, H, dpr = Math.min(devicePixelRatio || 1, 2);
-    var mouse = { 
-        x: -1000, 
-        y: -1000, 
-        isMoving: false, 
-        radius: 200,
-        speedThreshold: 0.8 // آستانه سرعت برای قطع کشیدگی در حرکت‌های خیلی کند
+/* نوا — index.js */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+/* ویدیوها: برای افزودن ویدیوی جدید، یک آیتم به این آرایه اضافه کنید.
+   h = کد ویدیو در آپارات (بخش videohash در لینک embed) */
+const VIDEOS = [
+    { t: 'زندگی در سیاره‌ای با دو خورشید؛ واقعیت علمی یا تخیل؟', d: 'ویدیوی آموزشی انجمن نوا', h: 'sox81n1', img: 'assets/img/3.jpg' },
+];
+
+/* آسمان ستاره‌ای */
+(() => {
+    const c = $('#sky'), x = c.getContext('2d'); let S = [];
+    const fit = () => { c.width = innerWidth; c.height = innerHeight; S = Array.from({ length: Math.round(c.width * c.height / 9000) }, () => ({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.3 + .2, p: Math.random() * 6 })); };
+    const draw = t => {
+        x.clearRect(0, 0, c.width, c.height);
+        const dark = document.documentElement.dataset.bsTheme !== 'light';
+        x.fillStyle = dark ? '#fff' : '#3a46b8';
+        S.forEach(s => { x.globalAlpha = (dark ? .35 : .18) + .4 * Math.abs(Math.sin(t / 1500 + s.p)); x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill(); });
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(draw);
     };
-    var mouseTimer = null;
-
-    window.addEventListener('mousemove', function (e) {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-        mouse.isMoving = true;
-
-        clearTimeout(mouseTimer);
-        mouseTimer = setTimeout(function () {
-            mouse.isMoving = false;
-        }, 25);
-    });
-
-    window.addEventListener('mouseleave', function () {
-        mouse.x = -1000;
-        mouse.y = -1000;
-        mouse.isMoving = false;
-    });
-
-    function size() {
-        if (!c) return;
-        x = c.getContext('2d');
-        W = innerWidth; H = innerHeight; 
-        c.width = W * dpr; 
-        c.height = H * dpr; 
-        x.setTransform(dpr, 0, 0, dpr, 0, 0);
-        
-        S = []; 
-        var n = Math.round(W * H / 2000); 
-        for (var i = 0; i < n; i++) {
-            var rx = Math.random() * W;
-            var ry = Math.random() * H;
-            S.push({ 
-                x: rx, 
-                y: ry, 
-                ox: rx, 
-                oy: ry, 
-                vx: 0, 
-                vy: 0, 
-                r: Math.random() * 1.3 + .3, 
-                p: Math.random() * 6.28, 
-                v: Math.random() * .02 + .005, 
-                h: Math.random() < .25 ? '#9fe8ec' : Math.random() < .5 ? '#a9c9ff' : '#ffffff' 
-            });
-        }
-    }
-
-    function draw(t) {
-        if (!x) return;
-        
-        var isDark = document.documentElement.getAttribute('data-bs-theme') !== 'light';
-
-        x.clearRect(0, 0, W, H);
-
-        for (var i = 0; i < S.length; i++) { 
-            var s = S[i];
-            
-            var dx = mouse.x - s.x;
-            var dy = mouse.y - s.y;
-            var dist = Math.sqrt(dx * dx + dy * dy);
-
-            // ۱. اعمال نیروی جذب تنها زمانی که موس فعالانه و با سرعت مناسب حرکت می‌کند
-            if (isDark && mouse.isMoving && dist < mouse.radius && dist > 2) {
-                var force = (mouse.radius - dist) / mouse.radius;
-                var angle = Math.atan2(dy, dx);
-                s.vx += Math.cos(angle) * force * 1.8;
-                s.vy += Math.sin(angle) * force * 1.8;
-            }
-
-            // ۲. بازگشت نرم به جایگاه اولیه
-            s.vx += (s.ox - s.x) * 0.14;
-            s.vy += (s.oy - s.y) * 0.14;
-
-            // ۳. اصطکاک روان
-            s.vx *= 0.70;
-            s.vy *= 0.70;
-
-            s.x += s.vx;
-            s.y += s.vy;
-
-            var a = .55 + .45 * Math.sin(s.p + t * s.v * .06); 
-            x.globalAlpha = a;
-            x.strokeStyle = s.h;
-            x.fillStyle = s.h;
-            x.lineWidth = s.r * 2;
-            x.lineCap = 'round';
-
-            // ۴. محاسبه سرعت جابه‌جایی ستاره
-            var speed = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
-
-            // ۵. قطع کشیدگی در سرعت‌های پایین جهت صفر کردن احساس لگ
-            if (speed > mouse.speedThreshold) {
-                // رسم دنباله کشیده‌تر (ضریب ۳.۵ برای ایجاد جلوه ستاره دنباله‌دار)
-                x.beginPath();
-                x.moveTo(s.x - s.vx * 3.5, s.y - s.vy * 3.5);
-                x.lineTo(s.x, s.y);
-                x.stroke();
-            } else {
-                // تبدیل به نقطه ثابت در صورت کند بودن یا ایستادن موس
-                x.beginPath();
-                x.arc(s.x, s.y, s.r, 0, 6.28);
-                x.fill();
-            }
-        }
-        
-        x.globalAlpha = 1; 
-        if (!matchMedia('(prefers-reduced-motion:reduce)').matches) {
-            requestAnimationFrame(draw);
-        }
-    }
-
-    if (c) {
-        size(); 
-        addEventListener('resize', size); 
-        requestAnimationFrame(draw);
-    }
-} catch (err) {
-    console.warn('Star canvas effect skipped:', err);
-}// ۲. انیمیشن هنگام اسکرول (Intersection Observer)
-    var io = new IntersectionObserver(function (e) { 
-        e.forEach(function (k) { if (k.isIntersecting) { k.target.classList.add('on'); io.unobserve(k.target); } }); 
-    }, { threshold: .12 });
-    document.querySelectorAll('.rv').forEach(function (el) { io.observe(el); });
-
-    // ۳. مدیریت منوی کشویی و اسکرول سالم لینک‌ها
-    var m = document.querySelector('.menu');
-    var nv = document.getElementById('nav');
-    var overlay = document.getElementById('navOverlay');
-    var closeBtn = document.getElementById('navCloseBtn');
-
-    function openMenu(e) {
-        if (e) e.stopPropagation();
-        if (nv) nv.classList.add('open');
-        if (overlay) overlay.classList.add('active');
-        if (m) m.setAttribute('aria-expanded', 'true');
-    }
-
-    function closeMenu() {
-        if (nv) nv.classList.remove('open');
-        if (overlay) overlay.classList.remove('active');
-        if (m) m.setAttribute('aria-expanded', 'false');
-    }
-
-    if (m) m.addEventListener('click', openMenu);
-    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-    if (overlay) overlay.addEventListener('click', closeMenu);
-
-    // بستن منو موقع کلیک روی لینک‌ها و اسکرول به بخش مربوطه
-    if (nv) {
-        var links = nv.querySelectorAll('a');
-        links.forEach(function (link) {
-            link.addEventListener('click', function (e) {
-                var href = this.getAttribute('href');
-
-                // اگر لینک داخلی سایت است (#about یا ...)
-                if (href && href.startsWith('#')) {
-                    e.preventDefault();
-                    closeMenu(); // اول منو بسته میشه
-
-                    var target = document.querySelector(href);
-                    if (target) {
-                        setTimeout(function () {
-                            target.scrollIntoView({ behavior: 'smooth' });
-                        }, 100); // اسکرول روان بعد از بسته شدن منو
-                    }
-                } else {
-                    closeMenu();
-                }
-            });
-        });
-    }
-
-    // ۴. مدیریت فرم Web3Forms (فقط در صورت وجود فرم در صفحه)
-    var form = document.getElementById('f');
-    var okBox = document.getElementById('ok');
-    var submitBtn = document.getElementById('submit-btn');
-
-    if (form && submitBtn && okBox) {
-        form.onsubmit = function (e) {
-            e.preventDefault();
-
-            var nameVal = form.n.value.trim();
-            var classVal = form.c.value.trim();
-            var idVal = form.id.value.trim();
-            var messageVal = form.m.value.trim();
-
-            if (!nameVal || !classVal || !idVal) {
-                okBox.style.display = 'block';
-                okBox.style.background = 'rgba(255, 99, 132, 0.2)';
-                okBox.style.color = '#ffb3c1';
-                okBox.textContent = 'لطفاً تمامی فیلدهای اجباری (نام، شماره کلاس و آیدی) را پر کنید.';
-                return;
-            }
-
-            var finalMessage = messageVal !== '' ? messageVal : 'درخواست عضویت دارند';
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'در حال ارسال...';
-            okBox.style.display = 'block';
-            okBox.style.background = 'rgba(74, 168, 255, .15)';
-            okBox.style.color = '#cfe6ff';
-            okBox.textContent = 'در حال ثبت اطلاعات...';
-
-            var formData = new FormData();
-            formData.append('access_key', form.access_key.value);
-            formData.append('subject', form.subject.value);
-            formData.append('نام و نام خانوادگی', nameVal);
-            formData.append('شماره کلاس', classVal);
-            formData.append('آیدی شاد / ایتا', idVal);
-            formData.append('درخواست یا پیشنهاد / پیام', finalMessage);
-
-            fetch('https://api.web3forms.com/submit', { method: 'POST', body: formData })
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-                    if (data.success) {
-                        okBox.style.background = 'rgba(79, 216, 232, 0.2)';
-                        okBox.style.color = '#8fefe0';
-                        okBox.textContent = 'اطلاعات شما با موفقیت ثبت شد. به‌زودی با شما ارتباط می‌گیریم.';
-                        form.reset();
-                    } else { throw new Error(data.message || 'خطا در ارسال'); }
-                })
-                .catch(function () {
-                    okBox.style.background = 'rgba(255, 99, 132, 0.2)';
-                    okBox.style.color = '#ffb3c1';
-                    okBox.textContent = 'مشکلی در ارسال پیام پیش آمد. لطفاً دوباره تلاش کنید.';
-                })
-                .finally(function () {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'ارسال پیام';
-                });
-        };
-    }
-
-    // ۵. مدیریت کامل و ایمن تغییر تم (Theme Toggle)
-    var toggleBtn = document.getElementById('themeToggleBtn');
-    var themeIcon = document.getElementById('themeIcon');
-    var htmlTag = document.documentElement;
-
-    var savedTheme = localStorage.getItem('theme');
-    var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-
-    applyTheme(currentTheme);
-
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', function () {
-            var activeTheme = htmlTag.getAttribute('data-bs-theme');
-            var newTheme = activeTheme === 'dark' ? 'light' : 'dark';
-            applyTheme(newTheme);
-        });
-    }
-
-    function applyTheme(theme) {
-        htmlTag.setAttribute('data-bs-theme', theme);
-        localStorage.setItem('theme', theme);
-
-        if (themeIcon) {
-            themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
-        }
-
-        // تغییر میزان شفافیت ستاره‌ها بر اساس تم
-        if (c) {
-            c.style.opacity = theme === 'dark' ? '1' : '0.2';
-        }
-
-        if (typeof size === 'function') {
-            size();
-        }
-    }
-    /* ==========================================================================
-        ۶. مدیریت پنل (پاپ‌آپ) ثبت‌نام رویداد
-        - ایمن‌شده در برابر نبودن المان‌ها در سایر صفحات
-        - ارسال اطلاعات به Web3Forms با نام و فامیل تفکیک‌شده، کلاس، آیدی خالی و پیام مشخص
-       ========================================================================== */
-    var openRegModalBtn = document.getElementById('openRegModal');
-    var regModal = document.getElementById('regModal');
-    var regOverlay = document.getElementById('regOverlay');
-    var regCloseBtn = document.getElementById('regCloseBtn');
-    var eventRegForm = document.getElementById('eventRegForm');
-    var eventSubmitBtn = document.getElementById('eventSubmitBtn');
-    var eventOkBox = document.getElementById('eventOkBox');
-
-    // بررسی وجود المان‌ها در صفحه جاری (جهت جلوگیری از بروز خطا در صفخات دیگر)
-    if (openRegModalBtn && regModal && regOverlay) {
-        
-        // تابع باز کردن پنل پاپ‌آپ
-        function openModal() {
-            regModal.classList.add('active');
-            regOverlay.classList.add('active');
-        }
-
-        // تابع بستن پنل پاپ‌آپ
-        function closeModal() {
-            regModal.classList.remove('active');
-            regOverlay.classList.remove('active');
-        }
-
-        // رویدادهای باز و بسته کردن پنل
-        openRegModalBtn.addEventListener('click', openModal);
-        if (regCloseBtn) {
-            regCloseBtn.addEventListener('click', closeModal);
-        }
-        regOverlay.addEventListener('click', closeModal);
-
-        // مدیریت ارسال فرم ثبت‌نام رویداد
-        if (eventRegForm && eventSubmitBtn && eventOkBox) {
-            eventRegForm.onsubmit = function (e) {
-                e.preventDefault();
-
-                var firstName = eventRegForm.first_name ? eventRegForm.first_name.value.trim() : '';
-                var lastName = eventRegForm.last_name ? eventRegForm.last_name.value.trim() : '';
-                var classVal = eventRegForm.c ? eventRegForm.c.value.trim() : '';
-
-                // اعتبارسنجی پر بودن فیلدهای نام، نام خانوادگی و شماره کلاس
-                if (!firstName || !lastName || !classVal) {
-                    eventOkBox.style.display = 'block';
-                    eventOkBox.style.background = 'rgba(255, 99, 132, 0.2)';
-                    eventOkBox.style.color = '#ffb3c1';
-                    eventOkBox.textContent = 'لطفاً نام، نام خانوادگی و شماره کلاس را به طور کامل وارد کنید.';
-                    return;
-                }
-
-                // ترکیب نام و نام خانوادگی برای ارسال در فیلد نام
-                var fullName = firstName + ' ' + lastName;
-
-                eventSubmitBtn.disabled = true;
-                eventSubmitBtn.textContent = 'در حال ارسال ثبت‌نام...';
-                eventOkBox.style.display = 'block';
-                eventOkBox.style.background = 'rgba(74, 168, 255, .15)';
-                eventOkBox.style.color = '#cfe6ff';
-                eventOkBox.textContent = 'در حال ثبت اطلاعات...';
-
-                // آماده‌سازی داده‌ها برای Web3Forms
-                var formData = new FormData();
-                formData.append('access_key', eventRegForm.access_key ? eventRegForm.access_key.value : '');
-                formData.append('subject', eventRegForm.subject ? eventRegForm.subject.value : 'ثبت نام رصد شبی در مدرسه');
-                formData.append('نام و نام خانوادگی', fullName);  // فیلد نام (ترکیب نام و فامیل)
-                formData.append('شماره کلاس', classVal);         // فیلد شماره کلاس
-                formData.append('آیدی', '');                     // آیدی خالی
-                formData.append('پیام', 'ثبت نام رصد شبی در مدرسه'); // پیام مشخص‌شده
-
-                fetch('https://api.web3forms.com/submit', { 
-                    method: 'POST', 
-                    body: formData 
-                })
-                .then(function (res) { 
-                    return res.json(); 
-                })
-                .then(function (data) {
-                    if (data.success) {
-                        eventOkBox.style.background = 'rgba(79, 216, 232, 0.2)';
-                        eventOkBox.style.color = '#8fefe0';
-                        eventOkBox.textContent = 'ثبت‌نام شما با موفقیت انجام شد!';
-                        eventRegForm.reset();
-                        setTimeout(closeModal, 2000); // بستن خودکار پنل بعد از ۲ ثانیه
-                    } else { 
-                        throw new Error(data.message || 'خطا در ثبت‌نام'); 
-                    }
-                })
-                .catch(function () {
-                    eventOkBox.style.background = 'rgba(255, 99, 132, 0.2)';
-                    eventOkBox.style.color = '#ffb3c1';
-                    eventOkBox.textContent = 'مشکلی در ثبت‌نام پیش آمد. لطفاً دوباره تلاش کنید.';
-                })
-                .finally(function () {
-                    eventSubmitBtn.disabled = false;
-                    eventSubmitBtn.textContent = 'ارسال ثبت‌نام';
-                });
-            };
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const sunriseEl = document.getElementById("sunrise-time");
-        const sunsetEl = document.getElementById("sunset-time");
-        const dayLengthEl = document.getElementById("day-length");
-        const statusEl = document.querySelector(".observatory-status");
-
-        if (!sunriseEl) return;
-
-        const today = new Date().toISOString().split('T')[0];
-        const cachedData = localStorage.getItem('nova_astro_data');
-        const cachedDate = localStorage.getItem('nova_astro_date');
-
-        // اگر اطلاعات امروز از قبل در مرورگر ذخیره شده بود، آنی نمایش بده بدون درخواست به API
-        if (cachedData && cachedDate === today) {
-            renderData(JSON.parse(cachedData));
-            return;
-        }
-
-        // اگر نبود، درخواست بزن و نتیجه رو ذخیره کن
-        const apiKey = "fac9c8b7b93246d1b71121603261110";
-        const city = "Birjand";
-
-        fetch(`https://api.weatherapi.com/v1/astronomy.json?key=${apiKey}&q=${city}&dt=${today}`)
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) throw new Error(data.error.message);
-
-                if (data.astronomy && data.astronomy.astro) {
-                    const astroData = data.astronomy.astro;
-                    
-                    // ذخیره در حافظه مرورگر برای کل روز
-                    localStorage.setItem('nova_astro_data', JSON.stringify(astroData));
-                    localStorage.setItem('nova_astro_date', today);
-
-                    renderData(astroData);
-                } else {
-                    throw new Error("فرمت داده نامعتبر");
-                }
-            })
-            .catch(err => {
-                console.error("خطای API:", err);
-                // اگر کش قدیمی هم بود در صورت خطا می‌تونیم از اون استفاده کنیم، وگرنه پیام خطا
-                if (cachedData) {
-                    renderData(JSON.parse(cachedData));
-                } else {
-                    sunriseEl.textContent = "خطا در دریافت اطلاعات";
-                    sunsetEl.textContent = "لطفا به مسئول فناوری انجمن اطلاع دهید";
-                    dayLengthEl.textContent = "خطای سامانه";
-                    if (statusEl) statusEl.textContent = "وضعیت: نامشخص";
-                }
-            });
-
-        function renderData(astro) {
-            const sunrise = astro.sunrise;
-            const sunset = astro.sunset;
-
-            sunriseEl.textContent = sunrise;
-            sunsetEl.textContent = sunset;
-            dayLengthEl.textContent = calculateDayLength(sunrise, sunset);
-
-            if (statusEl && astro.moon_phase) {
-                const phase = astro.moon_phase;
-                if (phase.includes("Full") || phase.includes("Waxing Gibbous")) {
-                    statusEl.textContent = "وضعیت آسمان: ماه کامل (مناسب عکاسی ماه)";
-                } else if (phase.includes("New") || phase.includes("Crescent")) {
-                    statusEl.textContent = "وضعیت آسمان: عالی برای عکاسی اعماق آسمان ✨";
-                } else {
-                    statusEl.textContent = "وضعیت آسمان: مناسب رصد عمومی 🔭";
-                }
-            }
-        }
-    });
-
-    function calculateDayLength(sunriseStr, sunsetStr) {
-        try {
-            function toMinutes(timeStr) {
-                const [time, modifier] = timeStr.split(' ');
-                let [hours, minutes] = time.split(':').map(Number);
-                if (modifier === 'PM' && hours < 12) hours += 12;
-                if (modifier === 'AM' && hours === 12) hours = 0;
-                return hours * 60 + minutes;
-            }
-
-            const riseMin = toMinutes(sunriseStr);
-            const setMin = toMinutes(sunsetStr);
-            let diffMin = setMin - riseMin;
-            if (diffMin < 0) diffMin += 24 * 60;
-
-            const hours = Math.floor(diffMin / 60);
-            const minutes = diffMin % 60;
-            return `${hours}h & ${minutes}m`;
-        } catch (e) {
-            return "محاسبه‌نشده";
-        }
-    }
+    addEventListener('resize', fit); fit(); requestAnimationFrame(draw);
 })();
+
+/* منوی همبرگری */
+const menu = $('#menu'), mb = $('#menuBtn');
+const setMenu = o => { menu.classList.toggle('open', o); mb.setAttribute('aria-expanded', o); };
+mb.onclick = e => { e.stopPropagation(); setMenu(!menu.classList.contains('open')); };
+menu.addEventListener('click', e => { if (e.target.closest('a,button')) setMenu(false); });
+document.addEventListener('click', e => { if (!menu.contains(e.target)) setMenu(false); });
+addEventListener('keydown', e => e.key === 'Escape' && setMenu(false));
+
+/* حالت شب و روز (ذخیره در مرورگر) */
+$('#themeBtn').onclick = () => {
+    const n = document.documentElement.dataset.bsTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.bsTheme = n;
+    try { localStorage.setItem('nova-theme', n); } catch (e) { }
+};
+
+/* انیمیشن ورود بخش‌ها و دکمه‌ی بازگشت به بالا */
+const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add('on'), io.unobserve(e.target))), { threshold: .12 });
+$$('.rv').forEach(el => io.observe(el));
+const up = $('#toTop');
+addEventListener('scroll', () => up.classList.toggle('show', scrollY > 600), { passive: true });
+up.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+
+/* پنجره‌ها */
+$$('dialog').forEach(d => {
+    $('.x', d).onclick = () => d.close();
+    d.addEventListener('click', e => e.target === d && d.close());
+});
+
+/* گالری: نمایش تصویر بزرگ */
+const lb = $('#lb');
+$$('.g').forEach(b => b.onclick = () => {
+    const i = $('img', b); $('img', lb).src = i.src; $('img', lb).alt = i.alt; $('p', lb).textContent = i.alt; lb.showModal();
+});
+
+/* ویدیوها */
+const vd = $('#vd');
+VIDEOS.forEach(v => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'vc';
+    b.innerHTML = '<div class="th"></div><div><h3></h3><p></p></div>';
+    $('.th', b).style.backgroundImage = `url(${v.img})`;
+    $('h3', b).textContent = v.t; $('p', b).textContent = v.d;
+    b.onclick = () => {
+        $('.vf', vd).innerHTML = `<iframe src="https://www.aparat.com/video/video/embed/videohash/${encodeURIComponent(v.h)}/vt/frame" allowfullscreen title=""></iframe>`;
+        $('iframe', vd).title = v.t; vd.showModal();
+    };
+    $('#vids').append(b);
+});
+vd.addEventListener('close', () => $('.vf', vd).innerHTML = '');
+
+/* فرم عضویت: اعتبارسنجی و ارسال */
+const fa = s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+const rules = {
+    name: v => v.trim().length >= 3 || 'نام و نام خانوادگی را کامل وارد کنید.',
+    age: v => (+fa(v) >= 5 && +fa(v) <= 100) || 'سن باید بین ۵ تا ۱۰۰ باشد.',
+    phone: v => /^(0|\+98)?(9\d{9}|[1-8]\d{9})$/.test(fa(v).replace(/[\s-]/g, '')) || 'شماره تماس معتبر نیست.',
+    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || 'ایمیل معتبر نیست.',
+    city: v => v.trim().length >= 2 || 'نام شهر را وارد کنید.',
+    reason: v => v.trim().length >= 10 || 'دلیل علاقه را حداقل در ۱۰ نویسه بنویسید.'
+};
+const f = $('#f'), ok = $('#ok');
+const show = (el, m, good) => { el.style.display = 'block'; el.textContent = m; el.style.background = good ? '' : 'rgba(255,107,129,.2)'; };
+f.addEventListener('submit', async e => {
+    e.preventDefault();
+    let valid = true;
+    Object.keys(rules).forEach(k => {
+        const i = f.elements[k], r = rules[k](i.value), er = i.closest('label').querySelector('.err');
+        i.setAttribute('aria-invalid', r !== true); er.textContent = r === true ? '' : r; if (r !== true) valid = false;
+    });
+    if (!valid) return;
+    const btn = $('#submit-btn'); btn.disabled = true; btn.textContent = 'در حال ارسال...';
+    try {
+        const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(f))) });
+        const j = await res.json();
+        if (!j.success) throw 0;
+        show(ok, 'درخواست شما ارسال شد. به‌زودی با شما تماس می‌گیریم.', true); f.reset();
+    } catch (_) { show(ok, 'ارسال انجام نشد. اتصال اینترنت را بررسی و دوباره تلاش کنید.', false); }
+    btn.disabled = false; btn.textContent = 'ارسال درخواست';
+});
+
+/* ورود رئیس: احراز هویت فقط سمت سرور.
+   فرانت‌اند هیچ رمزی ندارد و فقط به /api/login درخواست می‌فرستد.
+   تا وقتی بک‌اند آماده نشده، ورود امکان‌پذیر نیست (نسخه‌ی نمایشی). */
+const ld = $('#loginDlg'), lm = $('#loginMsg'), dash = $('#dash');
+$('#loginBtn').onclick = () => ld.showModal();
+$('#loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const u = e.target.elements.username.value.trim(), p = e.target.elements.password.value;
+    if (!u || !p) return show(lm, 'نام کاربری و رمز عبور را وارد کنید.', false);
+    try {
+        const r = await fetch('/api/login', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+        if (!r.ok) return show(lm, 'نام کاربری یا رمز عبور درست نیست.', false);
+        e.target.reset(); lm.style.display = 'none'; ld.close(); dash.showModal();
+    } catch (_) { show(lm, 'سرور ورود متصل نیست. این بخش در نسخه‌ی نمایشی فقط ساختار دارد.', false); }
+});
+
+/* داشبورد: داده‌ها از API سرور خوانده می‌شود (/api/requests، /api/images، /api/videos، /api/content) */
+$$('.tabs button').forEach(b => b.onclick = async () => {
+    $$('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+    const ul = $('#dashList'); ul.innerHTML = '<li>در حال بارگذاری...</li>';
+    try {
+        const r = await fetch('/api/' + b.dataset.tab, { credentials: 'include' });
+        if (!r.ok) throw 0;
+        const items = await r.json(); ul.innerHTML = '';
+        (items.length ? items : ['موردی ثبت نشده است.']).forEach(it => { const li = document.createElement('li'); li.textContent = typeof it === 'string' ? it : Object.values(it).join(' · '); ul.append(li); });
+    } catch (_) { ul.innerHTML = '<li>اتصال به سرور برقرار نیست.</li>'; }
+});
