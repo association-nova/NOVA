@@ -135,3 +135,43 @@ dialog .x { position: absolute; top: .4rem; left: .6rem; background: none; borde
     .rv { opacity: 1; transform: none; }
     html { scroll-behavior: auto; }
 }
+
+/* ===== v3: جلوه‌های بیشتر ===== */
+@property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+body::before { content: ""; position: fixed; inset: -10%; z-index: -2; background: radial-gradient(40rem 30rem at 80% 5%, rgba(138, 92, 240, .3), transparent 60%), radial-gradient(45rem 35rem at 5% 45%, rgba(60, 120, 255, .22), transparent 60%), radial-gradient(35rem 30rem at 75% 95%, rgba(200, 80, 220, .18), transparent 60%); animation: drift 40s ease-in-out infinite alternate; }
+[data-bs-theme="light"] body::before { opacity: .45; }
+@keyframes drift { to { transform: translate3d(-3%, 2%, 0) scale(1.08); } }
+
+.panel { position: relative; }
+.panel::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none; background: conic-gradient(from var(--ang), transparent 55%, var(--a1), var(--a2), transparent); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: ang 9s linear infinite; }
+@keyframes ang { to { --ang: 360deg; } }
+
+.hero .wrap { position: relative; }
+.hero h1 { background: linear-gradient(110deg, #fff, #b9c4ff, #e0b8ff, #fff) 0 0 / 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; animation: shine 6s linear infinite; filter: drop-shadow(0 0 22px rgba(120, 130, 255, .55)); }
+@keyframes shine { to { background-position: 200% 0; } }
+.planet { position: absolute; left: 3%; top: 50%; margin-top: -90px; width: clamp(110px, 20vw, 190px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #cbd8ff, #5b6cf0 45%, #1b1f6b 82%); box-shadow: 0 0 60px rgba(110, 120, 255, .6), inset -18px -12px 40px rgba(0, 0, 0, .55); animation: float 7s ease-in-out infinite; }
+.planet::after { content: ""; position: absolute; inset: -16% -48%; border: 3px solid rgba(200, 210, 255, .55); border-radius: 50%; transform: rotateX(72deg) rotate(-12deg); box-shadow: 0 0 18px rgba(138, 92, 240, .7); }
+@keyframes float { 50% { translate: 0 -14px; } }
+@media (max-width: 720px) { .planet { opacity: .45; left: -20px; } }
+
+.btn { position: relative; overflow: hidden; }
+.btn::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .35), transparent 65%); transform: translateX(-120%); transition: transform .6s; }
+.btn:hover::after { transform: translateX(120%); }
+
+.g, .mem, .vc { transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .15s, box-shadow .3s; }
+.vc:hover { transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-4px); }
+.vc.soon { opacity: .55; cursor: default; border-style: dashed; }
+.vc.soon:hover { transform: none; box-shadow: none; }
+.vc.soon .th::after { content: "به‌زودی"; width: auto; height: auto; padding: .15rem 1rem; border-radius: 99px; font-size: .85rem; }
+
+.soc a { background: var(--in); }
+.soc svg { width: 28px; height: 28px; color: var(--ink); }
+
+#dash { max-width: 900px; }
+#dashList { list-style: none; margin: 1rem 0 0; padding: 0; }
+.req { display: grid; grid-template-columns: 1.3fr .8fr 1.4fr 1fr auto; gap: .3rem .8rem; align-items: center; padding: .7rem .9rem; margin-bottom: .5rem; border: 1px solid var(--line); border-radius: 12px; background: var(--in); }
+.req small { grid-column: 1 / -1; color: var(--mut); }
+.del { font: inherit; color: #fff; background: #d6455d; border: 0; border-radius: 8px; padding: .2rem .8rem; cursor: pointer; }
+#vAdd { align-items: end; margin-bottom: .5rem; }
+#vAdd[hidden] { display: none; }
+@media (max-width: 720px) { .req { grid-template-columns: 1fr 1fr; } }
