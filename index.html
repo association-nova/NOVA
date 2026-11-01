@@ -26,12 +26,12 @@
     <div class="dnav">
       <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌ها</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر ما</a><a href="#contact">📞 تماس</a>
     </div>
-    <button type="button" class="btn ghost lg" data-login>🔐<span> ورود اعضا</span></button>
+    <button type="button" class="btn ghost lg" data-login>🔐<span> ورود مدیران</span></button>
     <button class="tg" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز"><span>☀</span><span>☾</span></button>
   </div>
   <nav id="menu" aria-label="منوی اصلی">
     <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌های نجومی</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت در انجمن</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر فعالیت‌ها</a><a href="#contact">📞 تماس با ما</a>
-    <button type="button" data-login>🔐 ورود اعضا</button>
+    <button type="button" data-login>🔐 ورود مدیران</button>
   </nav>
 </header>
 
@@ -152,7 +152,7 @@
 <dialog id="loginDlg">
   <button class="x" type="button" aria-label="بستن">&times;</button>
   <form id="loginForm" novalidate>
-    <h2>🔐 ورود اعضا</h2>
+    <h2>🔐 ورود مدیران</h2>
     <label>نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
     <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr"></label>
     <button class="btn" type="submit">ورود</button>
@@ -162,14 +162,10 @@
 
 <dialog id="dash">
   <button class="x" type="button" aria-label="بستن">&times;</button>
-  <h2 id="dashTitle">🌠 پنل اعضا</h2>
-  <div class="tabs">
-    <button type="button" class="on" data-dt="req">درخواست‌ها</button>
-    <button type="button" data-dt="mem" id="memTab">اعضای تأییدشده</button>
-    <button type="button" id="logoutBtn">خروج</button>
-  </div>
+  <h2 id="dashTitle">🌠 پیام‌ها و درخواست‌های عضویت</h2>
   <div class="ok" id="dashMsg" role="status"></div>
   <ul id="dashList"></ul>
+  <button class="btn ghost" id="logoutBtn" type="button">خروج</button>
 </dialog>
 
 <script src="assets/js/videos-data.js?v=11" defer></script>
@@ -185,6 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ===== اتصال به سرور (Google Apps Script) =====
      آدرس Web App را بین دو کوتیشن بگذارید. مثال: 'https://script.google.com/macros/s/AKfy.../exec' */
+  const ADMIN_USER = 'rais';
+  /* رمز حالت بدون سرور (فقط برای وقتی API خالی یا خراب است): پیش‌فرض nova1405 — هش SHA-256 رمز جدید را جایگزین کنید */
+  const ADMIN_HASH = '41c5bb5be14a81142fbfc902bd3a30dbe7d618d4ebe1a4b40c6f1a97ce7290bb';
   const API = 'https://script.google.com/macros/s/AKfycbz8WEOdUAxVkf7lITn6pTTx1FTbjhUWdXpQ1ujpwZ5FB2J0i-bA-HUxP16twUZysCV3bA/exec';
 
   const db = {
@@ -279,8 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     shad: v => /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) || 'آیدی شاد معتبر نیست.',
     email: v => /^[^\s@]+@gmail\.com$/i.test(v.trim()) || 'یک ایمیل جیمیل معتبر وارد کنید.'
   };
-  const call = async o => {
-    if (!API) throw new Error('no-api');
+  const post = async o => {
     const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(o) });
     return r.json();
   };
@@ -294,103 +292,76 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r !== true) ok = false;
     });
     if (!ok) return;
-    const d = Object.fromEntries(new FormData(f)), msg = $('#ok');
-    msg.style.display = 'block'; msg.textContent = 'در حال ارسال...';
-    try {
-      if (API) {
-        const j = await call({ action: 'submit', name: d.name, cls: d.cls, shad: d.shad, email: d.email });
-        msg.textContent = j.ok ? '✨ درخواست شما ثبت شد. پس از تأیید، نام کاربری و رمز به جیمیل شما می‌رسد.'
-          : j.err === 'dup' ? 'درخواست شما قبلاً ثبت شده و در انتظار تأیید است.' : j.err === 'invalid' ? 'اطلاعات واردشده معتبر نیست (نام کامل و جیمیل را بررسی کنید).' : 'ارسال انجام نشد. علت: ' + j.err;
-        if (j.ok) f.reset();
-      } else {
-        const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) });
-        msg.textContent = r.ok ? '✨ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم.' : 'ارسال انجام نشد، دوباره تلاش کنید.';
-        if (r.ok) f.reset();
+    const d = Object.fromEntries(new FormData(f)), msg = $('#ok'), btn = f.querySelector('[type=submit]');
+    msg.style.display = 'block'; msg.textContent = 'در حال ارسال...'; btn.disabled = true;
+    let done = false;
+    if (API) {
+      try {
+        const j = await post({ action: 'submit', name: d.name, cls: d.cls, shad: d.shad, email: d.email });
+        if (j.ok) done = true;
+        else if (j.err === 'dup') { msg.textContent = 'درخواست شما قبلاً ثبت شده است.'; btn.disabled = false; return; }
+      } catch (er) {}
+    }
+    if (!done) { // روش پشتیبان: ایمیل + ذخیره در همین مرورگر
+      try { done = (await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) })).ok; } catch (er) {}
+      if (done) {
+        const q = db.get('nova-requests', []);
+        q.unshift({ id: String(Date.now()), date: new Date().toISOString(), name: d.name.trim(), cls: d.cls.trim(), shad: d.shad.trim(), email: d.email.trim() });
+        db.set('nova-requests', q);
       }
-    } catch (er) { msg.textContent = 'ارسال انجام نشد؛ اینترنت را بررسی کنید و دوباره تلاش کنید.'; }
+    }
+    msg.textContent = done ? '✨ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم.' : 'ارسال انجام نشد؛ اینترنت را بررسی کنید و دوباره تلاش کنید.';
+    if (done) f.reset();
+    btn.disabled = false;
   });
 
-  /* ورود اعضا و پنل */
-  const dash = $('#dash'), list = $('#dashList'), dm = $('#dashMsg');
-  const S = sessionStorage;
-  let tok = S.getItem('nova-tok'), role = S.getItem('nova-role'), tab = 'req';
-  const errs = { baduser: 'نام کاربری فقط حروف انگلیسی، عدد، _ یا . و ۳ تا ۲۰ نویسه باشد.', weak: 'رمز حداقل ۶ حرف باشد.', exists: 'این نام کاربری قبلاً استفاده شده.', notfound: 'درخواست پیدا نشد.', forbidden: 'اجازه‌ی این کار را ندارید.' };
+  /* ورود مدیران + پیام‌ها */
+  const dash = $('#dash'), list = $('#dashList'), dm = $('#dashMsg'), S = sessionStorage;
+  let tok = S.getItem('nova-tok');
   const say = t => { dm.textContent = t || ''; dm.style.display = t ? 'block' : 'none'; };
-  const logout = () => { S.removeItem('nova-tok'); S.removeItem('nova-role'); tok = role = null; };
-  const fdate = v => { const d = new Date(v); return isNaN(d) ? '' : d.toLocaleDateString('fa-IR'); };
-  const call2 = o => call({ token: tok, ...o });
-
-  const apprForm = r => {
-    const u = el('input', { placeholder: 'نام کاربری (انگلیسی)', dir: 'ltr' });
-    const p = el('input', { placeholder: 'رمز (حداقل ۶ حرف)', dir: 'ltr' });
-    const c = el('input', { type: 'checkbox', checked: true });
-    const b = el('button', { type: 'button', className: 'btn', textContent: 'ثبت و تأیید' });
-    b.onclick = async () => {
-      b.disabled = true; say('در حال ثبت...');
-      try {
-        const j = await call2({ action: 'approve', id: r.id, username: u.value.trim(), password: p.value, send: c.checked, site: location.href.split('#')[0] });
-        if (j.ok) { say('✓ تأیید شد.' + (c.checked ? (j.mailed ? ' نام کاربری و رمز به جیمیل او ایمیل شد.' : ' ایمیل ارسال نشد؛ نام کاربری و رمز را خودتان برایش بفرستید.') : '')); render(); }
-        else say(errs[j.err] || 'خطا: ' + j.err);
-      } catch (e) { say('ارتباط با سرور برقرار نشد.'); }
-      b.disabled = false;
-    };
-    return el('div', { className: 'appr', hidden: true }, u, p, el('label', { className: 'chk' }, c, ' ارسال به جیمیل او'), b);
+  const fdate = v => { const x = new Date(v); return isNaN(x) ? '' : x.toLocaleDateString('fa-IR'); };
+  const localItems = () => db.get('nova-requests', []).map((x, i) => ({ ...x, id: x.id || 'o' + i }));
+  const getItems = async () => tok === 'local' ? { ok: true, items: localItems() } : post({ action: 'list', token: tok });
+  const delItem = async id => {
+    if (tok === 'local') db.set('nova-requests', localItems().filter(x => x.id !== id));
+    else await post({ action: 'remove', token: tok, id });
   };
-
   const render = async () => {
     list.replaceChildren(); say('در حال بارگذاری...');
     let j;
-    try { j = await call2({ action: tab === 'req' ? 'list' : 'members' }); }
-    catch (e) { say(API ? 'ارتباط با سرور برقرار نشد.' : 'آدرس سرور (API) هنوز در index.html تنظیم نشده است.'); return; }
-    if (!j.ok) { if (j.err === 'auth') { logout(); dash.close(); say(''); $('#loginDlg').showModal(); return; } say('خطا: ' + j.err); return; }
+    try { j = await getItems(); } catch (e) { say('ارتباط با سرور برقرار نشد.'); return; }
+    if (!j.ok) { if (j.err === 'auth') { S.removeItem('nova-tok'); tok = null; dash.close(); $('#loginDlg').showModal(); return; } say('خطا: ' + j.err); return; }
     say('');
-    if (!j.items.length) list.append(el('li', { className: 'mut', textContent: tab === 'req' ? 'هنوز درخواستی ثبت نشده است.' : 'هنوز عضوی تأیید نشده است.' }));
+    $('#dashTitle').textContent = `🌠 پیام‌ها و درخواست‌های عضویت (${j.items.length})`;
+    if (!j.items.length) list.append(el('li', { className: 'mut', textContent: 'هنوز درخواستی ثبت نشده است.' }));
     j.items.forEach(r => {
-      const boss = role === 'boss';
-      if (tab === 'req') {
-        const row = el('li', { className: 'req' }, el('b', { textContent: r.name }), el('span', { textContent: 'کلاس ' + r.cls }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { dir: 'ltr', textContent: r.shad }));
-        const acts = el('span', { style: 'display:flex;gap:.3rem' });
-        const form = r.status === 'pending' && boss ? apprForm(r) : null;
-        if (form) { const yes = el('button', { type: 'button', className: 'del', textContent: 'تأیید', style: 'background:#2f9e6b' }); yes.onclick = () => { form.hidden = !form.hidden; }; acts.append(yes); }
-        if (boss) { const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' }); del.onclick = async () => { if (confirm('این درخواست حذف شود؟')) { await call2({ action: 'remove', id: r.id }); render(); } }; acts.append(del); }
-        row.append(acts, el('small', { textContent: (r.status === 'approved' ? '✓ تأیید شد · نام کاربری: ' + r.username : 'در انتظار تأیید') + ' · ' + fdate(r.date) }));
-        if (form) row.append(form);
-        list.append(row);
-      } else {
-        const row = el('li', { className: 'req' }, el('b', { dir: 'ltr', textContent: r.username }), el('span', { textContent: r.name }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { textContent: fdate(r.date) }));
-        const del = el('button', { type: 'button', className: 'del', textContent: 'لغو عضویت' });
-        del.onclick = async () => { if (confirm('دسترسی این عضو لغو شود؟')) { await call2({ action: 'revoke', username: r.username }); render(); } };
-        row.append(del); list.append(row);
-      }
+      const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
+      del.onclick = async () => { if (confirm('این درخواست حذف شود؟')) { await delItem(r.id); render(); } };
+      list.append(el('li', { className: 'req' }, el('b', { textContent: r.name }), el('span', { textContent: 'کلاس ' + r.cls }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { dir: 'ltr', textContent: r.shad }), del, el('small', { textContent: 'تاریخ: ' + fdate(r.date) + (tok === 'local' ? ' · ذخیره‌شده در همین مرورگر' : '') })));
     });
   };
-  const openDash = () => {
-    tab = 'req';
-    $('#dashTitle').textContent = role === 'boss' ? '🌠 پنل مدیریت' : '🌠 پنل اعضا (فقط مشاهده)';
-    $('#memTab').style.display = role === 'boss' ? '' : 'none';
-    document.querySelectorAll('[data-dt]').forEach(b => b.classList.toggle('on', b.dataset.dt === 'req'));
-    dash.showModal(); render();
-  };
-  document.querySelectorAll('[data-dt]').forEach(b => b.onclick = () => {
-    tab = b.dataset.dt;
-    document.querySelectorAll('[data-dt]').forEach(x => x.classList.toggle('on', x === b));
-    render();
-  });
+  const openDash = () => { dash.showModal(); render(); };
   document.querySelectorAll('[data-login]').forEach(b => b.onclick = () => { closeMenu(); tok ? openDash() : $('#loginDlg').showModal(); });
   $('#loginForm').addEventListener('submit', async e => {
     e.preventDefault();
     const fm = e.target, m = $('#loginMsg'), btn = fm.querySelector('button');
-    m.style.display = 'block';
-    if (!API) { m.textContent = 'آدرس سرور (API) هنوز در index.html تنظیم نشده است.'; return; }
-    m.textContent = 'در حال بررسی...'; btn.disabled = true;
-    try {
-      const j = await call({ action: 'login', user: fm.username.value, pass: fm.password.value });
-      if (j.ok) { tok = j.token; role = j.role; S.setItem('nova-tok', tok); S.setItem('nova-role', role); fm.reset(); m.style.display = 'none'; $('#loginDlg').close(); openDash(); }
-      else m.textContent = j.err === 'locked' ? 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.' : j.err === 'nouser' ? 'این نام کاربری در لیست اعضای تأییدشده نیست.' : j.err === 'badpass' ? 'نام کاربری درست است ولی رمز اشتباه است.' : 'ورود انجام نشد: ' + j.err;
-    } catch (er) { m.textContent = 'ارتباط با سرور برقرار نشد.'; }
-    btn.disabled = false;
+    const u = fm.username.value.trim().toLowerCase(), p = fm.password.value.trim();
+    m.style.display = 'block'; m.textContent = 'در حال بررسی...'; btn.disabled = true;
+    let t = null, wrong = false;
+    if (API) {
+      try {
+        const j = await post({ action: 'login', user: u, pass: p });
+        if (j.ok) t = j.token;
+        else if (j.err === 'locked') { m.textContent = 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.'; btn.disabled = false; return; }
+        else if (j.err === 'bad') wrong = true;
+      } catch (er) {}
+    }
+    if (!t && !wrong && u === ADMIN_USER && await sha(p) === ADMIN_HASH) t = 'local'; // حالت بدون سرور
+    if (!t) { m.textContent = 'نام کاربری یا رمز عبور اشتباه است.'; btn.disabled = false; return; }
+    tok = t; S.setItem('nova-tok', t); fm.reset(); m.style.display = 'none'; btn.disabled = false;
+    $('#loginDlg').close(); openDash();
   });
-  $('#logoutBtn').onclick = () => { logout(); dash.close(); };
+  $('#logoutBtn').onclick = () => { S.removeItem('nova-tok'); tok = null; dash.close(); };
 });
 </script>
 </body>
