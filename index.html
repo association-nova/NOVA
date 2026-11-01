@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const j = await call({ action: 'login', user: fm.username.value, pass: fm.password.value });
       if (j.ok) { tok = j.token; role = j.role; S.setItem('nova-tok', tok); S.setItem('nova-role', role); fm.reset(); m.style.display = 'none'; $('#loginDlg').close(); openDash(); }
-      else m.textContent = j.err === 'locked' ? 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.' : 'نام کاربری یا رمز عبور اشتباه است.';
+      else m.textContent = j.err === 'locked' ? 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.' : j.err === 'nouser' ? 'این نام کاربری در لیست اعضای تأییدشده نیست.' : j.err === 'badpass' ? 'نام کاربری درست است ولی رمز اشتباه است.' : 'ورود انجام نشد: ' + j.err;
     } catch (er) { m.textContent = 'ارتباط با سرور برقرار نشد.'; }
     btn.disabled = false;
   });
