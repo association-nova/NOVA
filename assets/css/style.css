@@ -203,3 +203,32 @@ dialog .x{position:absolute;top:.4rem;left:.6rem;background:none;border:0;color:
 
 @media (max-width:900px){.facts{grid-template-columns:1fr 1fr}}
 @media (max-width:720px){.facts{grid-template-columns:1fr}.lbx{grid-template-columns:1fr}.vrow{grid-template-columns:1fr}.hintc{display:none}.foot{justify-content:center}}
+
+/* ===== نسخه ۹ ===== */
+.g{position:relative}
+.cap{position:absolute;inset:auto 0 0;padding:.9rem .5rem .4rem;font-size:.8rem;color:#fff;text-align:center;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent)}
+.venusimg{background:radial-gradient(circle at 40% 40%,#fff0c8,#e9b866 40%,#b9772f 75%),#1a0f08}
+.vfeat{display:grid;grid-template-columns:1.2fr 1fr;gap:1.2rem;align-items:center;padding:.8rem;border:1px solid var(--line);border-radius:16px;background:var(--in);transition:border-color .2s}
+.vfeat:hover{border-color:var(--a1)}
+.vfimg{position:relative;aspect-ratio:16/9;border-radius:12px;background:center/cover}
+.vfimg::before{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(0deg,rgba(0,0,0,.45),transparent)}
+.vfimg b{position:absolute;inset:0;margin:auto;width:60px;height:60px;display:grid;place-items:center;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;border:2px solid #fff}
+.vfx h3{font-size:1.2rem;margin:.5rem 0}
+.vfx p{color:var(--mut);font-size:.93rem;margin:0 0 .9rem}
+.vtag{display:inline-block;font-size:.78rem;padding:0 .8rem;border-radius:99px;border:1px solid var(--a1);color:var(--a1)}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem}
+.chips a{padding:.2rem 1rem;border:1px solid var(--line);border-radius:99px;background:var(--in)}
+.chips a:hover{border-color:var(--a1)}
+.sec{margin-top:2rem;scroll-margin-top:5rem}
+.sklist{display:grid;gap:1rem}
+.sk{display:grid;grid-template-columns:1fr 1.3fr;gap:1.2rem;align-items:center;scroll-margin-top:5rem}
+.sk img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px}
+.sk h3{color:var(--a1);margin-bottom:.4rem}
+.sk p{margin:0;color:var(--mut)}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.fcard{position:relative;padding-top:1.6rem}
+.fcard b{position:absolute;top:-.7rem;right:1rem;width:2rem;height:2rem;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff}
+.fcard h3{font-size:1.02rem;margin-bottom:.3rem}
+.fcard p{margin:0;color:var(--mut);font-size:.92rem}
+@media (max-width:900px){.fgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){.vfeat,.sk{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}}
