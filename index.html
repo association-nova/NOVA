@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#070a1f">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="preload" as="image" href="assets/img/3.jpg">
-<link rel="stylesheet" href="assets/css/style.css?v=10">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
 <script>try{document.documentElement.dataset.bsTheme=localStorage.getItem('nova-theme')||'dark'}catch(e){}</script>
 </head>
 <body>
@@ -151,10 +151,9 @@
 
 <dialog id="loginDlg">
   <button class="x" type="button" aria-label="بستن">&times;</button>
-  <h2>🔐 ورود مدیران</h2>
-  <div class="tabs"><button type="button" class="on" data-lt="boss">رئیس انجمن</button><button type="button" data-lt="member">اعضای تأییدشده</button></div>
   <form id="loginForm" novalidate>
-    <label id="lbUser">نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
+    <h2>🔐 ورود اعضا</h2>
+    <label>نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
     <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr"></label>
     <button class="btn" type="submit">ورود</button>
     <div class="ok" id="loginMsg" role="status"></div>
@@ -163,20 +162,18 @@
 
 <dialog id="dash">
   <button class="x" type="button" aria-label="بستن">&times;</button>
-  <h2 id="dashTitle">🌠 درخواست‌های عضویت</h2>
-  <form id="addMem" class="row" hidden>
-    <p class="mut" style="grid-column:1/-1;margin:0;font-size:.85rem">افزودن عضو تأییدشده: ایمیل و رمزش را بنویسید، خط ساخته‌شده را داخل لیست APPROVED در index.html بگذارید و رمز را به جیمیل او بفرستید.</p>
-    <label>جیمیل عضو<input name="e" dir="ltr" placeholder="name@gmail.com"></label>
-    <label>رمز برای او<input name="p" dir="ltr" placeholder="حداقل ۶ حرف"></label>
-    <button class="btn" type="submit" style="grid-column:1/-1">ساخت خط تأیید</button>
-    <code id="memOut" dir="ltr"></code>
-  </form>
+  <h2 id="dashTitle">🌠 پنل اعضا</h2>
+  <div class="tabs">
+    <button type="button" class="on" data-dt="req">درخواست‌ها</button>
+    <button type="button" data-dt="mem" id="memTab">اعضای تأییدشده</button>
+    <button type="button" id="logoutBtn">خروج</button>
+  </div>
+  <div class="ok" id="dashMsg" role="status"></div>
   <ul id="dashList"></ul>
-  <button class="btn ghost" id="logoutBtn" type="button">خروج</button>
 </dialog>
 
-<script src="assets/js/videos-data.js?v=9" defer></script>
-<script src="assets/js/social.js?v=9" defer></script>
+<script src="assets/js/videos-data.js?v=11" defer></script>
+<script src="assets/js/social.js?v=11" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   'use strict';
@@ -186,14 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // اگر افکت ظاهر شدن کار نکرد، بعد از ۲ ثانیه همه‌ی بخش‌ها نمایان می‌شوند
   setTimeout(() => document.querySelectorAll('.rv').forEach(n => n.classList.add('on')), 2000);
 
-  /* ===== تنظیمات رئیس (رمز پیش‌فرض: nova1405) =====
-     برای تغییر رمز، SHA-256 رمز جدید را جایگزین ADMIN_HASH کنید. */
-  const ADMIN_USER = 'rais';
-  /* اعضای تأییدشده: برای افزودن، از داشبورد رئیس «ساخت خط تأیید» بزنید و خط ساخته‌شده را اینجا بگذارید.
-     مثال: { email: 'name@gmail.com', hash: '...' }, */
-  const APPROVED = [
-  ];
-  const ADMIN_HASH = '41c5bb5be14a81142fbfc902bd3a30dbe7d618d4ebe1a4b40c6f1a97ce7290bb';
+  /* ===== اتصال به سرور (Google Apps Script) =====
+     آدرس Web App را بین دو کوتیشن بگذارید. مثال: 'https://script.google.com/macros/s/AKfy.../exec' */
+  const API = 'https://script.google.com/macros/s/AKfycbz8WEOdUAxVkf7lITn6pTTx1FTbjhUWdXpQ1ujpwZ5FB2J0i-bA-HUxP16twUZysCV3bA/exec';
 
   const db = {
     get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
@@ -287,6 +279,11 @@ document.addEventListener('DOMContentLoaded', () => {
     shad: v => /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) || 'آیدی شاد معتبر نیست.',
     email: v => /^[^\s@]+@gmail\.com$/i.test(v.trim()) || 'یک ایمیل جیمیل معتبر وارد کنید.'
   };
+  const call = async o => {
+    if (!API) throw new Error('no-api');
+    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(o) });
+    return r.json();
+  };
   f.addEventListener('submit', async e => {
     e.preventDefault();
     let ok = true;
@@ -297,71 +294,103 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r !== true) ok = false;
     });
     if (!ok) return;
-    const d = Object.fromEntries(new FormData(f));
-    const reqs = db.get('nova-requests', []);
-    reqs.unshift({ name: d.name.trim(), cls: d.cls.trim(), shad: d.shad.trim(), email: d.email.trim(), date: new Date().toLocaleDateString('fa-IR') });
-    db.set('nova-requests', reqs);
-    const msg = $('#ok'); msg.style.display = 'block';
+    const d = Object.fromEntries(new FormData(f)), msg = $('#ok');
+    msg.style.display = 'block'; msg.textContent = 'در حال ارسال...';
     try {
-      const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) });
-      msg.textContent = r.ok ? '✨ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم.' : 'درخواست ذخیره شد اما ارسال ایمیل انجام نشد.';
-    } catch (er) { msg.textContent = 'درخواست ذخیره شد اما ارسال ایمیل انجام نشد (اینترنت را بررسی کنید).'; }
-    f.reset();
+      if (API) {
+        const j = await call({ action: 'submit', name: d.name, cls: d.cls, shad: d.shad, email: d.email });
+        msg.textContent = j.ok ? '✨ درخواست شما ثبت شد. پس از تأیید، نام کاربری و رمز به جیمیل شما می‌رسد.'
+          : j.err === 'dup' ? 'درخواست شما قبلاً ثبت شده و در انتظار تأیید است.' : 'ارسال انجام نشد، دوباره تلاش کنید.';
+        if (j.ok) f.reset();
+      } else {
+        const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) });
+        msg.textContent = r.ok ? '✨ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم.' : 'ارسال انجام نشد، دوباره تلاش کنید.';
+        if (r.ok) f.reset();
+      }
+    } catch (er) { msg.textContent = 'ارسال انجام نشد؛ اینترنت را بررسی کنید و دوباره تلاش کنید.'; }
   });
 
-  /* ورود مدیران (رئیس + اعضای تأییدشده) */
-  const dash = $('#dash'), list = $('#dashList'), addMem = $('#addMem');
-  const role = () => sessionStorage.getItem('nova-admin');
-  let mode = 'boss';
-  document.querySelectorAll('[data-lt]').forEach(b => b.onclick = () => {
-    mode = b.dataset.lt;
-    document.querySelectorAll('[data-lt]').forEach(x => x.classList.toggle('on', x === b));
-    $('#lbUser').firstChild.textContent = mode === 'boss' ? 'نام کاربری' : 'ایمیل (جیمیل)';
-    $('#loginMsg').style.display = 'none';
-  });
-  const renderReqs = () => {
-    const boss = role() === 'boss', r = db.get('nova-requests', []);
-    $('#dashTitle').textContent = `🌠 درخواست‌های عضویت (${r.length})` + (boss ? '' : ' — فقط مشاهده');
-    addMem.hidden = !boss;
-    list.replaceChildren();
-    if (!r.length) list.append(el('li', { className: 'mut', textContent: 'هنوز درخواستی در این مرورگر ثبت نشده است.' }));
-    r.forEach((q, i) => {
-      const row = el('li', { className: 'req' }, el('b', { textContent: q.name }), el('span', { textContent: 'کلاس ' + q.cls }), el('span', { dir: 'ltr', textContent: q.email }), el('span', { dir: 'ltr', textContent: q.shad }));
-      if (boss) {
-        const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
-        del.onclick = () => { r.splice(i, 1); db.set('nova-requests', r); renderReqs(); };
-        const yes = el('button', { type: 'button', className: 'del', textContent: 'تأیید', style: 'background:#2f9e6b' });
-        yes.onclick = () => {
-          addMem.elements.e.value = q.email;
-          addMem.elements.p.value = Math.random().toString(36).slice(2, 10);
-          addMem.requestSubmit(); addMem.scrollIntoView({ behavior: 'smooth' });
-        };
-        row.append(el('span', { style: 'display:flex;gap:.3rem' }, yes, del));
+  /* ورود اعضا و پنل */
+  const dash = $('#dash'), list = $('#dashList'), dm = $('#dashMsg');
+  const S = sessionStorage;
+  let tok = S.getItem('nova-tok'), role = S.getItem('nova-role'), tab = 'req';
+  const errs = { baduser: 'نام کاربری فقط حروف انگلیسی، عدد، _ یا . و ۳ تا ۲۰ نویسه باشد.', weak: 'رمز حداقل ۶ حرف باشد.', exists: 'این نام کاربری قبلاً استفاده شده.', notfound: 'درخواست پیدا نشد.', forbidden: 'اجازه‌ی این کار را ندارید.' };
+  const say = t => { dm.textContent = t || ''; dm.style.display = t ? 'block' : 'none'; };
+  const logout = () => { S.removeItem('nova-tok'); S.removeItem('nova-role'); tok = role = null; };
+  const fdate = v => { const d = new Date(v); return isNaN(d) ? '' : d.toLocaleDateString('fa-IR'); };
+  const call2 = o => call({ token: tok, ...o });
+
+  const apprForm = r => {
+    const u = el('input', { placeholder: 'نام کاربری (انگلیسی)', dir: 'ltr' });
+    const p = el('input', { placeholder: 'رمز (حداقل ۶ حرف)', dir: 'ltr' });
+    const c = el('input', { type: 'checkbox', checked: true });
+    const b = el('button', { type: 'button', className: 'btn', textContent: 'ثبت و تأیید' });
+    b.onclick = async () => {
+      b.disabled = true; say('در حال ثبت...');
+      try {
+        const j = await call2({ action: 'approve', id: r.id, username: u.value.trim(), password: p.value, send: c.checked, site: location.href.split('#')[0] });
+        if (j.ok) { say('✓ تأیید شد.' + (c.checked ? (j.mailed ? ' نام کاربری و رمز به جیمیل او ایمیل شد.' : ' ایمیل ارسال نشد؛ نام کاربری و رمز را خودتان برایش بفرستید.') : '')); render(); }
+        else say(errs[j.err] || 'خطا: ' + j.err);
+      } catch (e) { say('ارتباط با سرور برقرار نشد.'); }
+      b.disabled = false;
+    };
+    return el('div', { className: 'appr', hidden: true }, u, p, el('label', { className: 'chk' }, c, ' ارسال به جیمیل او'), b);
+  };
+
+  const render = async () => {
+    list.replaceChildren(); say('در حال بارگذاری...');
+    let j;
+    try { j = await call2({ action: tab === 'req' ? 'list' : 'members' }); }
+    catch (e) { say(API ? 'ارتباط با سرور برقرار نشد.' : 'آدرس سرور (API) هنوز در index.html تنظیم نشده است.'); return; }
+    if (!j.ok) { if (j.err === 'auth') { logout(); dash.close(); say(''); $('#loginDlg').showModal(); return; } say('خطا: ' + j.err); return; }
+    say('');
+    if (!j.items.length) list.append(el('li', { className: 'mut', textContent: tab === 'req' ? 'هنوز درخواستی ثبت نشده است.' : 'هنوز عضوی تأیید نشده است.' }));
+    j.items.forEach(r => {
+      const boss = role === 'boss';
+      if (tab === 'req') {
+        const row = el('li', { className: 'req' }, el('b', { textContent: r.name }), el('span', { textContent: 'کلاس ' + r.cls }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { dir: 'ltr', textContent: r.shad }));
+        const acts = el('span', { style: 'display:flex;gap:.3rem' });
+        const form = r.status === 'pending' && boss ? apprForm(r) : null;
+        if (form) { const yes = el('button', { type: 'button', className: 'del', textContent: 'تأیید', style: 'background:#2f9e6b' }); yes.onclick = () => { form.hidden = !form.hidden; }; acts.append(yes); }
+        if (boss) { const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' }); del.onclick = async () => { if (confirm('این درخواست حذف شود؟')) { await call2({ action: 'remove', id: r.id }); render(); } }; acts.append(del); }
+        row.append(acts, el('small', { textContent: (r.status === 'approved' ? '✓ تأیید شد · نام کاربری: ' + r.username : 'در انتظار تأیید') + ' · ' + fdate(r.date) }));
+        if (form) row.append(form);
+        list.append(row);
+      } else {
+        const row = el('li', { className: 'req' }, el('b', { dir: 'ltr', textContent: r.username }), el('span', { textContent: r.name }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { textContent: fdate(r.date) }));
+        const del = el('button', { type: 'button', className: 'del', textContent: 'لغو عضویت' });
+        del.onclick = async () => { if (confirm('دسترسی این عضو لغو شود؟')) { await call2({ action: 'revoke', username: r.username }); render(); } };
+        row.append(del); list.append(row);
       }
-      row.append(el('small', { textContent: 'تاریخ: ' + q.date }));
-      list.append(row);
     });
   };
-  const openDash = () => { renderReqs(); dash.showModal(); };
-  document.querySelectorAll('[data-login]').forEach(b => b.onclick = () => { closeMenu(); role() ? openDash() : $('#loginDlg').showModal(); });
+  const openDash = () => {
+    tab = 'req';
+    $('#dashTitle').textContent = role === 'boss' ? '🌠 پنل مدیریت' : '🌠 پنل اعضا (فقط مشاهده)';
+    $('#memTab').style.display = role === 'boss' ? '' : 'none';
+    document.querySelectorAll('[data-dt]').forEach(b => b.classList.toggle('on', b.dataset.dt === 'req'));
+    dash.showModal(); render();
+  };
+  document.querySelectorAll('[data-dt]').forEach(b => b.onclick = () => {
+    tab = b.dataset.dt;
+    document.querySelectorAll('[data-dt]').forEach(x => x.classList.toggle('on', x === b));
+    render();
+  });
+  document.querySelectorAll('[data-login]').forEach(b => b.onclick = () => { closeMenu(); tok ? openDash() : $('#loginDlg').showModal(); });
   $('#loginForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const fm = e.target, m = $('#loginMsg'), u = fm.username.value.trim().toLowerCase(), p = fm.password.value;
-    let who = null;
-    if (mode === 'boss') { if (u === ADMIN_USER && await sha(p) === ADMIN_HASH) who = 'boss'; }
-    else { const hh = await sha(u + ':' + p); if (APPROVED.some(a => a.email.toLowerCase() === u && a.hash === hh)) who = 'member'; }
-    if (!who) { m.style.display = 'block'; m.textContent = 'نام کاربری/ایمیل یا رمز عبور اشتباه است.'; return; }
-    sessionStorage.setItem('nova-admin', who); fm.reset(); m.style.display = 'none';
-    $('#loginDlg').close(); openDash();
+    const fm = e.target, m = $('#loginMsg'), btn = fm.querySelector('button');
+    m.style.display = 'block';
+    if (!API) { m.textContent = 'آدرس سرور (API) هنوز در index.html تنظیم نشده است.'; return; }
+    m.textContent = 'در حال بررسی...'; btn.disabled = true;
+    try {
+      const j = await call({ action: 'login', user: fm.username.value, pass: fm.password.value });
+      if (j.ok) { tok = j.token; role = j.role; S.setItem('nova-tok', tok); S.setItem('nova-role', role); fm.reset(); m.style.display = 'none'; $('#loginDlg').close(); openDash(); }
+      else m.textContent = j.err === 'locked' ? 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.' : 'نام کاربری یا رمز عبور اشتباه است.';
+    } catch (er) { m.textContent = 'ارتباط با سرور برقرار نشد.'; }
+    btn.disabled = false;
   });
-  addMem.addEventListener('submit', async e => {
-    e.preventDefault();
-    const em = addMem.elements.e.value.trim().toLowerCase(), pw = addMem.elements.p.value, o = $('#memOut');
-    o.style.display = 'block';
-    o.style.whiteSpace = 'pre-wrap';
-    o.textContent = (/^[^\s@]+@gmail\.com$/.test(em) && pw.length >= 6) ? `{ email: '${em}', hash: '${await sha(em + ':' + pw)}' },\n\nرمز برای ارسال به او: ${pw}` : 'جیمیل معتبر و رمز حداقل ۶ حرفی وارد کنید.';
-  });
-  $('#logoutBtn').onclick = () => { sessionStorage.removeItem('nova-admin'); dash.close(); };
+  $('#logoutBtn').onclick = () => { logout(); dash.close(); };
 });
 </script>
 </body>
