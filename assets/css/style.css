@@ -248,3 +248,12 @@ dialog .x{position:absolute;top:.4rem;left:.6rem;background:none;border:0;color:
   #lb .lbx img{height:auto;max-height:42vh;aspect-ratio:4/3}
 }
 @media (max-width:480px){.lg span,.brand small{display:none}}
+
+/* ===== نسخه ۱۱ ===== */
+.appr{grid-column:1/-1;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;padding-top:.3rem}
+.appr[hidden]{display:none}
+.appr input{flex:1 1 150px;width:auto;margin:0}
+.appr input[type=checkbox]{flex:0 0 auto;width:auto}
+.appr .chk{margin:0;display:flex;align-items:center;gap:.3rem;font-size:.85rem}
+.appr .btn{padding:.4rem 1.2rem}
+#dashMsg{margin:0 0 .8rem}
