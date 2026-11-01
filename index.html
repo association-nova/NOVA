@@ -26,12 +26,12 @@
     <div class="dnav">
       <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌ها</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر ما</a><a href="#contact">📞 تماس</a>
     </div>
-    <button type="button" class="btn ghost lg" data-login>🔐<span> ورود مدیران</span></button>
+    <button type="button" class="btn ghost lg" data-login>🔐<span> ورود اعضا</span></button>
     <button class="tg" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز"><span>☀</span><span>☾</span></button>
   </div>
   <nav id="menu" aria-label="منوی اصلی">
     <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌های نجومی</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت در انجمن</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر فعالیت‌ها</a><a href="#contact">📞 تماس با ما</a>
-    <button type="button" data-login>🔐 ورود مدیران</button>
+    <button type="button" data-login>🔐 ورود اعضا</button>
   </nav>
 </header>
 
@@ -330,7 +330,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (boss) {
         const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
         del.onclick = () => { r.splice(i, 1); db.set('nova-requests', r); renderReqs(); };
-        row.append(del);
+        const yes = el('button', { type: 'button', className: 'del', textContent: 'تأیید', style: 'background:#2f9e6b' });
+        yes.onclick = () => {
+          addMem.elements.e.value = q.email;
+          addMem.elements.p.value = Math.random().toString(36).slice(2, 10);
+          addMem.requestSubmit(); addMem.scrollIntoView({ behavior: 'smooth' });
+        };
+        row.append(el('span', { style: 'display:flex;gap:.3rem' }, yes, del));
       }
       row.append(el('small', { textContent: 'تاریخ: ' + q.date }));
       list.append(row);
@@ -352,7 +358,8 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const em = addMem.elements.e.value.trim().toLowerCase(), pw = addMem.elements.p.value, o = $('#memOut');
     o.style.display = 'block';
-    o.textContent = (/^[^\s@]+@gmail\.com$/.test(em) && pw.length >= 6) ? `{ email: '${em}', hash: '${await sha(em + ':' + pw)}' },` : 'جیمیل معتبر و رمز حداقل ۶ حرفی وارد کنید.';
+    o.style.whiteSpace = 'pre-wrap';
+    o.textContent = (/^[^\s@]+@gmail\.com$/.test(em) && pw.length >= 6) ? `{ email: '${em}', hash: '${await sha(em + ':' + pw)}' },\n\nرمز برای ارسال به او: ${pw}` : 'جیمیل معتبر و رمز حداقل ۶ حرفی وارد کنید.';
   });
   $('#logoutBtn').onclick = () => { sessionStorage.removeItem('nova-admin'); dash.close(); };
 });
