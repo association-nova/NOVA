@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (API) {
         const j = await call({ action: 'submit', name: d.name, cls: d.cls, shad: d.shad, email: d.email });
         msg.textContent = j.ok ? '✨ درخواست شما ثبت شد. پس از تأیید، نام کاربری و رمز به جیمیل شما می‌رسد.'
-          : j.err === 'dup' ? 'درخواست شما قبلاً ثبت شده و در انتظار تأیید است.' : 'ارسال انجام نشد، دوباره تلاش کنید.';
+          : j.err === 'dup' ? 'درخواست شما قبلاً ثبت شده و در انتظار تأیید است.' : j.err === 'invalid' ? 'اطلاعات واردشده معتبر نیست (نام کامل و جیمیل را بررسی کنید).' : 'ارسال انجام نشد. علت: ' + j.err;
         if (j.ok) f.reset();
       } else {
         const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) });
