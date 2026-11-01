@@ -232,3 +232,19 @@ dialog .x{position:absolute;top:.4rem;left:.6rem;background:none;border:0;color:
 .fcard p{margin:0;color:var(--mut);font-size:.92rem}
 @media (max-width:900px){.fgrid{grid-template-columns:1fr 1fr}}
 @media (max-width:720px){.vfeat,.sk{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}}
+
+/* ===== نسخه ۱۰ ===== */
+.vfeat,.vrow{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.vfimg,.vplayer{aspect-ratio:auto;height:0;padding-bottom:56.25%;position:relative}
+.vplayer iframe{position:absolute;inset:0;width:100%;height:100%}
+#addMem[hidden]{display:none}
+#addMem{margin-bottom:1rem;align-items:end}
+#memOut{display:none;grid-column:1/-1;word-break:break-all;font-size:.8rem;background:var(--in);border:1px solid var(--line);padding:.6rem;border-radius:8px}
+@media (max-width:720px){
+  .vfeat,.vrow{grid-template-columns:minmax(0,1fr)}
+  .lg{display:inline-block;padding:.3rem .7rem;font-size:.75rem}
+  .gal .g:last-child:nth-child(odd){grid-column:1/-1;aspect-ratio:16/9}
+  #lb{max-height:92vh;overflow-y:auto}
+  #lb .lbx img{height:auto;max-height:42vh;aspect-ratio:4/3}
+}
+@media (max-width:480px){.lg span,.brand small{display:none}}
