@@ -26,12 +26,12 @@
     <div class="dnav">
       <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌ها</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر ما</a><a href="#contact">📞 تماس</a>
     </div>
-    <button type="button" class="btn ghost lg" data-login>🔐<span> ورود مدیران</span></button>
+    <a class="btn ghost lg" href="admin.html">🔐<span> ورود مدیران</span></a>
     <button class="tg" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز"><span>☀</span><span>☾</span></button>
   </div>
   <nav id="menu" aria-label="منوی اصلی">
     <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌های نجومی</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت در انجمن</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر فعالیت‌ها</a><a href="#contact">📞 تماس با ما</a>
-    <button type="button" data-login>🔐 ورود مدیران</button>
+    <a href="admin.html">🔐 ورود مدیران</a>
   </nav>
 </header>
 
@@ -149,27 +149,9 @@
   <div class="lbx"><img alt=""><div class="lbd"><h3></h3><p></p></div></div>
 </dialog>
 
-<dialog id="loginDlg">
-  <button class="x" type="button" aria-label="بستن">&times;</button>
-  <form id="loginForm" novalidate>
-    <h2>🔐 ورود مدیران</h2>
-    <label>نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
-    <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr"></label>
-    <button class="btn" type="submit">ورود</button>
-    <div class="ok" id="loginMsg" role="status"></div>
-  </form>
-</dialog>
-
-<dialog id="dash">
-  <button class="x" type="button" aria-label="بستن">&times;</button>
-  <h2 id="dashTitle">🌠 پیام‌ها و درخواست‌های عضویت</h2>
-  <div class="ok" id="dashMsg" role="status"></div>
-  <ul id="dashList"></ul>
-  <button class="btn ghost" id="logoutBtn" type="button">خروج</button>
-</dialog>
-
 <script src="assets/js/videos-data.js?v=11" defer></script>
 <script src="assets/js/social.js?v=11" defer></script>
+<script src="assets/js/announce.js?v=1" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   'use strict';
@@ -179,19 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // اگر افکت ظاهر شدن کار نکرد، بعد از ۲ ثانیه همه‌ی بخش‌ها نمایان می‌شوند
   setTimeout(() => document.querySelectorAll('.rv').forEach(n => n.classList.add('on')), 2000);
 
-  /* ===== اتصال به سرور (Google Apps Script) =====
-     آدرس Web App را بین دو کوتیشن بگذارید. مثال: 'https://script.google.com/macros/s/AKfy.../exec' */
-  const ADMIN_USER = 'rais';
-  /* رمز حالت بدون سرور (فقط برای وقتی API خالی یا خراب است): پیش‌فرض nova1405 — هش SHA-256 رمز جدید را جایگزین کنید */
-  const ADMIN_HASH = '41c5bb5be14a81142fbfc902bd3a30dbe7d618d4ebe1a4b40c6f1a97ce7290bb';
+  /* آدرس Web App (Google Apps Script) برای ثبت درخواست عضویت */
   const API = 'https://script.google.com/macros/s/AKfycbz8WEOdUAxVkf7lITn6pTTx1FTbjhUWdXpQ1ujpwZ5FB2J0i-bA-HUxP16twUZysCV3bA/exec';
 
   const db = {
     get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   };
-  const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); kids.forEach(k => n.append(k)); return n; };
-  const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, '0')).join('');
 
   /* تم */
   $('#themeBtn').onclick = () => {
@@ -314,54 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (done) f.reset();
     btn.disabled = false;
   });
-
-  /* ورود مدیران + پیام‌ها */
-  const dash = $('#dash'), list = $('#dashList'), dm = $('#dashMsg'), S = sessionStorage;
-  let tok = S.getItem('nova-tok');
-  const say = t => { dm.textContent = t || ''; dm.style.display = t ? 'block' : 'none'; };
-  const fdate = v => { const x = new Date(v); return isNaN(x) ? '' : x.toLocaleDateString('fa-IR'); };
-  const localItems = () => db.get('nova-requests', []).map((x, i) => ({ ...x, id: x.id || 'o' + i }));
-  const getItems = async () => tok === 'local' ? { ok: true, items: localItems() } : post({ action: 'list', token: tok });
-  const delItem = async id => {
-    if (tok === 'local') db.set('nova-requests', localItems().filter(x => x.id !== id));
-    else await post({ action: 'remove', token: tok, id });
-  };
-  const render = async () => {
-    list.replaceChildren(); say('در حال بارگذاری...');
-    let j;
-    try { j = await getItems(); } catch (e) { say('ارتباط با سرور برقرار نشد.'); return; }
-    if (!j.ok) { if (j.err === 'auth') { S.removeItem('nova-tok'); tok = null; dash.close(); $('#loginDlg').showModal(); return; } say('خطا: ' + j.err); return; }
-    say('');
-    $('#dashTitle').textContent = `🌠 پیام‌ها و درخواست‌های عضویت (${j.items.length})`;
-    if (!j.items.length) list.append(el('li', { className: 'mut', textContent: 'هنوز درخواستی ثبت نشده است.' }));
-    j.items.forEach(r => {
-      const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
-      del.onclick = async () => { if (confirm('این درخواست حذف شود؟')) { await delItem(r.id); render(); } };
-      list.append(el('li', { className: 'req' }, el('b', { textContent: r.name }), el('span', { textContent: 'کلاس ' + r.cls }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { dir: 'ltr', textContent: r.shad }), del, el('small', { textContent: 'تاریخ: ' + fdate(r.date) + (tok === 'local' ? ' · ذخیره‌شده در همین مرورگر' : '') })));
-    });
-  };
-  const openDash = () => { dash.showModal(); render(); };
-  document.querySelectorAll('[data-login]').forEach(b => b.onclick = () => { closeMenu(); tok ? openDash() : $('#loginDlg').showModal(); });
-  $('#loginForm').addEventListener('submit', async e => {
-    e.preventDefault();
-    const fm = e.target, m = $('#loginMsg'), btn = fm.querySelector('button');
-    const u = fm.username.value.trim().toLowerCase(), p = fm.password.value.trim();
-    m.style.display = 'block'; m.textContent = 'در حال بررسی...'; btn.disabled = true;
-    let t = null, wrong = false;
-    if (API) {
-      try {
-        const j = await post({ action: 'login', user: u, pass: p });
-        if (j.ok) t = j.token;
-        else if (j.err === 'locked') { m.textContent = 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.'; btn.disabled = false; return; }
-        else if (j.err === 'bad') wrong = true;
-      } catch (er) {}
-    }
-    if (!t && !wrong && u === ADMIN_USER && await sha(p) === ADMIN_HASH) t = 'local'; // حالت بدون سرور
-    if (!t) { m.textContent = 'نام کاربری یا رمز عبور اشتباه است.'; btn.disabled = false; return; }
-    tok = t; S.setItem('nova-tok', t); fm.reset(); m.style.display = 'none'; btn.disabled = false;
-    $('#loginDlg').close(); openDash();
-  });
-  $('#logoutBtn').onclick = () => { S.removeItem('nova-tok'); tok = null; dash.close(); };
 });
 </script>
 </body>
