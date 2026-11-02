@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>پنل مدیران | نوا</title>
+<meta name="theme-color" content="#070a1f">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
+<script>try{document.documentElement.dataset.bsTheme=localStorage.getItem('nova-theme')||'dark'}catch(e){}</script>
+<style>
+textarea{width:100%;margin-top:.2rem;padding:.6rem .8rem;font:inherit;color:var(--ink);background:var(--in);border:1px solid var(--line);border-radius:10px;min-height:7rem;resize:vertical}
+textarea:focus{outline:none;border-color:var(--a1);box-shadow:0 0 0 3px var(--glow)}
+.chk{display:flex;align-items:center;gap:.4rem}
+.chk input{width:auto;margin:0}
+.atop{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.ann{padding:.8rem 1rem;margin-bottom:.6rem;border:1px solid var(--line);border-radius:12px;background:var(--in);display:grid;grid-template-columns:1fr auto;gap:.3rem 1rem}
+.ann p{grid-column:1/-1;margin:0;white-space:pre-wrap;color:var(--mut)}
+.ann small{color:var(--mut)}
+#login{max-width:400px;margin:3rem auto}
+#panel{display:none}
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true" style="display:none"></canvas>
+<main>
+  <div class="wrap stack">
+
+    <section class="panel" id="login">
+      <form id="loginForm" novalidate>
+        <h2>🔐 ورود مدیران</h2>
+        <label>نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
+        <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr"></label>
+        <button class="btn" type="submit">ورود</button>
+        <div class="ok" id="loginMsg" role="status"></div>
+      </form>
+      <p style="text-align:center;margin:1rem 0 0"><a class="more" href="index.html">← بازگشت به سایت</a></p>
+    </section>
+
+    <div id="panel">
+      <section class="panel">
+        <div class="atop">
+          <h2 style="margin:0">🛠 پنل مدیریت نوا</h2>
+          <div style="display:flex;gap:.6rem">
+            <a class="btn ghost small" href="index.html" style="margin:0">← سایت</a>
+            <button class="btn ghost small" id="logoutBtn" type="button" style="margin:0">خروج</button>
+          </div>
+        </div>
+        <div class="ok" id="msg" role="status"></div>
+      </section>
+
+      <section class="panel" style="margin-top:1.2rem">
+        <h2>📢 ارسال اعلان برای همه</h2>
+        <p class="mut" style="margin-top:0">پیامی که اینجا بنویسید برای همه‌ی بازدیدکنندگان سایت با آیکن 🔔 و یک پیام بالای صفحه نمایش داده می‌شود.</p>
+        <form id="annForm" novalidate>
+          <label>عنوان<input name="title" maxlength="80" placeholder="مثال: رصد عمومی این هفته"></label>
+          <label>متن پیام<textarea name="text" maxlength="1000" placeholder="متن اعلان..."></textarea></label>
+          <label class="chk"><input type="checkbox" name="pin"> 📌 سنجاق شود (بالای فهرست بماند)</label>
+          <button class="btn" type="submit" style="margin-top:.7rem">انتشار اعلان</button>
+        </form>
+        <h3 style="margin:1.4rem 0 .6rem">اعلان‌های منتشرشده</h3>
+        <div id="annList"></div>
+      </section>
+
+      <section class="panel" style="margin-top:1.2rem">
+        <h2 id="reqTitle">🌠 درخواست‌های عضویت</h2>
+        <ul id="dashList" style="margin:0"></ul>
+      </section>
+    </div>
+
+  </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const API = 'https://script.google.com/macros/s/AKfycbz8WEOdUAxVkf7lITn6pTTx1FTbjhUWdXpQ1ujpwZ5FB2J0i-bA-HUxP16twUZysCV3bA/exec';
+  const ADMIN_USER = 'rais';
+  const ADMIN_HASH = '41c5bb5be14a81142fbfc902bd3a30dbe7d618d4ebe1a4b40c6f1a97ce7290bb';
+  const S = sessionStorage;
+  let tok = S.getItem('nova-tok');
+
+  const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); kids.forEach(k => n.append(k)); return n; };
+  const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, '0')).join('');
+  const post = async o => (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(o) })).json();
+  const fdate = v => { const x = new Date(+v || v); return isNaN(x) ? '' : x.toLocaleString('fa-IR'); };
+  const db = {
+    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  const say = t => { const m = $('#msg'); m.textContent = t || ''; m.style.display = t ? 'block' : 'none'; };
+
+  const showPanel = () => { $('#login').style.display = 'none'; $('#panel').style.display = 'block'; loadAll(); };
+  const showLogin = () => { $('#panel').style.display = 'none'; $('#login').style.display = 'block'; };
+  const kickOut = () => { S.removeItem('nova-tok'); tok = null; showLogin(); };
+
+  /* ورود */
+  $('#loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fm = e.target, m = $('#loginMsg'), btn = fm.querySelector('button');
+    const u = fm.username.value.trim().toLowerCase(), p = fm.password.value.trim();
+    m.style.display = 'block'; m.textContent = 'در حال بررسی...'; btn.disabled = true;
+    let t = null, wrong = false;
+    try {
+      const j = await post({ action: 'login', user: u, pass: p });
+      if (j.ok) t = j.token;
+      else if (j.err === 'locked') { m.textContent = 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.'; btn.disabled = false; return; }
+      else if (j.err === 'bad') wrong = true;
+    } catch (er) {}
+    if (!t && !wrong && u === ADMIN_USER && await sha(p) === ADMIN_HASH) t = 'local';
+    if (!t) { m.textContent = 'نام کاربری یا رمز عبور اشتباه است.'; btn.disabled = false; return; }
+    tok = t; S.setItem('nova-tok', t); fm.reset(); m.style.display = 'none'; btn.disabled = false;
+    showPanel();
+  });
+  $('#logoutBtn').onclick = kickOut;
+
+  /* اعلان‌ها */
+  async function loadAnn() {
+    const box = $('#annList'); box.replaceChildren();
+    let j;
+    try { j = await post({ action: 'alist' }); } catch (e) { box.append(el('p', { className: 'mut', textContent: 'ارتباط با سرور برقرار نشد.' })); return; }
+    if (!j.ok || !j.items.length) { box.append(el('p', { className: 'mut', textContent: 'هنوز اعلانی منتشر نشده است.' })); return; }
+    j.items.forEach(a => {
+      const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
+      del.onclick = async () => {
+        if (!confirm('این اعلان حذف شود؟')) return;
+        try { const r = await post({ action: 'adel', token: tok, id: a.id }); if (r.err === 'auth') return kickOut(); } catch (e) { say('حذف انجام نشد.'); }
+        loadAnn();
+      };
+      box.append(el('div', { className: 'ann' },
+        el('b', { textContent: (a.pin ? '📌 ' : '') + a.title }), del,
+        el('p', { textContent: a.text }),
+        el('small', { textContent: fdate(a.ts) })));
+    });
+  }
+  $('#annForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = e.target, title = f.title.value.trim(), text = f.text.value.trim();
+    if (!title || !text) { say('عنوان و متن اعلان را بنویسید.'); return; }
+    if (tok === 'local') { say('ورود شما در حالت بدون سرور است؛ اعلان فقط وقتی برای همه نمایش داده می‌شود که به سرور وصل باشید.'); return; }
+    const btn = f.querySelector('[type=submit]'); btn.disabled = true; say('در حال انتشار...');
+    try {
+      const r = await post({ action: 'apost', token: tok, title, text, pin: f.pin.checked });
+      if (r.err === 'auth') { kickOut(); return; }
+      if (!r.ok) { say('خطا: ' + r.err); btn.disabled = false; return; }
+      f.reset(); say('✨ اعلان منتشر شد و برای همه نمایش داده می‌شود.');
+      loadAnn();
+    } catch (er) { say('ارتباط با سرور برقرار نشد.'); }
+    btn.disabled = false;
+  });
+
+  /* درخواست‌های عضویت */
+  const localItems = () => db.get('nova-requests', []).map((x, i) => ({ ...x, id: x.id || 'o' + i }));
+  async function loadReq() {
+    const list = $('#dashList'); list.replaceChildren();
+    let j;
+    try { j = tok === 'local' ? { ok: true, items: localItems() } : await post({ action: 'list', token: tok }); }
+    catch (e) { list.append(el('li', { className: 'mut', textContent: 'ارتباط با سرور برقرار نشد.' })); return; }
+    if (!j.ok) { if (j.err === 'auth') return kickOut(); say('خطا: ' + j.err); return; }
+    $('#reqTitle').textContent = `🌠 درخواست‌های عضویت (${j.items.length})`;
+    if (!j.items.length) list.append(el('li', { className: 'mut', textContent: 'هنوز درخواستی ثبت نشده است.' }));
+    j.items.forEach(r => {
+      const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
+      del.onclick = async () => {
+        if (!confirm('این درخواست حذف شود؟')) return;
+        if (tok === 'local') db.set('nova-requests', localItems().filter(x => x.id !== r.id));
+        else await post({ action: 'remove', token: tok, id: r.id });
+        loadReq();
+      };
+      list.append(el('li', { className: 'req' },
+        el('b', { textContent: r.name }), el('span', { textContent: 'کلاس ' + r.cls }),
+        el('span', { dir: 'ltr', textContent: r.email }), el('span', { dir: 'ltr', textContent: r.shad }), del,
+        el('small', { textContent: 'تاریخ: ' + fdate(r.date) + (tok === 'local' ? ' · ذخیره‌شده در همین مرورگر' : '') })));
+    });
+  }
+  function loadAll() { say(''); loadAnn(); loadReq(); }
+
+  tok ? showPanel() : showLogin();
+});
+</script>
+</body>
+</html>
