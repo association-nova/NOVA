@@ -10,175 +10,271 @@
 <link rel="stylesheet" href="assets/css/style.css?v=11">
 <script>try{document.documentElement.dataset.bsTheme=localStorage.getItem('nova-theme')||'dark'}catch(e){}</script>
 <style>
-textarea{width:100%;margin-top:.2rem;padding:.6rem .8rem;font:inherit;color:var(--ink);background:var(--in);border:1px solid var(--line);border-radius:10px;min-height:7rem;resize:vertical}
+textarea{width:100%;margin-top:.2rem;padding:.6rem .8rem;font:inherit;color:var(--ink);background:var(--in);border:1px solid var(--line);border-radius:10px;min-height:6.5rem;resize:vertical}
 textarea:focus{outline:none;border-color:var(--a1);box-shadow:0 0 0 3px var(--glow)}
+.atop{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.atop .btn{margin:0}
+.acts{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.view{display:none}.view.on{display:block}
+.hub{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
+.hubc{font:inherit;color:var(--ink);text-align:center;padding:1.6rem 1rem;border:1px solid var(--line);border-radius:16px;background:var(--in);cursor:pointer;transition:transform .2s,border-color .2s}
+.hubc:hover{transform:translateY(-3px);border-color:var(--a1)}
+.hubc b{display:block;font-size:2rem}
+.hubc span{display:block;margin-top:.3rem;font-weight:700}
+.hubc small{color:var(--mut)}
+.back{margin-bottom:1rem}
+.sub{margin:1.6rem 0 .6rem;font-size:1.05rem}
+.att{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.5rem;margin:.8rem 0}
+.att label{display:flex;align-items:center;gap:.5rem;margin:0;padding:.5rem .8rem;border:1px solid var(--line);border-radius:10px;background:var(--in);color:var(--ink);cursor:pointer}
+.att label.present{border-color:#3ecf8e;background:rgba(62,207,142,.12)}
+.att input{width:auto;margin:0}
+.att small{color:var(--mut);margin-inline-start:auto}
+.item{display:grid;grid-template-columns:1fr auto;gap:.3rem 1rem;align-items:center;padding:.8rem 1rem;margin-bottom:.6rem;border:1px solid var(--line);border-radius:12px;background:var(--in)}
+.item p{grid-column:1/-1;margin:0;white-space:pre-wrap;color:var(--mut)}
+.item small{grid-column:1/-1;color:var(--mut)}
+.pill{display:inline-block;font-size:.75rem;padding:0 .6rem;border-radius:99px;border:1px solid var(--a1);color:var(--a1)}
+.pill.warn{border-color:#ffb830;color:#ffb830}
+.pill.good{border-color:#3ecf8e;color:#3ecf8e}
 .chk{display:flex;align-items:center;gap:.4rem}
 .chk input{width:auto;margin:0}
-.atop{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-.ann{padding:.8rem 1rem;margin-bottom:.6rem;border:1px solid var(--line);border-radius:12px;background:var(--in);display:grid;grid-template-columns:1fr auto;gap:.3rem 1rem}
-.ann p{grid-column:1/-1;margin:0;white-space:pre-wrap;color:var(--mut)}
-.ann small{color:var(--mut)}
-#login{max-width:400px;margin:3rem auto}
-#panel{display:none}
+.sm{padding:.2rem .8rem;font-size:.82rem;margin:0}
+@media (max-width:720px){.hub{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<canvas id="sky" aria-hidden="true" style="display:none"></canvas>
 <main>
   <div class="wrap stack">
 
-    <section class="panel" id="login">
-      <form id="loginForm" novalidate>
-        <h2>🔐 ورود مدیران</h2>
-        <label>نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
-        <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr"></label>
-        <button class="btn" type="submit">ورود</button>
-        <div class="ok" id="loginMsg" role="status"></div>
-      </form>
-      <p style="text-align:center;margin:1rem 0 0"><a class="more" href="index.html">← بازگشت به سایت</a></p>
+    <section class="panel">
+      <div class="atop">
+        <h2 style="margin:0">🛠 پنل مدیران نوا</h2>
+        <div class="acts">
+          <span class="mut" id="who" dir="ltr"></span>
+          <a class="btn ghost sm" href="index.html">← سایت</a>
+          <button class="btn ghost sm" id="logoutBtn" type="button">خروج</button>
+        </div>
+      </div>
+      <div class="ok" id="msg" role="status"></div>
     </section>
 
-    <div id="panel">
-      <section class="panel">
-        <div class="atop">
-          <h2 style="margin:0">🛠 پنل مدیریت نوا</h2>
-          <div style="display:flex;gap:.6rem">
-            <a class="btn ghost small" href="index.html" style="margin:0">← سایت</a>
-            <button class="btn ghost small" id="logoutBtn" type="button" style="margin:0">خروج</button>
-          </div>
-        </div>
-        <div class="ok" id="msg" role="status"></div>
-      </section>
+    <!-- صفحه‌ی انتخاب -->
+    <section class="panel view on" id="v-hub">
+      <h2>چه کاری می‌خواهید انجام دهید؟</h2>
+      <div class="hub">
+        <button class="hubc" type="button" data-go="msg"><b>📨</b><span>ارسال پیام</span><small>پیام به غایبان و اعلان همگانی</small></button>
+        <button class="hubc" type="button" data-go="req"><b>🌠</b><span>درخواست‌های عضویت</span><small id="reqCount">&nbsp;</small></button>
+        <button class="hubc" type="button" data-go="mem"><b>👥</b><span>فهرست اعضا</span><small id="memCount">&nbsp;</small></button>
+      </div>
+    </section>
 
-      <section class="panel" style="margin-top:1.2rem">
-        <h2>📢 ارسال اعلان برای همه</h2>
-        <p class="mut" style="margin-top:0">پیامی که اینجا بنویسید برای همه‌ی بازدیدکنندگان سایت با آیکن 🔔 و یک پیام بالای صفحه نمایش داده می‌شود.</p>
-        <form id="annForm" novalidate>
-          <label>عنوان<input name="title" maxlength="80" placeholder="مثال: رصد عمومی این هفته"></label>
-          <label>متن پیام<textarea name="text" maxlength="1000" placeholder="متن اعلان..."></textarea></label>
-          <label class="chk"><input type="checkbox" name="pin"> 📌 سنجاق شود (بالای فهرست بماند)</label>
-          <button class="btn" type="submit" style="margin-top:.7rem">انتشار اعلان</button>
-        </form>
-        <h3 style="margin:1.4rem 0 .6rem">اعلان‌های منتشرشده</h3>
-        <div id="annList"></div>
-      </section>
+    <!-- پیام -->
+    <section class="panel view" id="v-msg">
+      <button class="btn ghost sm back" type="button" data-go="hub">← بازگشت</button>
+      <h2>📨 پیام به غایبان</h2>
+      <p class="mut" style="margin-top:0">کسانی که <b>حاضر</b> بودند را تیک بزنید. پیام فقط برای افراد <b>بدون تیک</b> فرستاده می‌شود.</p>
+      <div class="acts">
+        <button class="btn ghost sm" type="button" id="allPresent">همه حاضر</button>
+        <button class="btn ghost sm" type="button" id="nonePresent">هیچ‌کس حاضر نیست</button>
+      </div>
+      <div class="att" id="att"></div>
+      <form id="sendForm" novalidate>
+        <label>عنوان<input name="title" maxlength="80" value="پیام انجمن نوا"></label>
+        <label>متن پیام<textarea name="text" maxlength="1000" placeholder="مثال: امروز در جلسه‌ی انجمن حضور نداشتید. لطفاً هماهنگ کنید."></textarea></label>
+        <button class="btn" type="submit" id="sendBtn">ارسال پیام</button>
+      </form>
 
-      <section class="panel" style="margin-top:1.2rem">
-        <h2 id="reqTitle">🌠 درخواست‌های عضویت</h2>
-        <ul id="dashList" style="margin:0"></ul>
-      </section>
-    </div>
+      <h3 class="sub">📢 اعلان همگانی (برای همه‌ی بازدیدکنندگان سایت)</h3>
+      <form id="annForm" novalidate>
+        <label>عنوان<input name="title" maxlength="80" placeholder="مثال: رصد عمومی این هفته"></label>
+        <label>متن اعلان<textarea name="text" maxlength="1000"></textarea></label>
+        <label class="chk"><input type="checkbox" name="pin"> 📌 سنجاق شود</label>
+        <button class="btn" type="submit" style="margin-top:.7rem">انتشار اعلان</button>
+      </form>
+      <div id="annList" style="margin-top:1rem"></div>
+
+      <h3 class="sub">🕘 آخرین پیام‌های ارسالی</h3>
+      <div id="sentList"></div>
+    </section>
+
+    <!-- درخواست‌ها -->
+    <section class="panel view" id="v-req">
+      <button class="btn ghost sm back" type="button" data-go="hub">← بازگشت</button>
+      <h2 id="reqTitle">🌠 درخواست‌های عضویت</h2>
+      <div id="reqList"></div>
+    </section>
+
+    <!-- اعضا -->
+    <section class="panel view" id="v-mem">
+      <button class="btn ghost sm back" type="button" data-go="hub">← بازگشت</button>
+      <h2 id="memTitle">👥 فهرست اعضا</h2>
+      <form id="memForm" novalidate>
+        <label>اسم‌ها را وارد کنید (هر خط یک نفر؛ ایمیل جیمیل اختیاری و بعد از ویرگول)
+          <textarea name="lines" dir="auto" placeholder="علی محمدی, ali@gmail.com&#10;رضا احمدی"></textarea></label>
+        <button class="btn" type="submit">افزودن به فهرست</button>
+      </form>
+      <p class="mut" style="font-size:.85rem">هر عضو فقط وقتی می‌تواند وارد پنل اعضا شود که جیمیلش ثبت شده باشد.</p>
+      <div id="memList"></div>
+    </section>
 
   </div>
 </main>
 
+<script src="assets/js/nova-api.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+(() => {
   'use strict';
+  if (!NOVA.guard('admin')) return;
   const $ = s => document.querySelector(s);
-  const API = 'https://script.google.com/macros/s/AKfycbz8WEOdUAxVkf7lITn6pTTx1FTbjhUWdXpQ1ujpwZ5FB2J0i-bA-HUxP16twUZysCV3bA/exec';
-  const ADMIN_USER = 'rais';
-  const ADMIN_HASH = '41c5bb5be14a81142fbfc902bd3a30dbe7d618d4ebe1a4b40c6f1a97ce7290bb';
-  const S = sessionStorage;
-  let tok = S.getItem('nova-tok');
+  const { call, el, fdate } = NOVA;
+  let members = [], requests = [];
 
-  const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); kids.forEach(k => n.append(k)); return n; };
-  const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, '0')).join('');
-  const post = async o => (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(o) })).json();
-  const fdate = v => { const x = new Date(+v || v); return isNaN(x) ? '' : x.toLocaleString('fa-IR'); };
-  const db = {
-    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  };
+  $('#who').textContent = NOVA.sess().email;
+  $('#logoutBtn').onclick = NOVA.logout;
   const say = t => { const m = $('#msg'); m.textContent = t || ''; m.style.display = t ? 'block' : 'none'; };
 
-  const showPanel = () => { $('#login').style.display = 'none'; $('#panel').style.display = 'block'; loadAll(); };
-  const showLogin = () => { $('#panel').style.display = 'none'; $('#login').style.display = 'block'; };
-  const kickOut = () => { S.removeItem('nova-tok'); tok = null; showLogin(); };
+  /* جابه‌جایی بین بخش‌ها */
+  const show = v => { document.querySelectorAll('.view').forEach(n => n.classList.toggle('on', n.id === 'v-' + v)); say(''); scrollTo(0, 0); if (v === 'msg') loadMsg(); if (v === 'req') loadReq(); if (v === 'mem') loadMem(); };
+  document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) show(b.dataset.go); });
 
-  /* ورود */
-  $('#loginForm').addEventListener('submit', async e => {
+  const fail = j => { say('خطا: ' + (j && j.err ? j.err : 'ارتباط با سرور برقرار نشد.')); };
+
+  /* ===== اعضا ===== */
+  async function fetchMembers() {
+    const j = await call('mlist');
+    if (j.ok) members = j.items; else fail(j);
+    $('#memCount').textContent = members.length ? members.length + ' عضو' : 'هنوز عضوی ثبت نشده';
+  }
+  async function loadMem() {
+    await fetchMembers();
+    $('#memTitle').textContent = `👥 فهرست اعضا (${members.length})`;
+    const box = $('#memList'); box.replaceChildren();
+    if (!members.length) box.append(el('p', { className: 'mut', textContent: 'هنوز عضوی اضافه نشده است.' }));
+    members.forEach(m => {
+      const edit = el('button', { type: 'button', className: 'btn ghost sm', textContent: 'ایمیل' });
+      edit.onclick = async () => {
+        const v = prompt('جیمیل ' + m.name, m.email || '');
+        if (v === null) return;
+        const r = await call('mset', { id: m.id, email: v.trim() });
+        r.ok ? loadMem() : fail(r);
+      };
+      const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
+      del.onclick = async () => { if (confirm(m.name + ' از فهرست حذف شود؟')) { const r = await call('mdel', { id: m.id }); r.ok ? loadMem() : fail(r); } };
+      box.append(el('div', { className: 'item' },
+        el('b', { textContent: m.name }),
+        el('span', { className: 'acts' }, edit, del),
+        el('small', { dir: 'ltr', textContent: m.email || '' }, m.email ? '' : el('span', { className: 'pill warn', textContent: 'بدون ایمیل؛ نمی‌تواند وارد شود' }))));
+    });
+  }
+  $('#memForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const fm = e.target, m = $('#loginMsg'), btn = fm.querySelector('button');
-    const u = fm.username.value.trim().toLowerCase(), p = fm.password.value.trim();
-    m.style.display = 'block'; m.textContent = 'در حال بررسی...'; btn.disabled = true;
-    let t = null, wrong = false;
-    try {
-      const j = await post({ action: 'login', user: u, pass: p });
-      if (j.ok) t = j.token;
-      else if (j.err === 'locked') { m.textContent = 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.'; btn.disabled = false; return; }
-      else if (j.err === 'bad') wrong = true;
-    } catch (er) {}
-    if (!t && !wrong && u === ADMIN_USER && await sha(p) === ADMIN_HASH) t = 'local';
-    if (!t) { m.textContent = 'نام کاربری یا رمز عبور اشتباه است.'; btn.disabled = false; return; }
-    tok = t; S.setItem('nova-tok', t); fm.reset(); m.style.display = 'none'; btn.disabled = false;
-    showPanel();
+    const people = e.target.lines.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+      const [n, ...r] = l.split(/[,،]/);
+      return { name: n.trim(), email: (r.join(',') || '').trim() };
+    }).filter(p => p.name);
+    if (!people.length) { say('حداقل یک اسم وارد کنید.'); return; }
+    const bad = people.find(p => p.email && !/^[^\s@]+@gmail\.com$/i.test(p.email));
+    if (bad) { say('ایمیل «' + bad.name + '» جیمیل معتبر نیست.'); return; }
+    const r = await call('madd', { people });
+    if (!r.ok) return fail(r);
+    e.target.reset(); say('✨ ' + r.added + ' نفر اضافه شد.'); loadMem();
   });
-  $('#logoutBtn').onclick = kickOut;
 
-  /* اعلان‌ها */
+  /* ===== درخواست‌ها ===== */
+  async function loadReq() {
+    await fetchMembers();
+    const box = $('#reqList'); box.replaceChildren();
+    const j = await call('list');
+    if (!j.ok) return fail(j);
+    requests = j.items;
+    $('#reqCount').textContent = requests.length ? requests.length + ' درخواست' : 'درخواستی نیست';
+    $('#reqTitle').textContent = `🌠 درخواست‌های عضویت (${requests.length})`;
+    if (!requests.length) box.append(el('p', { className: 'mut', textContent: 'هنوز درخواستی ثبت نشده است.' }));
+    const emails = new Set(members.map(m => (m.email || '').toLowerCase()));
+    requests.forEach(r => {
+      const isMem = emails.has((r.email || '').toLowerCase());
+      const add = isMem ? el('span', { className: 'pill good', textContent: 'عضو است' })
+        : el('button', { type: 'button', className: 'btn sm', textContent: '＋ افزودن به اعضا' });
+      if (!isMem) add.onclick = async () => { const x = await call('madd', { people: [{ name: r.name, email: r.email }] }); x.ok ? (say('✨ ' + r.name + ' به اعضا اضافه شد.'), loadReq()) : fail(x); };
+      const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
+      del.onclick = async () => { if (confirm('این درخواست حذف شود؟')) { const x = await call('remove', { id: r.id }); x.ok ? loadReq() : fail(x); } };
+      box.append(el('div', { className: 'item' },
+        el('b', { textContent: r.name }), el('span', { className: 'acts' }, add, del),
+        el('p', { textContent: 'کلاس ' + r.cls + ' · شاد: ' + r.shad + ' · ' + r.email, dir: 'auto' }),
+        el('small', { textContent: 'تاریخ: ' + fdate(r.date) })));
+    });
+  }
+
+  /* ===== پیام‌ها ===== */
+  const updateSendBtn = () => {
+    const n = document.querySelectorAll('#att input:not(:checked)').length;
+    $('#sendBtn').textContent = n ? `ارسال پیام به ${n} نفر (بدون تیک)` : 'همه حاضرند؛ پیامی ارسال نمی‌شود';
+    $('#sendBtn').disabled = !n;
+  };
+  async function loadMsg() {
+    await fetchMembers();
+    const att = $('#att'); att.replaceChildren();
+    if (!members.length) att.append(el('p', { className: 'mut', textContent: 'ابتدا از بخش «فهرست اعضا» اسم‌ها را اضافه کنید.' }));
+    members.forEach(m => {
+      const cb = el('input', { type: 'checkbox', value: m.id });
+      const lb = el('label', {}, cb, m.name);
+      cb.onchange = () => { lb.classList.toggle('present', cb.checked); updateSendBtn(); };
+      att.append(lb);
+    });
+    updateSendBtn(); loadAnn(); loadSent();
+  }
+  const setAll = v => document.querySelectorAll('#att input').forEach(c => { c.checked = v; c.parentElement.classList.toggle('present', v); updateSendBtn(); });
+  $('#allPresent').onclick = () => setAll(true);
+  $('#nonePresent').onclick = () => setAll(false);
+
+  $('#sendForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = e.target, title = f.title.value.trim(), text = f.text.value.trim();
+    const absent = [...document.querySelectorAll('#att input:not(:checked)')].map(c => c.value);
+    if (!absent.length) return;
+    if (!title || !text) { say('عنوان و متن پیام را بنویسید.'); return; }
+    if (!confirm(`پیام برای ${absent.length} نفر ارسال شود؟`)) return;
+    $('#sendBtn').disabled = true; say('در حال ارسال...');
+    const r = await call('msend', { ids: absent, title, text });
+    if (!r.ok) { fail(r); updateSendBtn(); return; }
+    f.text.value = ''; say('✨ پیام برای ' + r.sent + ' نفر ارسال شد.'); updateSendBtn(); loadSent();
+  });
+
+  async function loadSent() {
+    const box = $('#sentList'); box.replaceChildren();
+    const j = await call('sent');
+    if (!j.ok || !j.items.length) { box.append(el('p', { className: 'mut', textContent: 'هنوز پیامی ارسال نشده است.' })); return; }
+    j.items.forEach(s => box.append(el('div', { className: 'item' },
+      el('b', { textContent: s.title }), el('span', { className: 'pill', textContent: s.names.length + ' نفر' }),
+      el('p', { textContent: s.text }),
+      el('small', { textContent: 'به: ' + s.names.join('، ') + ' · ' + fdate(s.ts) }))));
+  }
+
   async function loadAnn() {
     const box = $('#annList'); box.replaceChildren();
-    let j;
-    try { j = await post({ action: 'alist' }); } catch (e) { box.append(el('p', { className: 'mut', textContent: 'ارتباط با سرور برقرار نشد.' })); return; }
+    const j = await NOVA.post({ action: 'alist' });
     if (!j.ok || !j.items.length) { box.append(el('p', { className: 'mut', textContent: 'هنوز اعلانی منتشر نشده است.' })); return; }
     j.items.forEach(a => {
       const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
-      del.onclick = async () => {
-        if (!confirm('این اعلان حذف شود؟')) return;
-        try { const r = await post({ action: 'adel', token: tok, id: a.id }); if (r.err === 'auth') return kickOut(); } catch (e) { say('حذف انجام نشد.'); }
-        loadAnn();
-      };
-      box.append(el('div', { className: 'ann' },
-        el('b', { textContent: (a.pin ? '📌 ' : '') + a.title }), del,
-        el('p', { textContent: a.text }),
-        el('small', { textContent: fdate(a.ts) })));
+      del.onclick = async () => { if (confirm('این اعلان حذف شود؟')) { const r = await call('adel', { id: a.id }); r.ok ? loadAnn() : fail(r); } };
+      box.append(el('div', { className: 'item' }, el('b', { textContent: (a.pin ? '📌 ' : '') + a.title }), del, el('p', { textContent: a.text }), el('small', { textContent: fdate(a.ts) })));
     });
   }
   $('#annForm').addEventListener('submit', async e => {
     e.preventDefault();
     const f = e.target, title = f.title.value.trim(), text = f.text.value.trim();
     if (!title || !text) { say('عنوان و متن اعلان را بنویسید.'); return; }
-    if (tok === 'local') { say('ورود شما در حالت بدون سرور است؛ اعلان فقط وقتی برای همه نمایش داده می‌شود که به سرور وصل باشید.'); return; }
-    const btn = f.querySelector('[type=submit]'); btn.disabled = true; say('در حال انتشار...');
-    try {
-      const r = await post({ action: 'apost', token: tok, title, text, pin: f.pin.checked });
-      if (r.err === 'auth') { kickOut(); return; }
-      if (!r.ok) { say('خطا: ' + r.err); btn.disabled = false; return; }
-      f.reset(); say('✨ اعلان منتشر شد و برای همه نمایش داده می‌شود.');
-      loadAnn();
-    } catch (er) { say('ارتباط با سرور برقرار نشد.'); }
-    btn.disabled = false;
+    const r = await call('apost', { title, text, pin: f.pin.checked });
+    if (!r.ok) return fail(r);
+    f.reset(); say('✨ اعلان منتشر شد.'); loadAnn();
   });
 
-  /* درخواست‌های عضویت */
-  const localItems = () => db.get('nova-requests', []).map((x, i) => ({ ...x, id: x.id || 'o' + i }));
-  async function loadReq() {
-    const list = $('#dashList'); list.replaceChildren();
-    let j;
-    try { j = tok === 'local' ? { ok: true, items: localItems() } : await post({ action: 'list', token: tok }); }
-    catch (e) { list.append(el('li', { className: 'mut', textContent: 'ارتباط با سرور برقرار نشد.' })); return; }
-    if (!j.ok) { if (j.err === 'auth') return kickOut(); say('خطا: ' + j.err); return; }
-    $('#reqTitle').textContent = `🌠 درخواست‌های عضویت (${j.items.length})`;
-    if (!j.items.length) list.append(el('li', { className: 'mut', textContent: 'هنوز درخواستی ثبت نشده است.' }));
-    j.items.forEach(r => {
-      const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' });
-      del.onclick = async () => {
-        if (!confirm('این درخواست حذف شود؟')) return;
-        if (tok === 'local') db.set('nova-requests', localItems().filter(x => x.id !== r.id));
-        else await post({ action: 'remove', token: tok, id: r.id });
-        loadReq();
-      };
-      list.append(el('li', { className: 'req' },
-        el('b', { textContent: r.name }), el('span', { textContent: 'کلاس ' + r.cls }),
-        el('span', { dir: 'ltr', textContent: r.email }), el('span', { dir: 'ltr', textContent: r.shad }), del,
-        el('small', { textContent: 'تاریخ: ' + fdate(r.date) + (tok === 'local' ? ' · ذخیره‌شده در همین مرورگر' : '') })));
-    });
-  }
-  function loadAll() { say(''); loadAnn(); loadReq(); }
-
-  tok ? showPanel() : showLogin();
-});
+  /* شروع: شمارنده‌های صفحه‌ی انتخاب */
+  (async () => {
+    await fetchMembers();
+    const j = await call('list');
+    if (j.ok) $('#reqCount').textContent = j.items.length ? j.items.length + ' درخواست' : 'درخواستی نیست';
+  })();
+})();
 </script>
 </body>
 </html>
