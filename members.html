@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پنل اعضا | نوا</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Vazirmatn,Tahoma,sans-serif;background:#070a1f;color:#fff}
+.wrap{max-width:700px;margin:auto;padding:16px}.panel{background:#12163a;border:1px solid #2a3170;border-radius:16px;padding:16px;margin-bottom:16px}
+select,input{width:100%;padding:.6rem;border-radius:10px;border:1px solid #33395f;background:#0b0f2a;color:#fff;font:inherit}
+.btn{background:#6c7bff;border:0;color:#fff;border-radius:10px;padding:.6rem 1.2rem;margin-top:.7rem;font:inherit;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid #6c7bff}.btn.sm{padding:.3rem .8rem;font-size:.85rem}
+.bell{font-size:26px;cursor:pointer}.count{background:#ff3b5c;border-radius:99px;padding:0 9px;font-size:14px}
+.msg{border:1px solid #33395f;border-radius:12px;padding:.7rem;margin-bottom:.6rem;background:#0b0f2a}
+.msg.unread{border-color:#ffb830;background:rgba(255,184,48,.08)}.mut{color:#9aa3c7}.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="panel" id="loginBox"><h2>🔐 ورود اعضا</h2><select id="userSelect"></select><button class="btn" id="loginBtn">ورود</button><p class="mut">اگر اسمت نیست به مدیر بگو در admin.html اضافه‌ات کند.</p></div>
+<div class="panel hidden" id="mainBox">
+<div style="display:flex;justify-content:space-between;align-items:center"><b id="welcome"></b><button class="btn ghost sm" id="logoutBtn">خروج</button></div><hr>
+<div class="bell">🔔 <span class="count" id="bellCount">0</span> <span style="font-size:15px">زنگوله من</span></div>
+<div id="bellList" style="margin-top:.8rem"></div>
+<button class="btn ghost sm" id="readAllBtn">همه را خواندم</button></div>
+<div class="panel hidden" id="annBox"><h2>📢 اعلان همگانی</h2><div id="annList"></div></div>
+</div>
+<script>
+function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)}
+function cur(){return localStorage.getItem('nova_current_user')||''}
+function fill(){const m=JSON.parse(localStorage.getItem('nova_members_v1')||'[]');const s=document.getElementById('userSelect');s.innerHTML='';m.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o)});if(!m.length)s.innerHTML='<option>عضوی ثبت نشده</option>'}fill();
+function checkAuto(){const u=cur();if(!u)return;const y=yesterdayStr();const aY=JSON.parse(localStorage.getItem('nova_att_'+y)||'{}');if(Object.keys(aY).length&&!aY[u]){const k='nova_bell_'+u;const arr=JSON.parse(localStorage.getItem(k)||'[]');if(!arr.find(m=>m.auto&&m.day===y)){arr.unshift({id:Date.now(),auto:true,day:y,title:'یادآوری فعالیت ⚠️',text:u+' عزیز، دیروز فعالیت را انجام ندادی و تیک برایت ثبت نشد.',date:new Date().toLocaleString('fa-IR'),read:false});localStorage.setItem(k,JSON.stringify(arr))}}}
+function renderBell(){const u=cur();const arr=JSON.parse(localStorage.getItem('nova_bell_'+u)||'[]');document.getElementById('bellCount').textContent=arr.filter(m=>!m.read).length;const b=document.getElementById('bellList');b.innerHTML=arr.length?'':'<p class=mut>پیامی نداری 🎉</p>';arr.forEach(m=>{const d=document.createElement('div');d.className='msg'+(m.read?'':' unread');d.innerHTML='<b>'+m.title+'</b><br><small>'+m.date+'</small><p>'+m.text+'</p>';if(!m.read){const btn=document.createElement('button');btn.className='btn sm';btn.textContent='خواندم';btn.onclick=()=>{const a=JSON.parse(localStorage.getItem('nova_bell_'+u)||'[]');a.find(x=>x.id===m.id).read=true;localStorage.setItem('nova_bell_'+u,JSON.stringify(a));renderBell()};d.appendChild(btn)}b.appendChild(d)})}
+function renderAnn(){const b=document.getElementById('annList');b.innerHTML='';const a=JSON.parse(localStorage.getItem('nova_ann_global_v1')||'[]');if(!a.length)b.innerHTML='<p class=mut>اعلانی نیست</p>';a.forEach(m=>{const d=document.createElement('div');d.className='msg';d.innerHTML='<b>'+m.title+'</b><p>'+m.text+'</p>';b.appendChild(d)})}
+function show(){const u=cur();if(!u)return;document.getElementById('loginBox').classList.add('hidden');document.getElementById('mainBox').classList.remove('hidden');document.getElementById('annBox').classList.remove('hidden');document.getElementById('welcome').textContent='سلام '+u;checkAuto();renderBell();renderAnn()}
+document.getElementById('loginBtn').onclick=()=>{const v=document.getElementById('userSelect').value;if(!v)return;localStorage.setItem('nova_current_user',v);show()};
+document.getElementById('logoutBtn').onclick=()=>{localStorage.removeItem('nova_current_user');location.reload()};
+document.getElementById('readAllBtn').onclick=()=>{const u=cur();const a=JSON.parse(localStorage.getItem('nova_bell_'+u)||'[]');a.forEach(m=>m.read=true);localStorage.setItem('nova_bell_'+u,JSON.stringify(a));renderBell()};
+if(cur())show();
+</script>
+</body>
+</html>
