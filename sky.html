@@ -3,395 +3,99 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>نوا | انجمن نجوم دانش‌آموزی</title>
-<meta name="description" content="انجمن نجوم نوا؛ رصد عمومی، آموزش نجوم، عکاسی نجومی و گالری آسمان شب. به انجمن بپیوندید.">
-<meta property="og:title" content="نوا | انجمن نجوم دانش‌آموزی">
-<meta property="og:image" content="assets/img/3.jpg">
-<meta name="theme-color" content="#070a1f">
+<title>گالری کامل و دانستنی‌ها | نوا</title>
+<meta name="description" content="گالری کامل آسمان شب و ۱۲ دانستنی نجومی انجمن نوا">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="preload" as="image" href="assets/img/3.jpg">
 <link rel="stylesheet" href="assets/css/style.css?v=11">
 <script>try{document.documentElement.dataset.bsTheme=localStorage.getItem('nova-theme')||'dark'}catch(e){}</script>
+<style>
+.gal{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem}
+@media(max-width:900px){.gal{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.gal{grid-template-columns:repeat(2,1fr)}}
+.g{padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:zoom-in;background:var(--in);aspect-ratio:4/3;position:relative}
+.g img{width:100%;height:100%;object-fit:cover;display:block}
+.g .cap{position:absolute;bottom:0;right:0;left:0;padding:.3rem .6rem;font-size:.8rem;background:rgba(0,0,0,.55);color:#fff}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:900px){.facts{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.facts{grid-template-columns:1fr}}
+.facts article{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--in)}
+.facts .fi{height:150px;background-size:cover;background-position:center}
+.facts .ft{padding:.9rem 1rem}
+.facts b{color:var(--a1)}
+.facts p{margin:.3rem 0 0;font-size:.9rem;color:var(--mut)}
+#nv-modal{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.75)}
+#nv-modal.open{display:flex}
+#nv-modal .box{max-width:640px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+#nv-modal img{width:100%;max-height:60vh;object-fit:cover;display:block}
+#nv-modal .tx{padding:1.1rem 1.3rem}
+#nv-modal .tx h3{margin:0 0 .4rem}
+#nv-modal .tx p{margin:0;color:var(--mut);line-height:1.9}
+#nv-modal .cls{display:block;margin:1rem auto 0}
+</style>
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
-<i class="sh" aria-hidden="true"></i><i class="sh b" aria-hidden="true"></i>
-
 <header>
-  <div class="wrap bar">
-    <button class="menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu" aria-label="منو">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-    </button>
-    <a class="brand" href="#top"><img src="assets/icons/nova-light.png" alt="لوگوی نوا" width="42" height="42"><span><b>نوا</b><small>سفری به دنیای ستارگان...</small></span></a>
-    <div class="dnav">
-      <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌ها</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر ما</a><a href="#contact">📞 تماس</a>
-    </div>
-    <button type="button" class="btn ghost lg" data-login>🔐<span> ورود اعضا</span></button>
-    <button class="tg" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز"><span>☀</span><span>☾</span></button>
-  </div>
-  <nav id="menu" aria-label="منوی اصلی">
-    <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌های نجومی</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت در انجمن</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر فعالیت‌ها</a><a href="#contact">📞 تماس با ما</a>
-    <button type="button" data-login>🔐 ورود اعضا</button>
-  </nav>
+<div class="wrap bar">
+<button class="menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu" aria-label="منو">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+<a class="brand" href="index.html"><img src="assets/icons/nova-light.png" alt="لوگوی نوا" width="42" height="42"><span><b>نوا</b><small>سفری به دنیای ستارگان...</small></span></a>
+<div class="dnav">
+<a href="index.html">🏠 خانه</a>
+<a href="#gallery">🔭 گالری کامل</a>
+<a href="#facts">🪐 همه‌ی دانستنی‌ها</a>
+<a href="index.html#videos">▶ ویدیوها</a>
+<a href="index.html#about">ℹ درباره ما</a>
+</div>
+<a class="btn ghost lg" href="login/login.html">🔐<span> ورود اعضا</span></a>
+<button class="tg" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز"><span>☀</span><span>☾</span></button>
+</div>
+<nav id="menu" aria-label="منوی اصلی">
+<a href="index.html">🏠 خانه</a>
+<a href="#gallery">🔭 گالری کامل</a>
+<a href="#facts">🪐 همه‌ی دانستنی‌ها</a>
+<a href="login/login.html">🔐 ورود اعضا و مدیران</a>
+</nav>
 </header>
-
 <main>
-  <section class="hero" id="top">
-    <div class="wrap hero-in">
-      <div class="hero-brand"><img src="assets/icons/nova-light.png" alt="" width="64" height="64"><b>نوا</b></div>
-      <h1>به دنیای شگفت‌انگیز نجوم خوش آمدید!</h1>
-      <p>«نگاهی فراتر از زمین...»</p>
-      <div class="cta"><a class="btn" href="#join">🚀 عضویت در انجمن</a><a class="btn ghost" href="#gallery">🔭 مشاهده گالری</a></div>
-    </div>
-    <a class="down" href="#gallery" aria-label="پایین">↓</a>
-  </section>
-
-  <div class="wrap stack">
-    <section class="panel rv" id="gallery">
-      <div class="ph"><h2>🔭 گالری آسمان</h2><a class="more" href="sky.html">← گالری کامل و دانستنی‌ها</a></div>
-      <div class="gal">
-        <button type="button" class="g" data-t="کهکشان مارپیچی" data-d="کهکشان‌های مارپیچی، مثل راه شیری، از میلیاردها ستاره، گاز و غبار ساخته شده‌اند. بازوهای درخشان آن‌ها جایی است که ستاره‌های تازه متولد می‌شوند و کل کهکشان حول هسته‌ی مرکزی می‌چرخد."><img src="assets/img/3.jpg" alt="کهکشان مارپیچی" loading="lazy" width="400" height="300"><span class="cap">کهکشان مارپیچی</span></button>
-        <button type="button" class="g" data-t="ماه کامل" data-d="ماه تنها قمر طبیعی زمین است و حدود ۳۸۴ هزار کیلومتر با ما فاصله دارد. لکه‌های تیره‌اش دشت‌های گدازه‌ی سردشده‌اند و در هر سال حدود ۱۲ تا ۱۳ بار بدر کامل می‌شود."><img src="assets/img/9.jpg" alt="ماه کامل بالای دشت" loading="lazy" width="400" height="300"><span class="cap">ماه کامل</span></button>
-        <button type="button" class="g" data-t="سحابی" data-d="سحابی‌ها ابرهای عظیمی از گاز و غبار میان‌ستاره‌ای‌اند. بسیاری از آن‌ها زادگاه ستاره‌ها هستند و رنگ‌هایشان از نوع گاز و نور ستاره‌های نزدیک می‌آید."><img src="assets/img/7.jpg" alt="سحابی در آسمان تاریک" loading="lazy" width="400" height="300"><span class="cap">سحابی</span></button>
-        <button type="button" class="g" data-t="مشتری و قمرهایش" data-d="مشتری بزرگ‌ترین سیاره‌ی منظومه‌ی شمسی است. چهار قمر بزرگ آن، یعنی آیو، اروپا، گانیمد و کالیستو، را گالیله در سال ۱۶۱۰ کشف کرد و امروز با یک دوربین دوچشمی هم دیده می‌شوند."><img src="assets/img/4.jpg" alt="مشتری و قمرهایش" loading="lazy" width="400" height="300"><span class="cap">مشتری و قمرهایش</span></button>
-        <button type="button" class="g" data-t="راه شیری در آسمان تاریک" data-d="در آسمانی بدون آلودگی نوری، کمربند راه شیری با چشم غیرمسلح دیده می‌شود. روشن‌ترین بخش آن به سمت مرکز کهکشان، در صورت فلکی کمان، است."><img src="assets/img/8.png" alt="راه شیری در کویر" loading="lazy" width="400" height="300"><span class="cap">راه شیری در آسمان تاریک</span></button>
-      </div>
-      <p class="hintc mut" style="margin:.8rem 0 0;text-align:center">روی هر عکس بزنید تا توضیحاتش را ببینید</p>
-    </section>
-
-    <section class="panel rv" id="facts">
-      <div class="ph"><h2>🪐 دانستنی‌هایی که کمتر کسی می‌داند</h2><a class="more" href="sky.html#facts">← همه‌ی دانستنی‌ها</a></div>
-      <div class="facts">
-        <article><div class="fi" style="background-image:url(assets/img/9.jpg)"></div><div class="ft"><b>🌙 ماه هنوز «زلزله» دارد</b><p>لرزه‌سنج‌هایی که فضانوردان آپولو روی ماه گذاشتند، ماه‌لرزه‌های واقعی را ثبت کردند. بعضی از آن‌ها بسیار طولانی بودند.</p></div></article>
-        <article><div class="fi venusimg"></div><div class="ft"><b>♀ روز زهره از سالش بلندتر است</b><p>زهره یک دور به دور خودش را در حدود ۲۴۳ روز زمینی می‌چرخد، ولی دور خورشید را در ۲۲۵ روز می‌گردد. یعنی روزش از سالش طولانی‌تر است و برعکس زمین می‌چرخد.</p></div></article>
-        <article><div class="fi" style="background-image:url(assets/img/7.jpg)"></div><div class="ft"><b>🧬 از غبار ستاره‌ها ساخته شده‌ایم</b><p>آهن خون و کلسیم استخوان‌های شما در درون ستاره‌ها و انفجار ابرنواخترها ساخته شده است. پس بخشی از بدن ما قبل از شکل‌گیری زمین، در آسمان ساخته شده است.</p></div></article>
-      </div>
-      <p class="vall"><a class="btn" href="sky.html#facts">دیدن ۱۲ دانستنی شگفت‌انگیز</a></p>
-    </section>
-
-    <section class="panel rv" id="videos">
-      <div class="ph"><h2>▶ ویدیوهای نجومی</h2><a class="more" href="videos/videos.html">← ورود به آرشیو</a></div>
-      <a class="vfeat" href="videos/videos.html">
-        <div class="vfimg" style="background-image:url(assets/img/7.jpg)"><b>▶</b></div>
-        <div class="vfx"><span class="vtag" id="vCount">آرشیو ویدیوها</span><h3>آرشیو ویدیوهای انجمن نوا</h3><p>آموزش‌ها، گزارش‌ها و وبینارهای انجمن؛ از سیاره‌های دو‌خورشیدی تا سفر در زمان و تلسکوپ جیمز وب. همه در یک صفحه.</p><span class="btn">ورود به صفحه‌ی ویدیوها ←</span></div>
-      </a>
-    </section>
-
-    <div class="duo">
-      <section class="panel rv" id="about">
-        <h2>ℹ درباره‌ی نوا</h2>
-        <p>نوا انجمنی دانش‌آموزی است برای کسانی که شب‌ها سرشان را بالا می‌گیرند و می‌پرسند آن بالا چه خبر است. نام ما از «نوا» می‌آید؛ ستاره‌ای که ناگهان روشن می‌شود و آسمان را غافلگیر می‌کند.</p>
-        <p>ما باور داریم نجوم فقط فرمول و کتاب نیست؛ یک تجربه است. تجربه‌ی دیدن حلقه‌های زحل از پشت تلسکوپ، یا فهمیدن اینکه نوری که امشب به چشممان می‌رسد، سال‌ها پیش راه افتاده است. نوا جایی است که این کنجکاوی کنار هم جمع می‌شود، پرسش‌ها بی‌جواب نمی‌مانند و هر عضو می‌تواند چیزی بیاموزد و چیزی یاد بدهد.</p>
-        <p class="quote">«آسمان مدرسه‌ای است که هیچ‌وقت تعطیل نمی‌شود.»</p>
-      </section>
-
-      <section class="panel rv" id="join">
-        <form id="f" novalidate>
-          <h2>🚀 عضویت در انجمن نجوم</h2>
-          <p class="mut">اطلاعات خود را وارد کنید تا ستاره‌ی جدید نوا شوید.</p>
-          <input type="hidden" name="access_key" value="b88779ab-ad0a-4b3c-b611-3042033b6495">
-          <input type="hidden" name="subject" value="درخواست جدید از سایت انجمن نجوم نوا">
-          <label>نام و نام خانوادگی<input name="name" autocomplete="name" placeholder="مثال: علی محمدی"><small class="err"></small></label>
-          <div class="row">
-            <label>شماره کلاس<input name="cls" inputmode="numeric" placeholder="مثال: ۸۰۲"><small class="err"></small></label>
-            <label>آیدی شاد<input name="shad" dir="ltr" placeholder="@username" autocomplete="off"><small class="err"></small></label>
-          </div>
-          <label>ایمیل (جیمیل)<input name="email" type="email" dir="ltr" autocomplete="email" placeholder="name@gmail.com"><small class="err"></small></label>
-          <button class="btn" type="submit">ارسال درخواست</button>
-          <div class="ok" id="ok" role="status"></div>
-        </form>
-      </section>
-    </div>
-
-    <section class="panel rv" id="team">
-      <h2>👥 تیم ما</h2>
-      <div class="team">
-        <article class="mem"><img src="assets/img/shayan.png" alt="شایان توکلی دستجرد" loading="lazy" width="100" height="100"><h3>شایان توکلی دستجرد</h3><small>👑 مدیر انجمن</small></article>
-        <article class="mem"><img src="assets/img/hossein.jpg" alt="حسین غلامی" loading="lazy" width="100" height="100"><h3>حسین غلامی</h3><small>💻 مسئول فناوری</small></article>
-        <article class="mem"><img src="assets/img/meraj.jpg" alt="معراج عیدی درمیان" loading="lazy" width="100" height="100"><h3>معراج عیدی درمیان</h3><small>✏️ مسئول محتوا</small></article>
-      </div>
-    </section>
-
-    <section class="panel rv" id="path">
-      <h2>🛰 مسیر فعالیت‌های نوا</h2>
-      <ol class="tl">
-        <li><b>آغاز راه</b><span>چند دوست هم‌مسیر، با علاقه به آموزش.</span></li>
-        <li><b>آغاز فعالیت‌ها</b><span>رسمیت‌یافتن فعالیت‌ها و انتشار نخستین مطالب آموزشی.</span></li>
-        <li><b>رصد عمومی</b><span>اولین برنامه‌های رصد همگانی در مدرسه.</span></li>
-        <li><b>نوا در امروز</b><span>فعالیت مستمر، عکاسی نجومی و ستاره‌شناسی مقدماتی.</span></li>
-      </ol>
-    </section>
-
-    <section class="panel rv" id="contact">
-      <h2>📞 تماس با ما</h2>
-      <div class="contact">
-        <ul>
-          <li>ایمیل: <a dir="ltr" href="mailto:associationnova13@gmail.com">associationnova13@gmail.com</a></li>
-          <li>آیدی شاد و روبیکا: <b dir="ltr">hossein631391</b></li>
-          <li>نشانی: بیرجند، سجادشهر، امامت، دبیرستان شهید بهشتی دوره اول</li>
-        </ul>
-        <p class="tagline">✦ نوا، جایی برای رویاهای ستاره‌ای...</p>
-      </div>
-    </section>
-  </div>
+<div class="wrap stack">
+<section class="panel rv" id="gallery">
+<div class="ph"><h2>🔭 گالری کامل آسمان</h2><a class="more" href="index.html#gallery">← بازگشت به خانه</a></div>
+<div class="gal">
+<button type="button" class="g" data-t="کهکشان مارپیچی" data-d="کهکشان‌های مارپیچی مثل راه‌شیری از میلیاردها ستاره و گاز ساخته شده‌اند. بازوهای روشن آن‌ها زایشگاه ستاره‌های تازه است."><img src="assets/img/3.jpg" alt="کهکشان مارپیچی" loading="lazy"><span class="cap">کهکشان مارپیچی</span></button>
+<button type="button" class="g" data-t="ماه کامل" data-d="ماه حدود ۳۸۴ هزار کیلومتر با زمین فاصله دارد. لکه‌های تیره‌ی آن دشت‌های گدازه‌ای سردشده است."><img src="assets/img/9.jpg" alt="ماه کامل" loading="lazy"><span class="cap">ماه کامل</span></button>
+<button type="button" class="g" data-t="سحابی" data-d="سحابی‌ها ابرهای گاز و غبار میان‌ستاره‌ای‌اند و بسیاری از آن‌ها زادگاه ستاره‌ها هستند."><img src="assets/img/7.jpg" alt="سحابی" loading="lazy"><span class="cap">سحابی</span></button>
+<button type="button" class="g" data-t="مشتری و قمرهایش" data-d="مشتری بزرگ‌ترین سیاره‌ی منظومه‌ی شمسی است. چهار قمر بزرگ آن را گالیله در سال ۱۶۱۰ کشف کرد."><img src="assets/img/4.jpg" alt="مشتری و قمرهایش" loading="lazy"><span class="cap">مشتری و قمرهایش</span></button>
+<button type="button" class="g" data-t="راه‌شیری در آسمان تاریک" data-d="در آسمان بدون آلودگی نوری، نوار راه‌شیری با چشم غیرمسلح دیده می‌شود. پرنورترین بخش آن سمت صورت فلکی کمان است."><img src="assets/img/8.png" alt="راه شیری" loading="lazy"><span class="cap">راه‌شیری</span></button>
+<button type="button" class="g" data-t="بازوهای کهکشان" data-d="هر بازوی کهکشان مارپیچی پر از سحابی و خوشه‌ی ستاره‌ای جوان است و کل سامانه حول هسته‌ی مرکزی می‌چرخد."><img src="assets/img/3.jpg" alt="بازوهای کهکشان" loading="lazy"><span class="cap">بازوهای کهکشان</span></button>
+<button type="button" class="g" data-t="دهانه‌های ماه" data-d="دهانه‌های ماه بیشتر از برخورد شهاب‌سنگ‌ها ساخته شده‌اند چون ماه جو غلیظی برای سوزاندن آن‌ها ندارد."><img src="assets/img/9.jpg" alt="دهانه‌های ماه" loading="lazy"><span class="cap">دهانه‌های ماه</span></button>
+<button type="button" class="g" data-t="زایشگاه ستاره‌ای" data-d="داخل سحابی‌ها گرانش گازها را جمع می‌کند تا ستاره‌ی تازه روشن شود. رنگ سحابی از نوع گاز و ستاره‌های نزدیک می‌آید."><img src="assets/img/7.jpg" alt="زایشگاه ستاره‌ای" loading="lazy"><span class="cap">زایشگاه ستاره‌ای</span></button>
+<button type="button" class="g" data-t="غول منظومه" data-d="مشتری آن‌قدر بزرگ است که حدود ۱۳۰۰ زمین داخل آن جا می‌شود. توفان لکه‌ی سرخ آن صدها سال است ادامه دارد."><img src="assets/img/4.jpg" alt="غول منظومه" loading="lazy"><span class="cap">غول منظومه</span></button>
+<button type="button" class="g" data-t="آسمان کویر" data-d="کویر به‌خاطر هوای خشک و نور کم بهترین جا برای رصد راه‌شیری است. کافی است ۲۰ دقیقه به چشم‌ها فرصت بدهی."><img src="assets/img/8.png" alt="آسمان کویر" loading="lazy"><span class="cap">آسمان کویر</span></button>
+</div>
+<p class="mut" style="text-align:center">روی هر عکس بزن تا توضیح آن باز شود</p>
+</section>
+<section class="panel rv" id="facts">
+<div class="ph"><h2>🪐 همه‌ی دانستنی‌ها ـ ۱۲ دانستنی شگفت‌انگیز</h2><a class="more" href="index.html#facts">← بازگشت به خانه</a></div>
+<div class="facts">
+<article><div class="fi" style="background-image:url(assets/img/9.jpg)"></div><div class="ft"><b>۱. 🌙 ماه هنوز زلزله دارد</b><p>لرزه‌سنج‌های آپولو ماه‌لرزه‌های واقعی ثبت کردند. بعضی از آن‌ها ساعت‌ها طول کشیدند.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/7.jpg)"></div><div class="ft"><b>۲. ♀ روز زهره از سالش بلندتر است</b><p>زهره در ۲۴۳ روز به دور خودش می‌چرخد ولی در ۲۲۵ روز به دور خورشید می‌گردد.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/3.jpg)"></div><div class="ft"><b>۳. 🧬 از غبار ستاره‌ها ساخته شده‌ایم</b><p>آهن خون و کلسیم استخوان ما در قلب ستاره‌ها و انفجار ابرنواخترها ساخته شده است.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/4.jpg)"></div><div class="ft"><b>۴. 🪐 زحل روی آب شناور می‌ماند</b><p>میانگین چگالی زحل از آب کمتر است. اگر اقیانوسی به بزرگی آن بود روی آب می‌ماند.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/8.png)"></div><div class="ft"><b>۵. 💡 نور خورشید ۸ دقیقه در راه است</b><p>نوری که الان می‌بینی حدود ۸ دقیقه و ۲۰ ثانیه پیش از خورشید راه افتاده است.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/3.jpg)"></div><div class="ft"><b>۶. 🌌 راه‌شیری ۱۰۰ میلیارد ستاره دارد</b><p>قطر آن حدود ۱۰۰ هزار سال نوری است و منظومه‌ی ما در یکی از بازوهای آن است.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/9.jpg)"></div><div class="ft"><b>۷. 👣 رد پا در ماه پاک نمی‌شود</b><p>چون ماه باد و باران ندارد، رد پای فضانوردان آپولو هنوز سر جایش است.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/7.jpg)"></div><div class="ft"><b>۸. 🎨 غروب خورشید در مریخ آبی است</b><p>غبار مریخ نور قرمز را پخش می‌کند و دور خورشید هاله‌ای آبی دیده می‌شود.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/4.jpg)"></div><div class="ft"><b>۹. 🌀 لکه‌ی سرخ مشتری از زمین بزرگ‌تر است</b><p>این توفان غول‌پیکر صدها سال است ادامه دارد و از کل زمین پهن‌تر است.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/8.png)"></div><div class="ft"><b>۱۰. 🧲 نوترونی‌ها قاشقی سنگین‌اند</b><p>یک قاشق چای‌خوری از ستاره‌ی نوترونی میلیاردها تن جرم دارد.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/3.jpg)"></div><div class="ft"><b>۱۱. 🔭 تلسکوپ جیمز وب به گذشته نگاه می‌کند</b><p>این تلسکوپ نور کهکشان‌های ۱۳ میلیارد سال پیش را می‌بیند.</p></div></article>
+<article><div class="fi" style="background-image:url(assets/img/9.jpg)"></div><div class="ft"><b>۱۲. 🌙 ماه هر سال دورتر می‌شود</b><p>ماه هر سال حدود ۳/۸ سانتی‌متر از زمین دورتر می‌شود.</p></div></article>
+</div>
+</section>
+</div>
 </main>
-
-<footer>
-  <div class="wrap foot">
-    <span>© انجمن نجوم نوا · همه‌ی حقوق محفوظ است.</span>
-    <div class="soc" data-social><noscript><a href="https://shad.ir/novaastro405">شاد</a> <a href="https://rubika.ir/novaastro405">روبیکا</a> <a href="https://www.aparat.com/nova_astro_405">آپارات</a></noscript></div>
-  </div>
-</footer>
-<button class="top" id="toTop" type="button" aria-label="بازگشت به بالا">↑</button>
-
-<dialog id="lb">
-  <button class="x" type="button" aria-label="بستن">&times;</button>
-  <div class="lbx"><img alt=""><div class="lbd"><h3></h3><p></p></div></div>
-</dialog>
-
-<dialog id="loginDlg">
-  <button class="x" type="button" aria-label="بستن">&times;</button>
-  <form id="loginForm" novalidate>
-    <h2>🔐 ورود اعضا</h2>
-    <label>نام کاربری<input name="username" autocomplete="username" dir="ltr"></label>
-    <label>رمز عبور<input name="password" type="password" autocomplete="current-password" dir="ltr"></label>
-    <button class="btn" type="submit">ورود</button>
-    <div class="ok" id="loginMsg" role="status"></div>
-  </form>
-</dialog>
-
-<dialog id="dash">
-  <button class="x" type="button" aria-label="بستن">&times;</button>
-  <h2 id="dashTitle">🌠 پنل اعضا</h2>
-  <div class="tabs">
-    <button type="button" class="on" data-dt="req">درخواست‌ها</button>
-    <button type="button" data-dt="mem" id="memTab">اعضای تأییدشده</button>
-    <button type="button" id="logoutBtn">خروج</button>
-  </div>
-  <div class="ok" id="dashMsg" role="status"></div>
-  <ul id="dashList"></ul>
-</dialog>
-
-<script src="assets/js/videos-data.js?v=11" defer></script>
-<script src="assets/js/social.js?v=11" defer></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  'use strict';
-  const $ = s => document.querySelector(s);
-  const root = document.documentElement;
-  root.classList.add('js');
-  // اگر افکت ظاهر شدن کار نکرد، بعد از ۲ ثانیه همه‌ی بخش‌ها نمایان می‌شوند
-  setTimeout(() => document.querySelectorAll('.rv').forEach(n => n.classList.add('on')), 2000);
-
-  /* ===== اتصال به سرور (Google Apps Script) =====
-     آدرس Web App را بین دو کوتیشن بگذارید. مثال: 'https://script.google.com/macros/s/AKfy.../exec' */
-  const API = '';
-
-  const db = {
-    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  };
-  const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); kids.forEach(k => n.append(k)); return n; };
-  const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, '0')).join('');
-
-  /* تم */
-  $('#themeBtn').onclick = () => {
-    const t = root.dataset.bsTheme === 'dark' ? 'light' : 'dark';
-    root.dataset.bsTheme = t;
-    try { localStorage.setItem('nova-theme', t); } catch (e) {}
-  };
-
-  /* منوی موبایل */
-  const mb = $('#menuBtn'), menu = $('#menu'), hdr = $('header');
-  const closeMenu = () => { menu.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); };
-  mb.onclick = () => mb.setAttribute('aria-expanded', menu.classList.toggle('open'));
-  document.addEventListener('click', e => { if (!menu.contains(e.target) && !mb.contains(e.target)) closeMenu(); });
-  addEventListener('resize', () => { if (innerWidth > 720) closeMenu(); });
-
-  /* رفتن دقیق به بخش‌ها (بدون تأثیر انیمیشن) + نشان دادن بخش فعلی */
-  const posOf = n => { let y = 0; for (; n; n = n.offsetParent) y += n.offsetTop; return y; };
-  const go = (id, smooth = true) => {
-    const t = id && id !== 'top' ? document.getElementById(id) : null;
-    scrollTo({ top: t ? Math.max(0, posOf(t) - hdr.offsetHeight - 14) : 0, behavior: smooth ? 'smooth' : 'auto' });
-  };
-  document.addEventListener('click', e => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    e.preventDefault(); closeMenu();
-    const id = a.getAttribute('href').slice(1);
-    go(id); history.replaceState(null, '', id ? '#' + id : location.pathname);
-  });
-  addEventListener('load', () => { if (location.hash) go(location.hash.slice(1), false); });
-  const ids = [...document.querySelectorAll('.dnav a')].map(a => a.getAttribute('href').slice(1));
-  const topBtn = $('#toTop');
-  const spy = () => {
-    topBtn.classList.toggle('show', scrollY > 600);
-    let cur = ids[0];
-    ids.forEach(id => { const t = id === 'top' ? null : document.getElementById(id); if (t && posOf(t) - hdr.offsetHeight - 80 <= scrollY) cur = id; });
-    document.querySelectorAll('.dnav a,#menu a').forEach(a => a.classList.toggle('act', a.getAttribute('href') === '#' + cur));
-  };
-  addEventListener('scroll', spy, { passive: true }); spy();
-  topBtn.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
-
-  /* ظاهر شدن بخش‌ها */
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .08 });
-  document.querySelectorAll('.rv').forEach(n => io.observe(n));
-
-  /* آسمان پرستاره */
-  const cv = $('#sky'), cx = cv.getContext('2d');
-  let stars = [];
-  const draw = () => {
-    cv.width = innerWidth; cv.height = innerHeight;
-    stars = Array.from({ length: Math.min(160, innerWidth / 6) }, () => ({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: Math.random() * 1.4 + .3, p: Math.random() * 6 }));
-  };
-  const tick = t => {
-    cx.clearRect(0, 0, cv.width, cv.height);
-    if (root.dataset.bsTheme === 'dark') stars.forEach(s => { cx.globalAlpha = .35 + .35 * Math.sin(t / 900 + s.p); cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.3); cx.fill(); });
-    requestAnimationFrame(tick);
-  };
-  draw(); addEventListener('resize', draw);
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(tick);
-
-  /* پنجره‌ها */
-  document.querySelectorAll('dialog').forEach(d => {
-    d.querySelector('.x').onclick = () => d.close();
-    d.addEventListener('click', e => { if (e.target === d) d.close(); });
-  });
-
-  /* گالری: عکس + توضیحات */
-  const lb = $('#lb');
-  document.querySelectorAll('.g').forEach(b => b.onclick = () => {
-    const i = b.querySelector('img'), im = lb.querySelector('img');
-    im.src = i.src; im.alt = i.alt;
-    lb.querySelector('h3').textContent = b.dataset.t;
-    lb.querySelector('.lbd p').textContent = b.dataset.d;
-    lb.showModal();
-  });
-
-  const vids = window.NOVA_VIDEOS || [];
-  if (vids.length) $('#vCount').textContent = vids.length + ' ویدیو در آرشیو';
-
-  /* فرم عضویت */
-  const f = $('#f');
-  const rules = {
-    name: v => v.trim().split(/\s+/).length >= 2 || 'نام و نام خانوادگی را کامل بنویسید.',
-    cls: v => /^[0-9۰-۹\/]{2,6}$/.test(v.trim()) || 'شماره کلاس معتبر نیست.',
-    shad: v => /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) || 'آیدی شاد معتبر نیست.',
-    email: v => /^[^\s@]+@gmail\.com$/i.test(v.trim()) || 'یک ایمیل جیمیل معتبر وارد کنید.'
-  };
-  const call = async o => {
-    if (!API) throw new Error('no-api');
-    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(o) });
-    return r.json();
-  };
-  f.addEventListener('submit', async e => {
-    e.preventDefault();
-    let ok = true;
-    Object.keys(rules).forEach(k => {
-      const i = f.elements[k], r = rules[k](i.value);
-      i.parentElement.querySelector('.err').textContent = r === true ? '' : r;
-      i.toggleAttribute('aria-invalid', r !== true);
-      if (r !== true) ok = false;
-    });
-    if (!ok) return;
-    const d = Object.fromEntries(new FormData(f)), msg = $('#ok');
-    msg.style.display = 'block'; msg.textContent = 'در حال ارسال...';
-    try {
-      if (API) {
-        const j = await call({ action: 'submit', name: d.name, cls: d.cls, shad: d.shad, email: d.email });
-        msg.textContent = j.ok ? '✨ درخواست شما ثبت شد. پس از تأیید، نام کاربری و رمز به جیمیل شما می‌رسد.'
-          : j.err === 'dup' ? 'درخواست شما قبلاً ثبت شده و در انتظار تأیید است.' : 'ارسال انجام نشد، دوباره تلاش کنید.';
-        if (j.ok) f.reset();
-      } else {
-        const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) });
-        msg.textContent = r.ok ? '✨ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم.' : 'ارسال انجام نشد، دوباره تلاش کنید.';
-        if (r.ok) f.reset();
-      }
-    } catch (er) { msg.textContent = 'ارسال انجام نشد؛ اینترنت را بررسی کنید و دوباره تلاش کنید.'; }
-  });
-
-  /* ورود اعضا و پنل */
-  const dash = $('#dash'), list = $('#dashList'), dm = $('#dashMsg');
-  const S = sessionStorage;
-  let tok = S.getItem('nova-tok'), role = S.getItem('nova-role'), tab = 'req';
-  const errs = { baduser: 'نام کاربری فقط حروف انگلیسی، عدد، _ یا . و ۳ تا ۲۰ نویسه باشد.', weak: 'رمز حداقل ۶ حرف باشد.', exists: 'این نام کاربری قبلاً استفاده شده.', notfound: 'درخواست پیدا نشد.', forbidden: 'اجازه‌ی این کار را ندارید.' };
-  const say = t => { dm.textContent = t || ''; dm.style.display = t ? 'block' : 'none'; };
-  const logout = () => { S.removeItem('nova-tok'); S.removeItem('nova-role'); tok = role = null; };
-  const fdate = v => { const d = new Date(v); return isNaN(d) ? '' : d.toLocaleDateString('fa-IR'); };
-  const call2 = o => call({ token: tok, ...o });
-
-  const apprForm = r => {
-    const u = el('input', { placeholder: 'نام کاربری (انگلیسی)', dir: 'ltr' });
-    const p = el('input', { placeholder: 'رمز (حداقل ۶ حرف)', dir: 'ltr' });
-    const c = el('input', { type: 'checkbox', checked: true });
-    const b = el('button', { type: 'button', className: 'btn', textContent: 'ثبت و تأیید' });
-    b.onclick = async () => {
-      b.disabled = true; say('در حال ثبت...');
-      try {
-        const j = await call2({ action: 'approve', id: r.id, username: u.value.trim(), password: p.value, send: c.checked, site: location.href.split('#')[0] });
-        if (j.ok) { say('✓ تأیید شد.' + (c.checked ? (j.mailed ? ' نام کاربری و رمز به جیمیل او ایمیل شد.' : ' ایمیل ارسال نشد؛ نام کاربری و رمز را خودتان برایش بفرستید.') : '')); render(); }
-        else say(errs[j.err] || 'خطا: ' + j.err);
-      } catch (e) { say('ارتباط با سرور برقرار نشد.'); }
-      b.disabled = false;
-    };
-    return el('div', { className: 'appr', hidden: true }, u, p, el('label', { className: 'chk' }, c, ' ارسال به جیمیل او'), b);
-  };
-
-  const render = async () => {
-    list.replaceChildren(); say('در حال بارگذاری...');
-    let j;
-    try { j = await call2({ action: tab === 'req' ? 'list' : 'members' }); }
-    catch (e) { say(API ? 'ارتباط با سرور برقرار نشد.' : 'آدرس سرور (API) هنوز در index.html تنظیم نشده است.'); return; }
-    if (!j.ok) { if (j.err === 'auth') { logout(); dash.close(); say(''); $('#loginDlg').showModal(); return; } say('خطا: ' + j.err); return; }
-    say('');
-    if (!j.items.length) list.append(el('li', { className: 'mut', textContent: tab === 'req' ? 'هنوز درخواستی ثبت نشده است.' : 'هنوز عضوی تأیید نشده است.' }));
-    j.items.forEach(r => {
-      const boss = role === 'boss';
-      if (tab === 'req') {
-        const row = el('li', { className: 'req' }, el('b', { textContent: r.name }), el('span', { textContent: 'کلاس ' + r.cls }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { dir: 'ltr', textContent: r.shad }));
-        const acts = el('span', { style: 'display:flex;gap:.3rem' });
-        const form = r.status === 'pending' && boss ? apprForm(r) : null;
-        if (form) { const yes = el('button', { type: 'button', className: 'del', textContent: 'تأیید', style: 'background:#2f9e6b' }); yes.onclick = () => { form.hidden = !form.hidden; }; acts.append(yes); }
-        if (boss) { const del = el('button', { type: 'button', className: 'del', textContent: 'حذف' }); del.onclick = async () => { if (confirm('این درخواست حذف شود؟')) { await call2({ action: 'remove', id: r.id }); render(); } }; acts.append(del); }
-        row.append(acts, el('small', { textContent: (r.status === 'approved' ? '✓ تأیید شد · نام کاربری: ' + r.username : 'در انتظار تأیید') + ' · ' + fdate(r.date) }));
-        if (form) row.append(form);
-        list.append(row);
-      } else {
-        const row = el('li', { className: 'req' }, el('b', { dir: 'ltr', textContent: r.username }), el('span', { textContent: r.name }), el('span', { dir: 'ltr', textContent: r.email }), el('span', { textContent: fdate(r.date) }));
-        const del = el('button', { type: 'button', className: 'del', textContent: 'لغو عضویت' });
-        del.onclick = async () => { if (confirm('دسترسی این عضو لغو شود؟')) { await call2({ action: 'revoke', username: r.username }); render(); } };
-        row.append(del); list.append(row);
-      }
-    });
-  };
-  const openDash = () => {
-    tab = 'req';
-    $('#dashTitle').textContent = role === 'boss' ? '🌠 پنل مدیریت' : '🌠 پنل اعضا (فقط مشاهده)';
-    $('#memTab').style.display = role === 'boss' ? '' : 'none';
-    document.querySelectorAll('[data-dt]').forEach(b => b.classList.toggle('on', b.dataset.dt === 'req'));
-    dash.showModal(); render();
-  };
-  document.querySelectorAll('[data-dt]').forEach(b => b.onclick = () => {
-    tab = b.dataset.dt;
-    document.querySelectorAll('[data-dt]').forEach(x => x.classList.toggle('on', x === b));
-    render();
-  });
-  document.querySelectorAll('[data-login]').forEach(b => b.onclick = () => { closeMenu(); tok ? openDash() : $('#loginDlg').showModal(); });
-  $('#loginForm').addEventListener('submit', async e => {
-    e.preventDefault();
-    const fm = e.target, m = $('#loginMsg'), btn = fm.querySelector('button');
-    m.style.display = 'block';
-    if (!API) { m.textContent = 'آدرس سرور (API) هنوز در index.html تنظیم نشده است.'; return; }
-    m.textContent = 'در حال بررسی...'; btn.disabled = true;
-    try {
-      const j = await call({ action: 'login', user: fm.username.value, pass: fm.password.value });
-      if (j.ok) { tok = j.token; role = j.role; S.setItem('nova-tok', tok); S.setItem('nova-role', role); fm.reset(); m.style.display = 'none'; $('#loginDlg').close(); openDash(); }
-      else m.textContent = j.err === 'locked' ? 'تلاش‌های ناموفق زیاد بود؛ ۱۰ دقیقه بعد دوباره امتحان کنید.' : 'نام کاربری یا رمز عبور اشتباه است.';
-    } catch (er) { m.textContent = 'ارتباط با سرور برقرار نشد.'; }
-    btn.disabled = false;
-  });
-  $('#logoutBtn').onclick = () => { logout(); dash.close(); };
-});
-</script>
+<div id="nv-modal" role="dialog" aria-modal="true"><div class="box"><img id="nv-img" alt=""><div class="tx"><h3 id="nv-t"></h3><p id="nv-d"></p><button class="btn ghost sm cls" id="nv-close" type="button">بستن</button></div></div></div>
+<script src="assets/js/nova.js?v=12"></script>
 </body>
 </html>
