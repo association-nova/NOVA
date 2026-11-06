@@ -85,14 +85,14 @@ nav#menu{display:none}
 .solarsec{padding-block:2.4rem}
 .solarwrap{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;margin-top:1.4rem}
 @media(max-width:860px){.solarwrap{grid-template-columns:1fr}}
-.solar{--sz:min(460px,88vw);position:relative;width:var(--sz);height:var(--sz);margin:auto}
+.solar{--sz:min(460px,88vw);position:relative;width:var(--sz);height:var(--sz);margin:auto;cursor:default}
 .sun{position:absolute;top:50%;right:50%;width:13%;height:13%;transform:translate(50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff8d8,#ffd35e 45%,#ff9a2e);box-shadow:0 0 30px 8px color-mix(in srgb,var(--c1) 45%,transparent),0 0 80px 24px color-mix(in srgb,var(--c2) 25%,transparent);animation:sunpulse 4s ease-in-out infinite}
 @keyframes sunpulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.15)}}
 .orbit{position:absolute;top:50%;right:50%;border:1px dashed var(--line);border-radius:50%;transform:translate(50%,-50%)}
 .solar.paused .pl{animation-play-state:paused}
-.pl{position:absolute;top:50%;right:50%;width:0;height:0;background:none;border:0;padding:0;animation:orb var(--t) linear infinite}
+.pl{position:absolute;top:50%;right:50%;width:0;height:0;animation:orb var(--t) linear infinite}
 @keyframes orb{from{transform:rotate(var(--a,0deg)) translateX(var(--r))}to{transform:rotate(calc(var(--a,0deg) + 360deg)) translateX(var(--r))}}
-.pl i{position:absolute;top:0;right:0;width:var(--d);height:var(--d);transform:translate(50%,-50%);border-radius:50%;cursor:pointer;font-style:normal;transition:box-shadow .2s}
+.pl i{position:absolute;top:0;right:0;width:var(--d);height:var(--d);transform:translate(50%,-50%);border-radius:50%;cursor:pointer;border:0;font-style:normal;transition:box-shadow .2s}
 .pl i:hover{box-shadow:0 0 12px 3px var(--glow)}
 .i-mercury{background:radial-gradient(circle at 35% 35%,#d8c9b8,#9c8b7a)}
 .i-venus{background:radial-gradient(circle at 35% 35%,#f5d9a8,#d9a441)}
@@ -154,8 +154,6 @@ nav#menu{display:none}
 .vtag{display:inline-block;font-size:.75rem;color:var(--c1);border:1px solid var(--line);border-radius:99px;padding:.1rem .7rem;margin-bottom:.5rem}
 @media(max-width:760px){.vfeat{grid-template-columns:1fr}}
 /* تیم و مسیر */
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
-@media(max-width:820px){.duo{grid-template-columns:1fr}}
 .team{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
 .team article{text-align:center;background:var(--in);border:1px solid var(--line);border-radius:12px;padding:1.2rem .8rem}
 .tm{width:64px;height:64px;margin:0 auto .6rem;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff}
@@ -182,7 +180,7 @@ footer b{color:var(--c1)}
 </style>
 </head>
 <body id="top">
-<canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="sky" aria-hidden="true"></i></canvas>
 
 <header>
   <div class="wrap bar">
@@ -214,7 +212,7 @@ footer b{color:var(--c1)}
       <div class="cta"><a class="btn" href="#join">🚀 عضویت در انجمن</a><a class="btn ghost" href="#gallery">🔭 مشاهده گالری</a></div>
       <p class="cnt">تا این لحظه <b id="cnt">۰</b> سال نوری با هم ستاره‌شمار کرده‌ایم ✨</p>
     </div>
-    <a class="btn" href="#solar" aria-label="پایین" style="position:absolute;left:50%;bottom:-1.3rem;margin-left:-22px;width:44px;height:44px;padding:0;display:grid;place-items:center;border-radius:10px;z-index:2">↓</a>
+    <a class="down btn" href="#solar" aria-label="پایین" style="position:absolute;left:50%;bottom:-1.3rem;margin-left:-22px;width:44px;height:44px;padding:0;display:grid;place-items:center;border-radius:10px;z-index:2">↓</a>
   </section>
 
   <div class="wrap stack">
@@ -222,7 +220,7 @@ footer b{color:var(--c1)}
     <section class="panel rv solarsec" id="solar">
       <div class="ph"><h2>🪐 منظومه شمسی ما</h2><span class="mut" style="font-size:.85rem">روی هر سیاره بزنید تا شناسنامه‌اش را ببینید</span></div>
       <div class="solarwrap">
-        <div class="solar" id="solarBox" role="group" aria-label="منظومه شمسی تعاملی">
+        <div class="solar" id="solar" role="group" aria-label="منظومه شمسی تعاملی">
           <div class="sun"></div>
           <div class="orbit" style="width:17.6%;height:17.6%"></div>
           <div class="orbit" style="width:28%;height:28%"></div>
@@ -284,7 +282,7 @@ footer b{color:var(--c1)}
       </a>
     </section>
 
-    <div class="duo">
+    <div class="duo" style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem">
       <section class="panel rv" id="about">
         <h2>ℹ درباره‌ی نوا</h2>
         <p>نوا انجمنی دانش‌آموزی است برای کسانی که شب‌ها سرشان را بالا می‌گیرند و می‌پرسند آن بالا چه خبر است. نام ما از «نوا» می‌آید؛ ستاره‌ای که ناگهان روشن می‌شود و آسمان را غافلگیر می‌کند.</p>
@@ -307,6 +305,7 @@ footer b{color:var(--c1)}
         </form>
       </section>
     </div>
+    <style>@media(max-width:820px){.duo{grid-template-columns:1fr!important}}</style>
 
     <section class="panel rv" id="team">
       <div class="ph"><h2>👥 تیم ما</h2></div>
@@ -405,7 +404,7 @@ menuBtn.onclick=function(){var o=menu.classList.toggle('open');menuBtn.setAttrib
 menu.addEventListener('click',function(e){if(e.target.tagName==='A'){menu.classList.remove('open');menuBtn.setAttribute('aria-expanded','false')}});
 /* ---------- منظومه شمسی ---------- */
 var PLANETS=[
- {n:'☿ عطارد (تیر)',i:'نزدیک‌ترین سیاره به خورشید و کوچک‌ترین آن‌ها. چون بسیار به خورشید نزدیک است، دمایش از ۴۳۰ درجه تا منفی ۱۸۰ درجه نوسان دارد!'},
+ {n:'☿ عطارد (تیر)',i:'نزدیک‌ترین سیاره به خورشید و کوچک‌ترین آن‌ها. چون بسیار به خورشید نزدیک است، شب و روزش داغ‌ترین و سردترین placeهای منظومه را می‌سازد: از ۴۳۰ درجه تا منفی ۱۸۰ درجه!'},
  {n:'♀ زهره (ناهید)',i:'درخشان‌ترین سیاره در آسمان ما. جو غلیظ کربن‌دیکسیدی‌اش آن را داغ‌ترین سیاره منظومه کرده است: حدود ۴۶۵ درجه! و جالب اینکه برعکس بقیه می‌چرخد.'},
  {n:'🌍 زمین',i:'خانه ما و تنها سیاره شناخته‌شده‌ای که موجودات زنده دارد. حدود ۷۱٪ سطحش را آب پوشانده و میدان مغناطیسی‌اش مانند سپر، ما را از بادهای خورشیدی حفظ می‌کند.'},
  {n:'♂ مریخ (بهرام)',i:'سیاره سرخ! رنگش از اکسید آهن (زنگار) است. بلندترین آتشفشان منظومه، المپ‌مونس، با ۲۲ کیلومتر ارتفاع روی مریخ است — تقریباً سه برابر اورست.'},
@@ -419,8 +418,8 @@ document.querySelectorAll('.pl').forEach(function(b){
   b.addEventListener('click',function(){var p=PLANETS[+b.dataset.p];pName.textContent=p.n;pInfo.textContent=p.i;});
 });
 document.getElementById('earthBtn').onclick=function(){var p=PLANETS[2];pName.textContent=p.n;pInfo.textContent=p.i;};
-var solarBox=document.getElementById('solarBox'),pauseBtn=document.getElementById('pauseBtn'),paused=false;
-pauseBtn.onclick=function(){paused=!paused;solarBox.classList.toggle('paused',paused);pauseBtn.textContent=paused?'▶ حرکت سیاره‌ها':'⏸ توقف حرکت'};
+var solar=document.getElementById('solar'),pauseBtn=document.getElementById('pauseBtn'),paused=false;
+pauseBtn.onclick=function(){paused=!paused;solar.classList.toggle('paused',paused);pauseBtn.textContent=paused?'▶ حرکت سیاره‌ها':'⏸ توقف حرکت'};
 /* ---------- لایت‌باکس گالری ---------- */
 var lb=document.getElementById('lb'),lbi=document.getElementById('lbi'),lbt=document.getElementById('lbt'),lbd=document.getElementById('lbd');
 document.querySelectorAll('.g').forEach(function(g){
@@ -438,7 +437,7 @@ document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
 document.getElementById('f').addEventListener('submit',function(e){
   e.preventDefault();var f=e.target,msg=document.getElementById('fmsg');
   if(!f.name.value.trim()){msg.className='err';msg.textContent='لطفاً نام خود را وارد کنید.';return}
-  msg.className='';msg.style.display='block';msg.textContent='در حال ارسال...';
+  msg.className='';msg.textContent='در حال ارسال...';msg.style.display='block';
   fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(f)})
    .then(function(r){return r.json()})
    .then(function(d){if(d.success){msg.className='ok';msg.textContent='✅ درخواست شما ثبت شد! به‌زودی با شما تماس می‌گیریم.';f.reset()}
