@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نوا | انجمن نجوم دانش‌آموزی</title>
+<meta name="description" content="انجمن نجوم نوا؛ رصد عمومی، آموزش نجوم، عکاسی نجومی و گالری آسمان شب.">
+<style>
+:root,[data-bs-theme="dark"]{
+  --bg:#0a0c10;--ink:#f2efe8;--mut:#8f97a6;
+  --line:rgba(255,171,84,.25);
+  --card:#13161d;--in:#0e1117;
+  --a1:#ffb454;--a2:#ff6b5e;
+  --glow:rgba(255,150,80,.28);
+}
+[data-bs-theme="light"]{
+  --bg:#f6f1e6;--ink:#221a0e;--mut:#6d6455;
+  --line:rgba(170,110,40,.28);
+  --card:#fffdf6;--in:#ffffff;
+  --glow:rgba(255,150,60,.22);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:5rem}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.9;overflow-x:hidden;font-family:"Vazirmatn",Tahoma,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+main{flex:1}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--a1);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 1.1rem}
+h1,h2,h3{margin:0;line-height:1.4}
+h2{font-size:1.3rem;border-inline-start:4px solid var(--a1);padding-inline-start:.65rem}
+.mut{color:var(--mut)}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(42rem 30rem at 85% -5%,rgba(255,107,94,.16),transparent 60%),radial-gradient(48rem 34rem at -10% 55%,rgba(255,180,84,.13),transparent 60%)}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.sh{position:fixed;top:6%;right:8%;width:120px;height:2px;background:linear-gradient(90deg,#ffd9a0,transparent);opacity:0;z-index:-1;animation:shoot 9s linear infinite;pointer-events:none}
+.sh.b{top:22%;right:40%;animation-delay:4.5s;animation-duration:12s}
+[data-bs-theme="light"] .sh,[data-bs-theme="light"] #sky{display:none}
+@keyframes shoot{0%{opacity:0;transform:rotate(-30deg)}3%{opacity:1}14%,100%{opacity:0;transform:translate3d(-55vw,32vh,0) rotate(-30deg)}}
+.btn{display:inline-block;border:0;cursor:pointer;font:inherit;font-weight:700;color:#241303;padding:.6rem 1.5rem;border-radius:6px;background:linear-gradient(135deg,var(--a1),var(--a2));transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px var(--glow)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--a1);color:var(--a1);box-shadow:none}
+header{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 96%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+header::after{content:"";display:block;height:2px;background:linear-gradient(90deg,transparent,var(--a1),var(--a2),transparent)}
+.bar{display:flex;align-items:center;gap:.7rem;height:4rem}
+.brand{display:flex;align-items:center;gap:.5rem}
+.brand img{width:42px;height:42px}
+.brand b{display:block;font-size:1.5rem;line-height:1.1}
+.brand small{color:var(--mut);font-size:.72rem;display:none}
+.dnav{display:flex;flex:1;justify-content:center;gap:.15rem;overflow-x:auto;scrollbar-width:none}
+.dnav::-webkit-scrollbar{display:none}
+.dnav a{flex-shrink:0;font-size:.8rem;padding:.3rem .55rem;border-radius:6px;color:var(--mut);white-space:nowrap}
+.dnav a:hover{background:var(--in);color:var(--a1)}
+.lg{flex-shrink:0;padding:.35rem 1.1rem;font-size:.82rem;white-space:nowrap}
+.tg{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;direction:ltr;width:60px;height:30px;padding:0 8px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--mut);cursor:pointer;font-size:13px;position:relative}
+.tg::after{content:"";position:absolute;top:3px;left:33px;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));transition:left .25s}
+[data-bs-theme="light"] .tg::after{left:4px}
+.hero{position:relative;display:flex;align-items:center;min-height:78vh;padding:3.5rem 0;overflow:hidden;background:radial-gradient(55rem 32rem at 78% 10%,rgba(255,107,94,.30),transparent 62%),radial-gradient(42rem 28rem at 12% 85%,rgba(255,180,84,.22),transparent 62%),linear-gradient(0deg,var(--bg),rgba(10,12,16,.25) 45%),#0a0c10}
+[data-bs-theme="light"] .hero{background:radial-gradient(55rem 32rem at 78% 10%,rgba(255,180,84,.25),transparent 62%),var(--bg)}
+.hero::before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 0deg at 60% 40%,transparent,rgba(255,180,84,.10),transparent,rgba(255,107,94,.12),transparent);animation:spin 22s linear infinite;pointer-events:none}
+[data-bs-theme="light"] .hero::before{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero-in{position:relative;z-index:1;width:100%}
+.hero-brand{display:flex;align-items:center;gap:.8rem}
+.hero-brand img{width:64px;height:64px}
+.hero-brand b{font-size:clamp(3rem,9vw,5.4rem);font-weight:800;color:#fff;text-shadow:0 0 26px rgba(255,150,80,.75)}
+[data-bs-theme="light"] .hero-brand b,[data-bs-theme="light"] .hero h1{color:var(--ink);text-shadow:none}
+.hero h1{font-size:clamp(1.25rem,3vw,1.8rem);color:#fff;margin-top:.3rem}
+.hero p{margin:.3rem 0 0;color:#ffe9cf;font-size:1.05rem}
+[data-bs-theme="light"] .hero p{color:var(--mut)}
+.hero p::after{content:"";display:block;width:5.5rem;height:3px;margin-top:.9rem;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--a2))}
+.cta{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.4rem}
+.stack{display:grid;gap:1.4rem;padding-block:2.4rem 3rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.4rem;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.8rem}
+.more{color:var(--a1);font-size:.9rem}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.g{position:relative;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--in);aspect-ratio:4/3;font:inherit;color:inherit}
+.g img{width:100%;height:100%;object-fit:cover}
+.cap{position:absolute;inset:auto 0 0;padding:.9rem .5rem .4rem;font-size:.8rem;color:#fff;text-align:center;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent)}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.facts article{overflow:hidden;border:1px solid var(--line);border-radius:10px;background:var(--in)}
+.ft{padding:.9rem 1rem 1rem}
+.facts b{display:block;margin-bottom:.2rem;color:var(--a1)}
+.facts p{margin:.3rem 0 0;font-size:.9rem;color:var(--mut)}
+footer{border-top:1px solid var(--line);padding:1.5rem 0;color:var(--mut);font-size:.85rem}
+.js .rv{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.js .rv.on{opacity:1;transform:none}
+@media(max-width:900px){.gal{grid-template-columns:repeat(2,1fr)}.facts{grid-template-columns:1fr}}
+@media (max-width:720px){.dnav,.lg{display:none}.brand small{display:block}.brand{margin-inline-end:auto}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="sh"></div>
+<div class="sh b"></div>
+<header>
+<div class="wrap bar">
+<div class="brand">
+<img src="assets/icons/nova-light.png" alt="نوا">
+<div><b>نوا</b><small>انجمن نجوم دانش‌آموزی</small></div>
+</div>
+<nav class="dnav">
+<a href="#home">خانه</a>
+<a href="#about">درباره</a>
+<a href="#gallery">گالری</a>
+<a href="#facts">دانستنی‌ها</a>
+<a href="sky.html">آسمان</a>
+</nav>
+<a class="btn lg" href="login/login.html">ورود اعضا</a>
+<button class="tg" id="themeBtn" aria-label="تغییر تم">🌙 ☀️</button>
+</div>
+</header>
+<main>
+<section class="hero" id="home">
+<div class="wrap hero-in">
+<div class="hero-brand">
+<img src="assets/icons/nova-light.png" alt="لوگوی نوا">
+<b>نوا</b>
+</div>
+<h1>انجمن نجوم دانش‌آموزی</h1>
+<p>رصد عمومی، آموزش نجوم و عکاسی نجومی؛ به آسمان نزدیک‌تر شو.</p>
+<div class="cta">
+<a class="btn" href="login/login.html">عضویت و ورود</a>
+<a class="btn ghost" href="sky.html">مشاهده‌ی گالری آسمان</a>
+</div>
+</div>
+</section>
+<div class="wrap stack">
+<section class="panel rv" id="about">
+<div class="ph"><h2>درباره‌ی نوا</h2></div>
+<p class="mut">نوا یک انجمن دانش‌آموزی است که با برگزاری رصدهای عمومی، کارگاه‌های آموزشی و عکاسی نجومی، آسمان شب را به کلاس درس تبدیل می‌کند. اگر به ماه، سیاره‌ها و صورت‌های فلکی علاقه داری، جای تو این‌جاست.</p>
+</section>
+<section class="panel rv" id="gallery">
+<div class="ph"><h2>گالری</h2><a class="more" href="sky.html">مشاهده‌ی همه ←</a></div>
+<div class="gal">
+<a class="g" href="sky.html"><img src="assets/icons/nova-light.png" alt="نمونه رصد"><span class="cap">رصد ماه</span></a>
+<a class="g" href="sky.html"><img src="assets/icons/nova-light.png" alt="نمونه رصد"><span class="cap">آسمان شب</span></a>
+<a class="g" href="sky.html"><img src="assets/icons/nova-light.png" alt="نمونه رصد"><span class="cap">عکاسی نجومی</span></a>
+</div>
+</section>
+<section class="panel rv" id="facts">
+<div class="ph"><h2>دانستنی‌ها</h2><a class="more" href="sky.html#facts">همه‌ی دانستنی‌ها ←</a></div>
+<div class="facts">
+<article><div class="ft"><b>ماه همیشه یک رو دارد؟</b><p>به‌خاطر قفل کشندی، ما همیشه یک سمت ماه را می‌بینیم.</p></div></article>
+<article><div class="ft"><b>نور ستارگان قدیمی است</b><p>نوری که امشب می‌بینی، شاید هزاران سال پیش حرکت کرده باشد.</p></div></article>
+<article><div class="ft"><b>آسمان تاریک گنج است</b><p>برای رصد خوب، از نور شهر دور شو.</p></div></article>
+</div>
+</section>
+</div>
+</main>
+<footer>
+<div class="wrap">© <span id="year"></span> انجمن نوا — ساخته‌شده با علاقه به آسمان</div>
+</footer>
+<script>
+document.documentElement.classList.add('js');
+var root=document.documentElement;
+var saved=null;
+try{saved=localStorage.getItem('nova-theme')}catch(e){}
+if(saved==='light'||saved==='dark'){root.setAttribute('data-bs-theme',saved)}
+document.getElementById('themeBtn').addEventListener('click',function(){
+var cur=root.getAttribute('data-bs-theme')==='light'?'dark':'light';
+root.setAttribute('data-bs-theme',cur);
+try{localStorage.setItem('nova-theme',cur)}catch(e){}
+drawSky();
+});
+document.getElementById('year').textContent=new Date().getFullYear();
+function drawSky(){
+var c=document.getElementById('sky');
+if(!c)return;
+if(root.getAttribute('data-bs-theme')==='light'){c.getContext('2d').clearRect(0,0,c.width,c.height);return}
+c.width=innerWidth;c.height=innerHeight;
+var x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);
+for(var i=0;i<140;i++){x.fillStyle='rgba(255,255,255,'+(Math.random()*.8+.2)+')';x.fillRect(Math.random()*c.width,Math.random()*c.height,1.4,1.4)}
+}
+drawSky();addEventListener('resize',drawSky);
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+</script>
+</body>
+</html>
