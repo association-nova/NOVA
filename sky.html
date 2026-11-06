@@ -5,31 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>گالری کامل و دانستنی‌ها | نوا</title>
 <meta name="description" content="گالری کامل آسمان شب و ۱۲ دانستنی نجومی انجمن نوا">
+<meta name="theme-color" content="#0a0c10">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="assets/css/style.css?v=12">
+<link rel="stylesheet" href="assets/css/style.css?v=20">
 <script>try{document.documentElement.dataset.bsTheme=localStorage.getItem('nova-theme')||'dark'}catch(e){}</script>
 <style>
-.gal{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem}
+.pagehead{text-align:center;padding:2.2rem 1.3rem 1.4rem}
+.pagehead h1{font-size:1.8rem;color:var(--a1)}
+.pagehead p{color:var(--mut);margin:.4rem 0 0}
+.gal{display:grid;grid-template-columns:repeat(5,1fr);gap:.8rem}
 @media(max-width:900px){.gal{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.gal{grid-template-columns:repeat(2,1fr)}}
-.g{padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:zoom-in;background:var(--in);aspect-ratio:4/3;position:relative;font:inherit;color:inherit}
-.g img{width:100%;height:100%;object-fit:cover;display:block}
-.g .cap{position:absolute;bottom:0;right:0;left:0;padding:.3rem .6rem;font-size:.8rem;background:rgba(0,0,0,.55);color:#fff}
-.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-@media(max-width:900px){.facts{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.facts{grid-template-columns:1fr}}
-.facts article{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--in)}
-.facts .fi{height:150px;background-size:cover;background-position:center}
-.facts .ft{padding:.9rem 1rem}
+.g{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:zoom-in;background:var(--in);aspect-ratio:4/3;position:relative;font:inherit;color:inherit;transition:border-color .25s,transform .25s}
+.g:hover{border-color:var(--a1);transform:translateY(-3px)}
+.g img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s,filter .5s}
+.g:hover img{transform:scale(1.07);filter:saturate(1.25)}
+.g .cap{position:absolute;bottom:0;right:0;left:0;padding:.35rem .6rem;font-size:.8rem;background:rgba(10,12,16,.82);color:#ffe9cf;text-align:center}
+.facts{display:grid;grid-template-columns:1fr;gap:.9rem}
+.facts article{display:grid;grid-template-columns:200px 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--in);transition:border-color .25s,transform .25s}
+.facts article:hover{border-color:var(--a2);transform:translateX(-4px)}
+.facts .fi{height:100%;min-height:130px;background-size:cover;background-position:center}
+.facts .ft{padding:.9rem 1.1rem}
 .facts b{color:var(--a1)}
-.facts p{margin:.3rem 0 0;font-size:.9rem;color:var(--mut)}
+.facts p{margin:.3rem 0 0;font-size:.92rem;color:var(--mut)}
+@media(max-width:600px){.facts article{grid-template-columns:1fr}.facts .fi{height:150px;min-height:0}}
 #gallery,#facts{scroll-margin-top:90px}
-#nv-modal{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.75)}
+#nv-modal{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(5,6,10,.8)}
 #nv-modal.open{display:flex}
-#nv-modal .box{max-width:640px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+#nv-modal .box{max-width:640px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 #nv-modal img{width:100%;max-height:60vh;object-fit:cover;display:block}
-#nv-modal .tx{padding:1.1rem 1.3rem}
-#nv-modal .tx h3{margin:0 0 .4rem}
+#nv-modal .tx{padding:1.1rem 1.3rem;border-top:2px solid var(--line)}
+#nv-modal .tx h3{margin:0 0 .4rem;color:var(--a1)}
 #nv-modal .tx p{margin:0;color:var(--mut);line-height:1.9}
 #nv-modal .cls{display:block;margin:1rem auto 0}
 </style>
@@ -61,6 +67,10 @@
 </header>
 <main>
 <div class="wrap stack">
+<section class="pagehead">
+<h1>🌌 گالری آسمان شب نوا</h1>
+<p>عکس‌ها و دانستنی‌های نجومی انجمن؛ روی هر عکس بزن تا داستانش را بخوانی.</p>
+</section>
 <section class="panel rv on" id="gallery">
 <div class="ph"><h2>🔭 گالری کامل آسمان</h2><a class="more" href="index.html#gallery">← بازگشت به خانه</a></div>
 <div class="gal">
