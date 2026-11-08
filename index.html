@@ -708,12 +708,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch(error) {
 
-      console.error('Connection error:', error);
+  console.error('Connection error:', error);
 
-      msg.textContent =
-        'ارتباط با سرور برقرار نشد. اینترنت خود را بررسی کنید و دوباره تلاش کنید.';
+  msg.textContent =
+    'خطای ارتباط: ' + (error.message || String(error));
 
-    } finally {
+  } finally {
       btn.disabled = false;
     }
 
