@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منظومه شمسی سه‌بعدی و تلسکوپ</title>
+<link rel="stylesheet" href="manzoomeh.css">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<header class="hero">
+<h1>سفر سه‌بعدی به منظومه شمسی</h1>
+<p>هر ۸ سیاره در حال چرخش دور خورشید + تلسکوپ سه‌بعدی — روی هر کدام کلیک کن</p>
+<div class="badge-row">
+<span>نمای کامل هر ۸ سیاره</span>
+<span>بافت HD و نور سینمایی</span>
+<span>چرخش و زوم با موس</span>
+</div>
+</header>
+<main>
+<section class="panel">
+<div class="section-head">
+<h2>بخش اول: منظومه شمسی زنده</h2>
+<p>از ابتدا هر ۸ سیاره در کادر هستند. برای توضیح، روی هر سیاره کلیک کنید</p>
+</div>
+<div class="chips" id="planet-chips">
+<button data-i="-1">خورشید</button>
+<button data-i="0">عطارد</button>
+<button data-i="1">زهره</button>
+<button data-i="2" class="active">زمین</button>
+<button data-i="3">مریخ</button>
+<button data-i="4">مشتری</button>
+<button data-i="5">زحل</button>
+<button data-i="6">اورانوس</button>
+<button data-i="7">نپتون</button>
+</div>
+<div class="solar-layout">
+<div id="solar-wrap">
+<canvas id="solar-canvas"></canvas>
+<div id="labels"></div>
+<div class="hint">کلیک روی سیاره = توضیح | درگ = چرخش | اسکرول = زوم</div>
+<div class="toolbar">
+<button id="fitBtn">نمایش هر ۸ سیاره</button>
+<button id="pauseBtn">توقف</button>
+<label>سرعت <input type="range" id="speed" min="0" max="3" step="0.1" value="1"></label>
+<label><input type="checkbox" id="orbitToggle" checked> مدارها</label>
+<label><input type="checkbox" id="labelToggle" checked> نام‌ها</label>
+</div>
+</div>
+<aside class="info-card">
+<div class="tag">سیاره انتخاب‌شده</div>
+<h3 id="planet-name">زمین — خانه ما</h3>
+<div id="planet-en">Earth</div>
+<p id="planet-desc">تنها سیاره شناخته‌شده با حیات. ۷۱ درصد سطح آن آب است و یک قمر به نام ماه دارد.</p>
+<div class="facts" id="planet-facts"></div>
+</aside>
+</div>
+</section>
+<section class="panel">
+<div class="section-head">
+<h2>بخش دوم: تلسکوپ سه‌بعدی</h2>
+<p>تلسکوپ را بچرخانید و روی هر قطعه کلیک کنید تا کاربردش را ببینید</p>
+</div>
+<div class="chips" id="scope-chips">
+<button data-part="tube" class="active">لوله اصلی</button>
+<button data-part="objective">عدسی شیئی</button>
+<button data-part="eyepiece">چشمی و فوکوسر</button>
+<button data-part="finder">جوینده</button>
+<button data-part="mount">پایه استوایی</button>
+<button data-part="tripod">سه‌پایه</button>
+<button data-part="knob">پیچ تنظیم</button>
+</div>
+<div class="scope-layout">
+<div id="telescope-wrap">
+<canvas id="telescope-canvas"></canvas>
+<div class="hint">کلیک روی لوله، عدسی، چشمی، جوینده و پایه = توضیح فارسی</div>
+</div>
+<aside class="info-card">
+<div class="tag">قطعه انتخاب‌شده</div>
+<h3 id="scope-title">لوله اصلی تلسکوپ</h3>
+<p id="scope-desc"></p>
+<div class="facts" id="scope-specs"></div>
+</aside>
+</div>
+</section>
+</main>
+<script src="manzoomeh.js"></script>
+</body>
+</html>
