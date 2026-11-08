@@ -1,296 +1,726 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl" data-bs-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>نوا | انجمن نجوم دانش‌آموزی</title>
+<title>نوا | نوا</title>
 <meta name="description" content="انجمن نجوم نوا؛ رصد عمومی، آموزش نجوم، عکاسی نجومی و گالری آسمان شب. به انجمن بپیوندید.">
 <meta property="og:title" content="نوا | انجمن نجوم دانش‌آموزی">
 <meta property="og:image" content="assets/img/3.jpg">
 <meta name="theme-color" content="#070a1f">
+
 <link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="preload" as="image" href="assets/img/3.jpg">
 <link rel="stylesheet" href="assets/css/style.css?v=11">
-<script>try{document.documentElement.dataset.bsTheme=localStorage.getItem('nova-theme')||'dark'}catch(e){}</script>
+
+<!-- کتابخانه Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+try {
+  document.documentElement.dataset.bsTheme =
+    localStorage.getItem('nova-theme') || 'dark';
+} catch(e) {}
+</script>
 </head>
+
 <body>
+
 <canvas id="sky" aria-hidden="true"></canvas>
-<i class="sh" aria-hidden="true"></i><i class="sh b" aria-hidden="true"></i>
+<i class="sh" aria-hidden="true"></i>
+<i class="sh b" aria-hidden="true"></i>
 
 <header>
   <div class="wrap bar">
-    <button class="menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu" aria-label="منو">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+
+    <button class="menu" id="menuBtn" type="button"
+      aria-expanded="false" aria-controls="menu" aria-label="منو">
+      <svg width="26" height="26" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
     </button>
-    <a class="brand" href="#top"><img src="assets/icons/nova-light.png" alt="لوگوی نوا" width="42" height="42"><span><b>نوا</b><small>سفری به دنیای ستارگان...</small></span></a>
+
+    <a class="brand" href="#top">
+      <img src="assets/icons/nova-light.png" alt="لوگوی نوا" width="42" height="42">
+      <span>
+        <b>نوا</b>
+        <small>سفری به دنیای ستارگان...</small>
+      </span>
+    </a>
+
     <div class="dnav">
-      <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌ها</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر ما</a><a href="#contact">📞 تماس</a>
+      <a href="#top">🏠 خانه</a>
+      <a href="#gallery">🔭 گالری آسمان</a>
+      <a href="#facts">🪐 دانستنی‌ها</a>
+      <a href="#videos">▶ ویدیوها</a>
+      <a href="#about">ℹ درباره ما</a>
+      <a href="#join">🚀 عضویت</a>
+      <a href="#team">👥 تیم ما</a>
+      <a href="#path">🛰 مسیر ما</a>
+      <a href="#contact">📞 تماس</a>
     </div>
+
     <a class="btn ghost lg" href="login/login.html">🔐<span> ورود</span></a>
-    <button class="tg" id="themeBtn" type="button" aria-label="تغییر حالت شب و روز"><span>☀</span><span>☾</span></button>
+
+    <button class="tg" id="themeBtn" type="button"
+      aria-label="تغییر حالت شب و روز">
+      <span>☀</span>
+      <span>☾</span>
+    </button>
+
   </div>
+
   <nav id="menu" aria-label="منوی اصلی">
-    <a href="#top">🏠 خانه</a><a href="#gallery">🔭 گالری آسمان</a><a href="#facts">🪐 دانستنی‌های نجومی</a><a href="#videos">▶ ویدیوها</a><a href="#about">ℹ درباره ما</a><a href="#join">🚀 عضویت در انجمن</a><a href="#team">👥 تیم ما</a><a href="#path">🛰 مسیر فعالیت‌ها</a><a href="#contact">📞 تماس با ما</a>
+    <a href="#top">🏠 خانه</a>
+    <a href="#gallery">🔭 گالری آسمان</a>
+    <a href="#facts">🪐 دانستنی‌های نجومی</a>
+    <a href="#videos">▶ ویدیوها</a>
+    <a href="#about">ℹ درباره ما</a>
+    <a href="#join">🚀 عضویت در انجمن</a>
+    <a href="#team">👥 تیم ما</a>
+    <a href="#path">🛰 مسیر فعالیت‌ها</a>
+    <a href="#contact">📞 تماس با ما</a>
     <a href="login/login.html">🔐 ورود اعضا و مدیران</a>
   </nav>
 </header>
 
 <main>
+
   <section class="hero" id="top">
     <div class="wrap hero-in">
-      <div class="hero-brand"><img src="assets/icons/nova-light.png" alt="" width="64" height="64"><b>نوا</b></div>
+
+      <div class="hero-brand">
+        <img src="assets/icons/nova-light.png" alt="" width="64" height="64">
+        <b>نوا</b>
+      </div>
+
       <h1>به دنیای شگفت‌انگیز نجوم خوش آمدید!</h1>
       <p>«نگاهی فراتر از زمین...»</p>
-      <div class="cta"><a class="btn" href="#join">🚀 عضویت در انجمن</a><a class="btn ghost" href="#gallery">🔭 مشاهده گالری</a></div>
+
+      <div class="cta">
+        <a class="btn" href="#join">🚀 عضویت در انجمن</a>
+        <a class="btn ghost" href="#gallery">🔭 مشاهده گالری</a>
+      </div>
+
     </div>
+
     <a class="down" href="#gallery" aria-label="پایین">↓</a>
   </section>
 
   <div class="wrap stack">
+
     <section class="panel rv" id="gallery">
-      <div class="ph"><h2>🔭 گالری آسمان</h2><a class="more" href="sky.html">← گالری کامل و دانستنی‌ها</a></div>
-      <div class="gal">
-        <button type="button" class="g" data-t="کهکشان مارپیچی" data-d="کهکشان‌های مارپیچی، مثل راه شیری، از میلیاردها ستاره، گاز و غبار ساخته شده‌اند. بازوهای درخشان آن‌ها جایی است که ستاره‌های تازه متولد می‌شوند و کل کهکشان حول هسته‌ی مرکزی می‌چرخد."><img src="assets/img/3.jpg" alt="کهکشان مارپیچی" loading="lazy" width="400" height="300"><span class="cap">کهکشان مارپیچی</span></button>
-        <button type="button" class="g" data-t="ماه کامل" data-d="ماه تنها قمر طبیعی زمین است و حدود ۳۸۴ هزار کیلومتر با ما فاصله دارد. لکه‌های تیره‌اش دشت‌های گدازه‌ی سردشده‌اند و در هر سال حدود ۱۲ تا ۱۳ بار بدر کامل می‌شود."><img src="assets/img/9.jpg" alt="ماه کامل بالای دشت" loading="lazy" width="400" height="300"><span class="cap">ماه کامل</span></button>
-        <button type="button" class="g" data-t="سحابی" data-d="سحابی‌ها ابرهای عظیمی از گاز و غبار میان‌ستاره‌ای‌اند. بسیاری از آن‌ها زادگاه ستاره‌ها هستند و رنگ‌هایشان از نوع گاز و نور ستاره‌های نزدیک می‌آید."><img src="assets/img/7.jpg" alt="سحابی در آسمان تاریک" loading="lazy" width="400" height="300"><span class="cap">سحابی</span></button>
-        <button type="button" class="g" data-t="مشتری و قمرهایش" data-d="مشتری بزرگ‌ترین سیاره‌ی منظومه‌ی شمسی است. چهار قمر بزرگ آن، یعنی آیو، اروپا، گانیمد و کالیستو، را گالیله در سال ۱۶۱۰ کشف کرد و امروز با یک دوربین دوچشمی هم دیده می‌شوند."><img src="assets/img/4.jpg" alt="مشتری و قمرهایش" loading="lazy" width="400" height="300"><span class="cap">مشتری و قمرهایش</span></button>
-        <button type="button" class="g" data-t="راه شیری در آسمان تاریک" data-d="در آسمانی بدون آلودگی نوری، کمربند راه شیری با چشم غیرمسلح دیده می‌شود. روشن‌ترین بخش آن به سمت مرکز کهکشان، در صورت فلکی کمان، است."><img src="assets/img/8.png" alt="راه شیری در کویر" loading="lazy" width="400" height="300"><span class="cap">راه شیری در آسمان تاریک</span></button>
+
+      <div class="ph">
+        <h2>🔭 گالری آسمان</h2>
+        <a class="more" href="sky.html">← گالری کامل و دانستنی‌ها</a>
       </div>
-      <p class="hintc mut" style="margin:.8rem 0 0;text-align:center">روی هر عکس بزنید تا توضیحاتش را ببینید</p>
+
+      <div class="gal">
+
+        <button type="button" class="g"
+          data-t="کهکشان مارپیچی"
+          data-d="کهکشان‌های مارپیچی، مثل راه شیری، از میلیاردها ستاره، گاز و غبار ساخته شده‌اند. بازوهای درخشان آن‌ها جایی است که ستاره‌های تازه متولد می‌شوند و کل کهکشان حول هسته‌ی مرکزی می‌چرخد.">
+          <img src="assets/img/3.jpg" alt="کهکشان مارپیچی"
+            loading="lazy" width="400" height="300">
+          <span class="cap">کهکشان مارپیچی</span>
+        </button>
+
+        <button type="button" class="g"
+          data-t="ماه کامل"
+          data-d="ماه تنها قمر طبیعی زمین است و حدود ۳۸۴ هزار کیلومتر با ما فاصله دارد. لکه‌های تیره‌اش دشت‌های گدازه‌ی سردشده‌اند و در هر سال حدود ۱۲ تا ۱۳ بار بدر کامل می‌شود.">
+          <img src="assets/img/9.jpg" alt="ماه کامل بالای دشت"
+            loading="lazy" width="400" height="300">
+          <span class="cap">ماه کامل</span>
+        </button>
+
+        <button type="button" class="g"
+          data-t="سحابی"
+          data-d="سحابی‌ها ابرهای عظیمی از گاز و غبار میان‌ستاره‌ای‌اند. بسیاری از آن‌ها زادگاه ستاره‌ها هستند و رنگ‌هایشان از نوع گاز و نور ستاره‌های نزدیک می‌آید.">
+          <img src="assets/img/7.jpg" alt="سحابی در آسمان تاریک"
+            loading="lazy" width="400" height="300">
+          <span class="cap">سحابی</span>
+        </button>
+
+        <button type="button" class="g"
+          data-t="مشتری و قمرهایش"
+          data-d="مشتری بزرگ‌ترین سیاره‌ی منظومه‌ی شمسی است. چهار قمر بزرگ آن، یعنی آیو، اروپا، گانیمد و کالیستو، را گالیله در سال ۱۶۱۰ کشف کرد و امروز با یک دوربین دوچشمی هم دیده می‌شوند.">
+          <img src="assets/img/4.jpg" alt="مشتری و قمرهایش"
+            loading="lazy" width="400" height="300">
+          <span class="cap">مشتری و قمرهایش</span>
+        </button>
+
+        <button type="button" class="g"
+          data-t="راه شیری در آسمان تاریک"
+          data-d="در آسمانی بدون آلودگی نوری، کمربند راه شیری با چشم غیرمسلح دیده می‌شود. روشن‌ترین بخش آن به سمت مرکز کهکشان، در صورت فلکی کمان، است.">
+          <img src="assets/img/8.png" alt="راه شیری در کویر"
+            loading="lazy" width="400" height="300">
+          <span class="cap">راه شیری در آسمان تاریک</span>
+        </button>
+
+      </div>
+
+      <p class="hintc mut" style="margin:.8rem 0 0;text-align:center">
+        روی هر عکس بزنید تا توضیحاتش را ببینید
+      </p>
+
     </section>
 
     <section class="panel rv" id="facts">
-      <div class="ph"><h2>🪐 دانستنی‌هایی که کمتر کسی می‌داند</h2><a class="more" href="sky.html#facts">← همه‌ی دانستنی‌ها</a></div>
-      <div class="facts">
-        <article><div class="fi" style="background-image:url(assets/img/9.jpg)"></div><div class="ft"><b>🌙 ماه هنوز «زلزله» دارد</b><p>لرزه‌سنج‌هایی که فضانوردان آپولو روی ماه گذاشتند، ماه‌لرزه‌های واقعی را ثبت کردند. بعضی از آن‌ها بسیار طولانی بودند.</p></div></article>
-        <article><div class="fi venusimg"></div><div class="ft"><b>♀ روز زهره از سالش بلندتر است</b><p>زهره یک دور به دور خودش را در حدود ۲۴۳ روز زمینی می‌چرخد، ولی دور خورشید را در ۲۲۵ روز می‌گردد. یعنی روزش از سالش طولانی‌تر است و برعکس زمین می‌چرخد.</p></div></article>
-        <article><div class="fi" style="background-image:url(assets/img/7.jpg)"></div><div class="ft"><b>🧬 از غبار ستاره‌ها ساخته شده‌ایم</b><p>آهن خون و کلسیم استخوان‌های شما در درون ستاره‌ها و انفجار ابرنواخترها ساخته شده است. پس بخشی از بدن ما قبل از شکل‌گیری زمین، در آسمان ساخته شده است.</p></div></article>
+
+      <div class="ph">
+        <h2>🪐 دانستنی‌هایی که کمتر کسی می‌داند</h2>
+        <a class="more" href="sky.html#facts">← همه‌ی دانستنی‌ها</a>
       </div>
-      <p class="vall"><a class="btn" href="sky.html#facts">دیدن ۱۲ دانستنی شگفت‌انگیز</a></p>
+
+      <div class="facts">
+
+        <article>
+          <div class="fi" style="background-image:url(assets/img/9.jpg)"></div>
+          <div class="ft">
+            <b>🌙 ماه هنوز «زلزله» دارد</b>
+            <p>لرزه‌سنج‌هایی که فضانوردان آپولو روی ماه گذاشتند، ماه‌لرزه‌های واقعی را ثبت کردند. بعضی از آن‌ها بسیار طولانی بودند.</p>
+          </div>
+        </article>
+
+        <article>
+          <div class="fi venusimg"></div>
+          <div class="ft">
+            <b>♀ روز زهره از سالش بلندتر است</b>
+            <p>زهره یک دور به دور خودش را در حدود ۲۴۳ روز زمینی می‌چرخد، ولی دور خورشید را در ۲۲۵ روز می‌گردد. یعنی روزش از سالش طولانی‌تر است و برعکس زمین می‌چرخد.</p>
+          </div>
+        </article>
+
+        <article>
+          <div class="fi" style="background-image:url(assets/img/7.jpg)"></div>
+          <div class="ft">
+            <b>🧬 از غبار ستاره‌ها ساخته شده‌ایم</b>
+            <p>آهن خون و کلسیم استخوان‌های شما در درون ستاره‌ها و انفجار ابرنواخترها ساخته شده است. پس بخشی از بدن ما قبل از شکل‌گیری زمین، در آسمان ساخته شده است.</p>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="vall">
+        <a class="btn" href="sky.html#facts">دیدن ۱۲ دانستنی شگفت‌انگیز</a>
+      </p>
+
     </section>
 
     <section class="panel rv" id="videos">
-      <div class="ph"><h2>▶ ویدیوهای نجومی</h2><a class="more" href="videos/videos.html">← ورود به آرشیو</a></div>
+
+      <div class="ph">
+        <h2>▶ ویدیوهای نجومی</h2>
+        <a class="more" href="videos/videos.html">← ورود به آرشیو</a>
+      </div>
+
       <a class="vfeat" href="videos/videos.html">
-        <div class="vfimg" style="background-image:url(assets/img/7.jpg)"><b>▶</b></div>
-        <div class="vfx"><span class="vtag" id="vCount">آرشیو ویدیوها</span><h3>آرشیو ویدیوهای انجمن نوا</h3><p>آموزش‌ها، گزارش‌ها و وبینارهای انجمن؛ از سیاره‌های دو‌خورشیدی تا سفر در زمان و تلسکوپ جیمز وب. همه در یک صفحه.</p><span class="btn">ورود به صفحه‌ی ویدیوها ←</span></div>
+        <div class="vfimg" style="background-image:url(assets/img/7.jpg)">
+          <b>▶</b>
+        </div>
+
+        <div class="vfx">
+          <span class="vtag" id="vCount">آرشیو ویدیوها</span>
+          <h3>آرشیو ویدیوهای انجمن نوا</h3>
+          <p>آموزش‌ها، گزارش‌ها و وبینارهای انجمن؛ از سیاره‌های دو‌خورشیدی تا سفر در زمان و تلسکوپ جیمز وب. همه در یک صفحه.</p>
+          <span class="btn">ورود به صفحه‌ی ویدیوها ←</span>
+        </div>
       </a>
+
     </section>
 
     <div class="duo">
+
       <section class="panel rv" id="about">
         <h2>ℹ درباره‌ی نوا</h2>
+
         <p>نوا انجمنی دانش‌آموزی است برای کسانی که شب‌ها سرشان را بالا می‌گیرند و می‌پرسند آن بالا چه خبر است. نام ما از «نوا» می‌آید؛ ستاره‌ای که ناگهان روشن می‌شود و آسمان را غافلگیر می‌کند.</p>
+
         <p>ما باور داریم نجوم فقط فرمول و کتاب نیست؛ یک تجربه است. تجربه‌ی دیدن حلقه‌های زحل از پشت تلسکوپ، یا فهمیدن اینکه نوری که امشب به چشممان می‌رسد، سال‌ها پیش راه افتاده است. نوا جایی است که این کنجکاوی کنار هم جمع می‌شود، پرسش‌ها بی‌جواب نمی‌مانند و هر عضو می‌تواند چیزی بیاموزد و چیزی یاد بدهد.</p>
+
         <p class="quote">«آسمان مدرسه‌ای است که هیچ‌وقت تعطیل نمی‌شود.»</p>
       </section>
 
       <section class="panel rv" id="join">
+
+        <!-- فرم عضویت متصل به Supabase -->
         <form id="f" novalidate>
+
           <h2>🚀 عضویت در انجمن نجوم</h2>
           <p class="mut">اطلاعات خود را وارد کنید تا ستاره‌ی جدید نوا شوید.</p>
-          <input type="hidden" name="access_key" value="b88779ab-ad0a-4b3c-b611-3042033b6495">
-          <input type="hidden" name="subject" value="درخواست جدید از سایت انجمن نجوم نوا">
-          <label>نام و نام خانوادگی<input name="name" autocomplete="name" placeholder="مثال: حسین غلامی"><small class="err"></small></label>
+
+          <label>
+            نام و نام خانوادگی
+            <input name="name" autocomplete="name" placeholder="مثال: حسین غلامی">
+            <small class="err"></small>
+          </label>
+
           <div class="row">
-            <label>شماره کلاس<input name="cls" inputmode="numeric" placeholder="مثال: 903"><small class="err"></small></label>
-            <label>آیدی شاد<input name="shad" dir="ltr" placeholder="@username" autocomplete="off"><small class="err"></small></label>
+            <label>
+              شماره کلاس
+              <input name="cls" inputmode="numeric" placeholder="مثال: 903">
+              <small class="err"></small>
+            </label>
+
+            <label>
+              آیدی شاد
+              <input name="shad" dir="ltr" placeholder="@username" autocomplete="off">
+              <small class="err"></small>
+            </label>
           </div>
-          <label>ایمیل (جیمیل)<input name="email" type="email" dir="ltr" autocomplete="email" placeholder="harchi@gmail.com"><small class="err"></small></label>
+
+          <label>
+            ایمیل (جیمیل)
+            <input name="email" type="email" dir="ltr"
+              autocomplete="email" placeholder="harchi@gmail.com">
+            <small class="err"></small>
+          </label>
+
           <button class="btn" type="submit">ارسال درخواست</button>
           <div class="ok" id="ok" role="status"></div>
+
         </form>
+
       </section>
+
     </div>
 
     <section class="panel rv" id="team">
+
       <h2>👥 تیم ما</h2>
+
       <div class="team">
-        <article class="mem"><img src="assets/img/shayan.png" alt="شایان توکلی دستجرد" loading="lazy" width="100" height="100"><h3>شایان توکلی دستجرد</h3><small>👑 مدیر انجمن</small></article>
-        <article class="mem"><img src="assets/img/hossein.jpg" alt="حسین غلامی" loading="lazy" width="100" height="100"><h3>حسین غلامی</h3><small>💻 مسئول فناوری</small></article>
-        <article class="mem"><img src="assets/img/meraj.jpg" alt="معراج عیدی درمیان" loading="lazy" width="100" height="100"><h3>معراج عیدی درمیان</h3><small>✏️ مسئول محتوا</small></article>
+
+        <article class="mem">
+          <img src="assets/img/shayan.png" alt="شایان توکلی دستجرد"
+            loading="lazy" width="100" height="100">
+          <h3>شایان توکلی دستجرد</h3>
+          <small>👑 مدیر انجمن</small>
+        </article>
+
+        <article class="mem">
+          <img src="assets/img/hossein.jpg" alt="حسین غلامی"
+            loading="lazy" width="100" height="100">
+          <h3>حسین غلامی</h3>
+          <small>💻 مسئول فناوری</small>
+        </article>
+
+        <article class="mem">
+          <img src="assets/img/meraj.jpg" alt="معراج عیدی درمیان"
+            loading="lazy" width="100" height="100">
+          <h3>معراج عیدی درمیان</h3>
+          <small>✏️ مسئول محتوا</small>
+        </article>
+
       </div>
     </section>
 
     <section class="panel rv" id="path">
+
       <h2>🛰 مسیر فعالیت‌های نوا</h2>
+
       <ol class="tl">
-        <li><b>آغاز راه</b><span>چند دوست هم‌مسیر، با علاقه به آموزش.</span></li>
-        <li><b>آغاز فعالیت‌ها</b><span>رسمیت‌یافتن فعالیت‌ها و انتشار نخستین مطالب آموزشی.</span></li>
-        <li><b>رصد عمومی</b><span>اولین برنامه‌های رصد همگانی در مدرسه.</span></li>
-        <li><b>نوا در امروز</b><span>فعالیت مستمر، عکاسی نجومی و ستاره‌شناسی مقدماتی.</span></li>
+        <li>
+          <b>آغاز راه</b>
+          <span>چند دوست هم‌مسیر، با علاقه به آموزش.</span>
+        </li>
+        <li>
+          <b>آغاز فعالیت‌ها</b>
+          <span>رسمیت‌یافتن فعالیت‌ها و انتشار نخستین مطالب آموزشی.</span>
+        </li>
+        <li>
+          <b>رصد عمومی</b>
+          <span>اولین برنامه‌های رصد همگانی در مدرسه.</span>
+        </li>
+        <li>
+          <b>نوا در امروز</b>
+          <span>فعالیت مستمر، عکاسی نجومی و ستاره‌شناسی مقدماتی.</span>
+        </li>
       </ol>
+
     </section>
 
     <section class="panel rv" id="contact">
+
       <h2>📞 تماس با ما</h2>
+
       <div class="contact">
         <ul>
-          <li>ایمیل: <a dir="ltr" href="mailto:associationnova13@gmail.com">associationnova13@gmail.com</a></li>
-          <li>آیدی شاد و روبیکا: <b dir="ltr">hossein631391</b></li>
+          <li>ایمیل:
+            <a dir="ltr" href="mailto:associationnova13@gmail.com">associationnova13@gmail.com</a>
+          </li>
+          <li>آیدی شاد و روبیکا:
+            <b dir="ltr">hossein631391</b>
+          </li>
           <li>نشانی: بیرجند، سجادشهر، امامت، دبیرستان شهید بهشتی دوره اول</li>
         </ul>
+
         <p class="tagline">✦ نوا، جایی برای رویاهای ستاره‌ای...</p>
       </div>
+
     </section>
+
   </div>
 </main>
 
 <footer>
   <div class="wrap foot">
     <span>© انجمن نجوم نوا · همه‌ی حقوق محفوظ است.</span>
-    <div class="soc" data-social><noscript><a href="https://shad.ir/novaastro405">شاد</a> <a href="https://rubika.ir/novaastro405">روبیکا</a> <a href="https://www.aparat.com/nova_astro_405">آپارات</a></noscript></div>
+
+    <div class="soc" data-social>
+      <noscript>
+        <a href="https://shad.ir/novaastro405">شاد</a>
+        <a href="https://rubika.ir/novaastro405">روبیکا</a>
+        <a href="https://www.aparat.com/nova_astro_405">آپارات</a>
+      </noscript>
+    </div>
   </div>
 </footer>
+
 <button class="top" id="toTop" type="button" aria-label="بازگشت به بالا">↑</button>
 
 <dialog id="lb">
   <button class="x" type="button" aria-label="بستن">&times;</button>
-  <div class="lbx"><img alt=""><div class="lbd"><h3></h3><p></p></div></div>
+  <div class="lbx">
+    <img alt="">
+    <div class="lbd">
+      <h3></h3>
+      <p></p>
+    </div>
+  </div>
 </dialog>
 
 <script src="assets/js/videos-data.js?v=11" defer></script>
 <script src="assets/js/social.js?v=11" defer></script>
 <script src="assets/js/announce.js?v=1" defer></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
   'use strict';
+
   const $ = s => document.querySelector(s);
   const root = document.documentElement;
+
   root.classList.add('js');
-  // اگر افکت ظاهر شدن کار نکرد، بعد از ۲ ثانیه همه‌ی بخش‌ها نمایان می‌شوند
-  setTimeout(() => document.querySelectorAll('.rv').forEach(n => n.classList.add('on')), 2000);
 
-  /* آدرس Web App (Google Apps Script) برای ثبت درخواست عضویت */
-  const API = 'https://script.google.com/macros/s/AKfycbz8WEOdUAxVkf7lITn6pTTx1FTbjhUWdXpQ1ujpwZ5FB2J0i-bA-HUxP16twUZysCV3bA/exec';
+  // نمایش بخش‌ها در صورت مشکل انیمیشن
+  setTimeout(() => {
+    document.querySelectorAll('.rv').forEach(n => n.classList.add('on'));
+  }, 2000);
 
-  const db = {
-    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  };
+  // اتصال به Supabase
+  const SUPABASE_URL = 'https://ufdcottunhkcxeiphepv.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_1Y9SYiFVd4lxlKPWjCnshw_vaFLdSg-';
 
-  /* تم */
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  // تغییر حالت شب و روز
   $('#themeBtn').onclick = () => {
     const t = root.dataset.bsTheme === 'dark' ? 'light' : 'dark';
     root.dataset.bsTheme = t;
-    try { localStorage.setItem('nova-theme', t); } catch (e) {}
+
+    try {
+      localStorage.setItem('nova-theme', t);
+    } catch(e) {}
   };
 
-  /* منوی موبایل */
-  const mb = $('#menuBtn'), menu = $('#menu'), hdr = $('header');
-  const closeMenu = () => { menu.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); };
-  mb.onclick = () => mb.setAttribute('aria-expanded', menu.classList.toggle('open'));
-  document.addEventListener('click', e => { if (!menu.contains(e.target) && !mb.contains(e.target)) closeMenu(); });
-  addEventListener('resize', () => { if (innerWidth > 720) closeMenu(); });
+  // منوی موبایل
+  const mb = $('#menuBtn');
+  const menu = $('#menu');
+  const hdr = $('header');
 
-  /* رفتن دقیق به بخش‌ها (بدون تأثیر انیمیشن) + نشان دادن بخش فعلی */
-  const posOf = n => { let y = 0; for (; n; n = n.offsetParent) y += n.offsetTop; return y; };
+  const closeMenu = () => {
+    menu.classList.remove('open');
+    mb.setAttribute('aria-expanded', 'false');
+  };
+
+  mb.onclick = () => {
+    mb.setAttribute(
+      'aria-expanded',
+      menu.classList.toggle('open')
+    );
+  };
+
+  document.addEventListener('click', e => {
+    if (!menu.contains(e.target) && !mb.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  addEventListener('resize', () => {
+    if (innerWidth > 720) closeMenu();
+  });
+
+  // رفتن دقیق به بخش‌ها
+  const posOf = n => {
+    let y = 0;
+    for (; n; n = n.offsetParent) y += n.offsetTop;
+    return y;
+  };
+
   const go = (id, smooth = true) => {
-    const t = id && id !== 'top' ? document.getElementById(id) : null;
-    scrollTo({ top: t ? Math.max(0, posOf(t) - hdr.offsetHeight - 14) : 0, behavior: smooth ? 'smooth' : 'auto' });
+    const t = id && id !== 'top'
+      ? document.getElementById(id)
+      : null;
+
+    scrollTo({
+      top: t ? Math.max(0, posOf(t) - hdr.offsetHeight - 14) : 0,
+      behavior: smooth ? 'smooth' : 'auto'
+    });
   };
+
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
-    e.preventDefault(); closeMenu();
+
+    e.preventDefault();
+    closeMenu();
+
     const id = a.getAttribute('href').slice(1);
-    go(id); history.replaceState(null, '', id ? '#' + id : location.pathname);
+    go(id);
+
+    history.replaceState(
+      null,
+      '',
+      id ? '#' + id : location.pathname
+    );
   });
-  addEventListener('load', () => { if (location.hash) go(location.hash.slice(1), false); });
-  const ids = [...document.querySelectorAll('.dnav a')].map(a => a.getAttribute('href').slice(1));
+
+  addEventListener('load', () => {
+    if (location.hash) {
+      go(location.hash.slice(1), false);
+    }
+  });
+
+  const ids = [...document.querySelectorAll('.dnav a')]
+    .map(a => a.getAttribute('href').slice(1));
+
   const topBtn = $('#toTop');
+
   const spy = () => {
     topBtn.classList.toggle('show', scrollY > 600);
-    let cur = ids[0];
-    ids.forEach(id => { const t = id === 'top' ? null : document.getElementById(id); if (t && posOf(t) - hdr.offsetHeight - 80 <= scrollY) cur = id; });
-    document.querySelectorAll('.dnav a,#menu a').forEach(a => a.classList.toggle('act', a.getAttribute('href') === '#' + cur));
-  };
-  addEventListener('scroll', spy, { passive: true }); spy();
-  topBtn.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
 
-  /* ظاهر شدن بخش‌ها */
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .08 });
+    let cur = ids[0];
+
+    ids.forEach(id => {
+      const t = id === 'top'
+        ? null
+        : document.getElementById(id);
+
+      if (t && posOf(t) - hdr.offsetHeight - 80 <= scrollY) {
+        cur = id;
+      }
+    });
+
+    document.querySelectorAll('.dnav a,#menu a').forEach(a => {
+      a.classList.toggle(
+        'act',
+        a.getAttribute('href') === '#' + cur
+      );
+    });
+  };
+
+  addEventListener('scroll', spy, { passive: true });
+  spy();
+
+  topBtn.onclick = () => {
+    scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // ظاهر شدن بخش‌ها
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: .08 });
+
   document.querySelectorAll('.rv').forEach(n => io.observe(n));
 
-  /* آسمان پرستاره */
-  const cv = $('#sky'), cx = cv.getContext('2d');
+  // آسمان پرستاره
+  const cv = $('#sky');
+  const cx = cv.getContext('2d');
+
   let stars = [];
+
   const draw = () => {
-    cv.width = innerWidth; cv.height = innerHeight;
-    stars = Array.from({ length: Math.min(160, innerWidth / 6) }, () => ({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: Math.random() * 1.4 + .3, p: Math.random() * 6 }));
+    cv.width = innerWidth;
+    cv.height = innerHeight;
+
+    stars = Array.from(
+      { length: Math.min(160, innerWidth / 6) },
+      () => ({
+        x: Math.random() * cv.width,
+        y: Math.random() * cv.height,
+        r: Math.random() * 1.4 + .3,
+        p: Math.random() * 6
+      })
+    );
   };
+
   const tick = t => {
     cx.clearRect(0, 0, cv.width, cv.height);
-    if (root.dataset.bsTheme === 'dark') stars.forEach(s => { cx.globalAlpha = .35 + .35 * Math.sin(t / 900 + s.p); cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.3); cx.fill(); });
+
+    if (root.dataset.bsTheme === 'dark') {
+      stars.forEach(s => {
+        cx.globalAlpha = .35 + .35 * Math.sin(t / 900 + s.p);
+        cx.fillStyle = '#fff';
+        cx.beginPath();
+        cx.arc(s.x, s.y, s.r, 0, 6.3);
+        cx.fill();
+      });
+    }
+
     requestAnimationFrame(tick);
   };
-  draw(); addEventListener('resize', draw);
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(tick);
 
-  /* پنجره‌ها */
+  draw();
+  addEventListener('resize', draw);
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    requestAnimationFrame(tick);
+  }
+
+  // پنجره‌ها
   document.querySelectorAll('dialog').forEach(d => {
     d.querySelector('.x').onclick = () => d.close();
-    d.addEventListener('click', e => { if (e.target === d) d.close(); });
-  });
 
-  /* گالری: عکس + توضیحات */
-  const lb = $('#lb');
-  document.querySelectorAll('.g').forEach(b => b.onclick = () => {
-    const i = b.querySelector('img'), im = lb.querySelector('img');
-    im.src = i.src; im.alt = i.alt;
-    lb.querySelector('h3').textContent = b.dataset.t;
-    lb.querySelector('.lbd p').textContent = b.dataset.d;
-    lb.showModal();
-  });
-
-  const vids = window.NOVA_VIDEOS || [];
-  if (vids.length) $('#vCount').textContent = vids.length + ' ویدیو در آرشیو';
-
-  /* فرم عضویت */
-  const f = $('#f');
-  const rules = {
-    name: v => v.trim().split(/\s+/).length >= 2 || 'نام و نام خانوادگی را کامل بنویسید.',
-    cls: v => /^[0-9۰-۹\/]{2,6}$/.test(v.trim()) || 'شماره کلاس معتبر نیست.',
-    shad: v => /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) || 'آیدی شاد معتبر نیست.',
-    email: v => /^[^\s@]+@gmail\.com$/i.test(v.trim()) || 'یک ایمیل جیمیل معتبر وارد کنید.'
-  };
-  const post = async o => {
-    const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(o) });
-    return r.json();
-  };
-  f.addEventListener('submit', async e => {
-    e.preventDefault();
-    let ok = true;
-    Object.keys(rules).forEach(k => {
-      const i = f.elements[k], r = rules[k](i.value);
-      i.parentElement.querySelector('.err').textContent = r === true ? '' : r;
-      i.toggleAttribute('aria-invalid', r !== true);
-      if (r !== true) ok = false;
+    d.addEventListener('click', e => {
+      if (e.target === d) d.close();
     });
-    if (!ok) return;
-    const d = Object.fromEntries(new FormData(f)), msg = $('#ok'), btn = f.querySelector('[type=submit]');
-    msg.style.display = 'block'; msg.textContent = 'در حال ارسال...'; btn.disabled = true;
-    let done = false;
-    if (API) {
-      try {
-        const j = await post({ action: 'submit', name: d.name, cls: d.cls, shad: d.shad, email: d.email });
-        if (j.ok) done = true;
-        else if (j.err === 'dup') { msg.textContent = 'درخواست شما قبلاً ثبت شده است.'; btn.disabled = false; return; }
-      } catch (er) {}
-    }
-    if (!done) { // روش پشتیبان: ایمیل + ذخیره در همین مرورگر
-      try { done = (await fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(f) })).ok; } catch (er) {}
-      if (done) {
-        const q = db.get('nova-requests', []);
-        q.unshift({ id: String(Date.now()), date: new Date().toISOString(), name: d.name.trim(), cls: d.cls.trim(), shad: d.shad.trim(), email: d.email.trim() });
-        db.set('nova-requests', q);
-      }
-    }
-    msg.textContent = done ? '✨ درخواست شما ثبت شد. به‌زودی با شما تماس می‌گیریم.' : 'ارسال انجام نشد؛ اینترنت را بررسی کنید و دوباره تلاش کنید.';
-    if (done) f.reset();
-    btn.disabled = false;
   });
+
+  // گالری
+  const lb = $('#lb');
+
+  document.querySelectorAll('.g').forEach(b => {
+    b.onclick = () => {
+      const i = b.querySelector('img');
+      const im = lb.querySelector('img');
+
+      im.src = i.src;
+      im.alt = i.alt;
+
+      lb.querySelector('h3').textContent = b.dataset.t;
+      lb.querySelector('.lbd p').textContent = b.dataset.d;
+
+      lb.showModal();
+    };
+  });
+
+  // تعداد ویدیوها
+  const vids = window.NOVA_VIDEOS || [];
+
+  if (vids.length) {
+    $('#vCount').textContent = vids.length + ' ویدیو در آرشیو';
+  }
+
+  // فرم عضویت و اعتبارسنجی
+  const f = $('#f');
+
+  const rules = {
+    name: v =>
+      v.trim().split(/\s+/).length >= 2 ||
+      'نام و نام خانوادگی را کامل بنویسید.',
+
+    cls: v =>
+      /^[0-9۰-۹\/]{2,6}$/.test(v.trim()) ||
+      'شماره کلاس معتبر نیست.',
+
+    shad: v =>
+      /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) ||
+      'آیدی شاد معتبر نیست.',
+
+    email: v =>
+      /^[^\s@]+@gmail\.com$/i.test(v.trim()) ||
+      'یک ایمیل جیمیل معتبر وارد کنید.'
+  };
+
+  // ارسال مستقیم اطلاعات به جدول membership_requests
+  f.addEventListener('submit', async e => {
+
+    e.preventDefault();
+
+    let valid = true;
+
+    Object.keys(rules).forEach(k => {
+      const input = f.elements[k];
+      const result = rules[k](input.value);
+
+      input.parentElement.querySelector('.err').textContent =
+        result === true ? '' : result;
+
+      input.toggleAttribute('aria-invalid', result !== true);
+
+      if (result !== true) valid = false;
+    });
+
+    if (!valid) return;
+
+    const msg = $('#ok');
+    const btn = f.querySelector('[type=submit]');
+
+    const data = {
+      name: f.elements.name.value.trim(),
+      cls: f.elements.cls.value.trim(),
+      shad: f.elements.shad.value.trim(),
+      email: f.elements.email.value.trim().toLowerCase()
+    };
+
+    msg.style.display = 'block';
+    msg.textContent = 'در حال ارسال درخواست...';
+    btn.disabled = true;
+
+    try {
+
+      const { error } = await supabaseClient
+        .from('membership_requests')
+        .insert([data]);
+
+      if (error) {
+
+        console.error('Supabase error:', error);
+
+        if (error.code === '23505') {
+          msg.textContent =
+            'این ایمیل قبلاً درخواست عضویت ثبت کرده است.';
+        } else {
+          msg.textContent =
+            'ثبت درخواست انجام نشد. لطفاً دوباره تلاش کنید.';
+        }
+
+        return;
+      }
+
+      msg.textContent =
+        '✨ درخواست شما با موفقیت ثبت شد. به‌زودی با شما تماس می‌گیریم.';
+
+      f.reset();
+
+    } catch(error) {
+
+      console.error('Connection error:', error);
+
+      msg.textContent =
+        'ارتباط با سرور برقرار نشد. اینترنت خود را بررسی کنید و دوباره تلاش کنید.';
+
+    } finally {
+      btn.disabled = false;
+    }
+
+  });
+
 });
 </script>
+
 </body>
 </html>
