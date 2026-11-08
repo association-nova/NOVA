@@ -61,11 +61,10 @@ try {
       <a href="#path">🛰 مسیر ما</a>
       <a href="#contact">📞 تماس</a>
       <a href="manzoomeh.html">🪐 رصدخانه مجازی</a>
-      
     </div>
 
     <a class="btn ghost lg" href="login/login.html">🔐<span> ورود</span></a>
-    
+
     <button class="tg" id="themeBtn" type="button"
       aria-label="تغییر حالت شب و روز">
       <span>☀</span>
@@ -248,7 +247,6 @@ try {
 
       <section class="panel rv" id="join">
 
-        <!-- فرم عضویت متصل به Supabase -->
         <form id="f" novalidate>
 
           <h2>🚀 عضویت در انجمن نجوم</h2>
@@ -401,330 +399,218 @@ try {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
   'use strict';
-
   const $ = s => document.querySelector(s);
   const root = document.documentElement;
-
   root.classList.add('js');
 
-  // نمایش بخش‌ها در صورت مشکل انیمیشن
   setTimeout(() => {
     document.querySelectorAll('.rv').forEach(n => n.classList.add('on'));
   }, 2000);
 
-  // اتصال به Supabase
+  // اتصال امن به Supabase - اگر لود نشود منو نباید بمیرد
   const SUPABASE_URL = 'https://ufdcottunhkcxeiphepv.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_1Y9SYiFVd4lxlKPWjCnshw_vaFLdSg-';
-
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  let supabaseClient = null;
+  try {
+    if (window.supabase && window.supabase.createClient) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+  } catch(e) { console.warn('supabase init failed', e); }
 
   // تغییر حالت شب و روز
-  $('#themeBtn').onclick = () => {
-    const t = root.dataset.bsTheme === 'dark' ? 'light' : 'dark';
-    root.dataset.bsTheme = t;
-
-    try {
-      localStorage.setItem('nova-theme', t);
-    } catch(e) {}
-  };
+  const themeBtn = $('#themeBtn');
+  if (themeBtn) {
+    themeBtn.onclick = () => {
+      const t = root.dataset.bsTheme === 'dark' ? 'light' : 'dark';
+      root.dataset.bsTheme = t;
+      try { localStorage.setItem('nova-theme', t); } catch(e) {}
+    };
+  }
 
   // منوی موبایل
   const mb = $('#menuBtn');
   const menu = $('#menu');
-  const hdr = $('header');
+  const hdr = document.querySelector('header');
 
   const closeMenu = () => {
+    if (!menu || !mb) return;
     menu.classList.remove('open');
     mb.setAttribute('aria-expanded', 'false');
   };
 
-  mb.onclick = () => {
-    mb.setAttribute(
-      'aria-expanded',
-      menu.classList.toggle('open')
-    );
-  };
-
-  document.addEventListener('click', e => {
-    if (!menu.contains(e.target) && !mb.contains(e.target)) {
-      closeMenu();
-    }
-  });
-
-  addEventListener('resize', () => {
-    if (innerWidth > 720) closeMenu();
-  });
-
-  // رفتن دقیق به بخش‌ها
-  const posOf = n => {
-    let y = 0;
-    for (; n; n = n.offsetParent) y += n.offsetTop;
-    return y;
-  };
-
-  const go = (id, smooth = true) => {
-    const t = id && id !== 'top'
-      ? document.getElementById(id)
-      : null;
-
-    scrollTo({
-      top: t ? Math.max(0, posOf(t) - hdr.offsetHeight - 14) : 0,
-      behavior: smooth ? 'smooth' : 'auto'
+  if (mb && menu) {
+    mb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = menu.classList.toggle('open');
+      mb.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+
+    document.addEventListener('click', e => {
+      if (!e.target || !e.target.closest) return;
+      if (!menu.contains(e.target) && !mb.contains(e.target)) closeMenu();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 720) closeMenu();
+    });
+  }
+
+  // رفتن دقیق به بخش‌ها - فقط لینک‌های # را می‌گیرد
+  const posOf = n => { let y = 0; for (; n; n = n.offsetParent) y += n.offsetTop; return y; };
+  const go = (id, smooth = true) => {
+    const t = id && id !== 'top' ? document.getElementById(id) : null;
+    const off = hdr ? hdr.offsetHeight + 14 : 70;
+    window.scrollTo({ top: t ? Math.max(0, posOf(t) - off) : 0, behavior: smooth ? 'smooth' : 'auto' });
   };
 
   document.addEventListener('click', e => {
+    if (!e.target || !e.target.closest) return;
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
-
+    const href = a.getAttribute('href');
+    if (!href || href.length < 2) return;
     e.preventDefault();
     closeMenu();
-
-    const id = a.getAttribute('href').slice(1);
+    const id = href.slice(1);
     go(id);
-
-    history.replaceState(
-      null,
-      '',
-      id ? '#' + id : location.pathname
-    );
+    try { history.replaceState(null, '', id ? '#' + id : location.pathname); } catch(err) {}
   });
 
-  addEventListener('load', () => {
-    if (location.hash) {
-      go(location.hash.slice(1), false);
-    }
-  });
+  window.addEventListener('load', () => { if (location.hash) go(location.hash.slice(1), false); });
 
-  const ids = [...document.querySelectorAll('.dnav a')]
-    .map(a => a.getAttribute('href').slice(1));
-
+  const ids = [...document.querySelectorAll('.dnav a[href^="#"]')].map(a => a.getAttribute('href').slice(1)).filter(Boolean);
   const topBtn = $('#toTop');
 
   const spy = () => {
-    topBtn.classList.toggle('show', scrollY > 600);
-
+    if (topBtn) topBtn.classList.toggle('show', window.scrollY > 600);
     let cur = ids[0];
-
     ids.forEach(id => {
-      const t = id === 'top'
-        ? null
-        : document.getElementById(id);
-
-      if (t && posOf(t) - hdr.offsetHeight - 80 <= scrollY) {
-        cur = id;
-      }
+      const t = id === 'top' ? null : document.getElementById(id);
+      const off = hdr ? hdr.offsetHeight + 80 : 150;
+      if (t && posOf(t) - off <= window.scrollY) cur = id;
     });
-
     document.querySelectorAll('.dnav a,#menu a').forEach(a => {
-      a.classList.toggle(
-        'act',
-        a.getAttribute('href') === '#' + cur
-      );
+      a.classList.toggle('act', a.getAttribute('href') === '#' + cur);
     });
   };
-
-  addEventListener('scroll', spy, { passive: true });
+  window.addEventListener('scroll', spy, { passive: true });
   spy();
-
-  topBtn.onclick = () => {
-    scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  if (topBtn) topBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // ظاهر شدن بخش‌ها
   const io = new IntersectionObserver(es => {
-    es.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('on');
-        io.unobserve(e.target);
-      }
-    });
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
   }, { threshold: .08 });
-
   document.querySelectorAll('.rv').forEach(n => io.observe(n));
 
   // آسمان پرستاره
   const cv = $('#sky');
-  const cx = cv.getContext('2d');
-
-  let stars = [];
-
-  const draw = () => {
-    cv.width = innerWidth;
-    cv.height = innerHeight;
-
-    stars = Array.from(
-      { length: Math.min(160, innerWidth / 6) },
-      () => ({
-        x: Math.random() * cv.width,
-        y: Math.random() * cv.height,
-        r: Math.random() * 1.4 + .3,
-        p: Math.random() * 6
-      })
-    );
-  };
-
-  const tick = t => {
-    cx.clearRect(0, 0, cv.width, cv.height);
-
-    if (root.dataset.bsTheme === 'dark') {
-      stars.forEach(s => {
-        cx.globalAlpha = .35 + .35 * Math.sin(t / 900 + s.p);
-        cx.fillStyle = '#fff';
-        cx.beginPath();
-        cx.arc(s.x, s.y, s.r, 0, 6.3);
-        cx.fill();
-      });
-    }
-
-    requestAnimationFrame(tick);
-  };
-
-  draw();
-  addEventListener('resize', draw);
-
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    requestAnimationFrame(tick);
+  if (cv) {
+    const cx = cv.getContext('2d');
+    let stars = [];
+    const draw = () => {
+      cv.width = window.innerWidth; cv.height = window.innerHeight;
+      stars = Array.from({ length: Math.min(160, window.innerWidth / 6) }, () => ({
+        x: Math.random() * cv.width, y: Math.random() * cv.height,
+        r: Math.random() * 1.4 + .3, p: Math.random() * 6
+      }));
+    };
+    const tick = t => {
+      cx.clearRect(0, 0, cv.width, cv.height);
+      if (root.dataset.bsTheme === 'dark') {
+        stars.forEach(s => {
+          cx.globalAlpha = .35 + .35 * Math.sin(t / 900 + s.p);
+          cx.fillStyle = '#fff';
+          cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.3); cx.fill();
+        });
+      }
+      requestAnimationFrame(tick);
+    };
+    draw(); window.addEventListener('resize', draw);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(tick);
   }
 
   // پنجره‌ها
   document.querySelectorAll('dialog').forEach(d => {
-    d.querySelector('.x').onclick = () => d.close();
-
-    d.addEventListener('click', e => {
-      if (e.target === d) d.close();
-    });
+    const x = d.querySelector('.x');
+    if (x) x.onclick = () => d.close();
+    d.addEventListener('click', e => { if (e.target === d) d.close(); });
   });
 
   // گالری
   const lb = $('#lb');
-
-  document.querySelectorAll('.g').forEach(b => {
-    b.onclick = () => {
-      const i = b.querySelector('img');
-      const im = lb.querySelector('img');
-
-      im.src = i.src;
-      im.alt = i.alt;
-
-      lb.querySelector('h3').textContent = b.dataset.t;
-      lb.querySelector('.lbd p').textContent = b.dataset.d;
-
-      lb.showModal();
-    };
-  });
+  if (lb) {
+    document.querySelectorAll('.g').forEach(b => {
+      b.onclick = () => {
+        const i = b.querySelector('img');
+        const im = lb.querySelector('img');
+        if (!i || !im) return;
+        im.src = i.src; im.alt = i.alt;
+        lb.querySelector('h3').textContent = b.dataset.t || '';
+        lb.querySelector('.lbd p').textContent = b.dataset.d || '';
+        if (typeof lb.showModal === 'function') lb.showModal();
+      };
+    });
+  }
 
   // تعداد ویدیوها
   const vids = window.NOVA_VIDEOS || [];
+  const vCount = $('#vCount');
+  if (vids.length && vCount) vCount.textContent = vids.length + ' ویدیو در آرشیو';
 
-  if (vids.length) {
-    $('#vCount').textContent = vids.length + ' ویدیو در آرشیو';
-  }
-
-  // فرم عضویت و اعتبارسنجی
+  // فرم عضویت
   const f = $('#f');
-
-  const rules = {
-    name: v =>
-      v.trim().split(/\s+/).length >= 2 ||
-      'نام و نام خانوادگی را کامل بنویسید.',
-
-    cls: v =>
-      /^[0-9۰-۹\/]{2,6}$/.test(v.trim()) ||
-      'شماره کلاس معتبر نیست.',
-
-    shad: v =>
-      /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) ||
-      'آیدی شاد معتبر نیست.',
-
-    email: v =>
-      /^[^\s@]+@gmail\.com$/i.test(v.trim()) ||
-      'یک ایمیل جیمیل معتبر وارد کنید.'
-  };
-
-  // ارسال مستقیم اطلاعات به جدول membership_requests
-  f.addEventListener('submit', async e => {
-
-    e.preventDefault();
-
-    let valid = true;
-
-    Object.keys(rules).forEach(k => {
-      const input = f.elements[k];
-      const result = rules[k](input.value);
-
-      input.parentElement.querySelector('.err').textContent =
-        result === true ? '' : result;
-
-      input.toggleAttribute('aria-invalid', result !== true);
-
-      if (result !== true) valid = false;
-    });
-
-    if (!valid) return;
-
-    const msg = $('#ok');
-    const btn = f.querySelector('[type=submit]');
-
-    const data = {
-      name: f.elements.name.value.trim(),
-      cls: f.elements.cls.value.trim(),
-      shad: f.elements.shad.value.trim(),
-      email: f.elements.email.value.trim().toLowerCase()
+  if (f) {
+    const rules = {
+      name: v => v.trim().split(/\s+/).length >= 2 || 'نام و نام خانوادگی را کامل بنویسید.',
+      cls: v => /^[0-9۰-۹\/]{2,6}$/.test(v.trim()) || 'شماره کلاس معتبر نیست.',
+      shad: v => /^@?[A-Za-z0-9_.]{3,32}$/.test(v.trim()) || 'آیدی شاد معتبر نیست.',
+      email: v => /^[^\s@]+@gmail\.com$/i.test(v.trim()) || 'یک ایمیل جیمیل معتبر وارد کنید.'
     };
-
-    msg.style.display = 'block';
-    msg.textContent = 'در حال ارسال درخواست...';
-    btn.disabled = true;
-
-    try {
-
-      const { error } = await supabaseClient
-        .from('membership_requests')
-        .insert([data]);
-
-      if (error) {
-
-        console.error('Supabase error:', error);
-
-        if (error.code === '23505') {
-          msg.textContent =
-            'این ایمیل قبلاً درخواست عضویت ثبت کرده است.';
-        } else {
-          msg.textContent =
-            'ثبت درخواست انجام نشد. لطفاً دوباره تلاش کنید.';
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      let valid = true;
+      Object.keys(rules).forEach(k => {
+        const input = f.elements[k];
+        if (!input) return;
+        const result = rules[k](input.value);
+        const err = input.parentElement ? input.parentElement.querySelector('.err') : null;
+        if (err) err.textContent = result === true ? '' : result;
+        input.toggleAttribute('aria-invalid', result !== true);
+        if (result !== true) valid = false;
+      });
+      if (!valid) return;
+      const msg = $('#ok');
+      const btn = f.querySelector('[type=submit]');
+      const data = {
+        name: f.elements.name.value.trim(),
+        cls: f.elements.cls.value.trim(),
+        shad: f.elements.shad.value.trim(),
+        email: f.elements.email.value.trim().toLowerCase()
+      };
+      if (msg) { msg.style.display = 'block'; msg.textContent = 'در حال ارسال درخواست...'; }
+      if (btn) btn.disabled = true;
+      try {
+        if (!supabaseClient) throw new Error('supabase not loaded');
+        const { error } = await supabaseClient.from('membership_requests').insert([data]);
+        if (error) {
+          console.error('Supabase error:', error);
+          if (msg) msg.textContent = error.code === '23505'
+            ? 'این ایمیل قبلاً درخواست عضویت ثبت کرده است.'
+            : 'ثبت درخواست انجام نشد. لطفاً دوباره تلاش کنید.';
+          return;
         }
-
-        return;
+        if (msg) msg.textContent = '✨ درخواست شما با موفقیت ثبت شد. به‌زودی با شما تماس می‌گیریم.';
+        f.reset();
+      } catch(error) {
+        console.error('Connection error:', error);
+        if (msg) msg.textContent = 'ارتباط با سرور برقرار نشد. اینترنت خود را بررسی کنید و دوباره تلاش کنید.';
+      } finally {
+        if (btn) btn.disabled = false;
       }
-
-      msg.textContent =
-        '✨ درخواست شما با موفقیت ثبت شد. به‌زودی با شما تماس می‌گیریم.';
-
-      f.reset();
-
-    } catch(error) {
-
-      console.error('Connection error:', error);
-  console.error('Connection error:', error);
-
-      msg.textContent =
-        'ارتباط با سرور برقرار نشد. اینترنت خود را بررسی کنید و دوباره تلاش کنید.';
-  msg.textContent =
-    'خطای ارتباط: ' + (error.message || String(error));
-
-    } finally {
-  } finally {
-      btn.disabled = false;
-    }
-
-  });
-
+    });
+  }
 });
 </script>
 
